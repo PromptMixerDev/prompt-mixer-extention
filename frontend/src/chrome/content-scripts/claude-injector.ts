@@ -5,7 +5,7 @@
  * пользователям отправлять свой промпт на улучшение.
  */
 
-import { createImproveButton, positionButton } from './components/improve-button';
+import { createImproveButton, positionButton, updateButtonVisibility } from './components/improve-button';
 
 // Оборачиваем все в IIFE, чтобы избежать загрязнения глобального пространства имен
 (function() {
@@ -63,6 +63,19 @@ import { createImproveButton, positionButton } from './components/improve-button
     
     // Позиционируем кнопку относительно поля ввода
     positionButton(inputField, buttonContainer);
+    
+    // Проверяем начальное состояние видимости кнопки
+    updateButtonVisibility(buttonContainer, getPromptText);
+    
+    // Добавляем слушатели событий для поля ввода
+    const updateVisibility = () => {
+      updateButtonVisibility(buttonContainer, getPromptText);
+    };
+
+    inputField.addEventListener('input', updateVisibility);
+    inputField.addEventListener('keyup', updateVisibility); // Для клавиш Delete, Backspace
+    inputField.addEventListener('paste', updateVisibility);
+    inputField.addEventListener('cut', updateVisibility);
     
     // Добавляем обработчик изменения размера окна
     window.addEventListener('resize', () => {
