@@ -12,9 +12,10 @@ export function createImproveButton(
   buttonContainer.id = 'improve-prompt-button-container';
   buttonContainer.style.cssText = `
     position: absolute;
-    top: 10px;
+    top: 48px;
     right: 10px;
     z-index: 9999;
+    display: none; /* Изначально скрываем кнопку */
   `;
   
   // Создаем кнопку с иконкой
@@ -25,9 +26,9 @@ export function createImproveButton(
     background-color: #6b46fe;
     color: white;
     border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    border-radius: 12px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -114,6 +115,17 @@ export function createImproveButton(
   return buttonContainer;
 }
 
+// Функция для обновления видимости кнопки в зависимости от наличия текста
+export function updateButtonVisibility(
+  buttonContainer: HTMLElement,
+  getPromptText: () => string
+): void {
+  const promptText = getPromptText();
+  const isEmpty = !promptText || promptText.trim() === '';
+  console.log('Text is empty:', isEmpty, 'Text:', JSON.stringify(promptText)); // Для отладки
+  buttonContainer.style.display = isEmpty ? 'none' : 'block';
+}
+
 // Функция для позиционирования кнопки относительно поля ввода
 export function positionButton(inputField: Element, buttonContainer: HTMLElement): void {
   if (!inputField || !buttonContainer) return;
@@ -123,7 +135,7 @@ export function positionButton(inputField: Element, buttonContainer: HTMLElement
   
   // Если кнопка в fieldset (position: absolute)
   if (buttonContainer.style.position === 'absolute') {
-    buttonContainer.style.top = '10px';
+    buttonContainer.style.top = '48px';
     buttonContainer.style.right = '10px';
   } 
   // Если кнопка в body (position: fixed)
