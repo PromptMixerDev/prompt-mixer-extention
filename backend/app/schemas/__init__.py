@@ -5,3 +5,7 @@ from app.schemas.schemas import (
     Tag, TagCreate, TagUpdate, TagInDB,
     GoogleAuthRequest, GoogleAuthResponse
 )
+
+from app.schemas.prompts import (
+    PromptRequest, PromptResponse
+)

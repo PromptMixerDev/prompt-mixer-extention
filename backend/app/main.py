@@ -71,6 +71,11 @@ def read_root():
             <p>Callback endpoint for Google OAuth</p>
         </div>
         
+        <div class="endpoint">
+            <span class="method">POST</span> /api/v1/prompts/improve</p>
+            <p>Improve a prompt using Claude AI</p>
+        </div>
+        
         <p>For full API documentation, visit <a href="/docs">/docs</a></p>
     </body>
     </html>

@@ -1,6 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, DateTime, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from typing import Optional
 
 from app.core.database import Base
 
@@ -55,3 +56,16 @@ class PromptTag(Base):
     # Relationships
     prompt = relationship("Prompt", back_populates="tags")
     tag = relationship("Tag", back_populates="prompts")
+
+class PromptHistory(Base):
+    __tablename__ = "prompt_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    original_prompt = Column(Text, nullable=False)
+    improved_prompt = Column(Text, nullable=False)
+    url = Column(String, nullable=True)  # URL страницы, где был улучшен промпт
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # Опционально, если хотим связать с пользователем
+
+    # Relationships
+    user = relationship("User", backref="prompt_history")

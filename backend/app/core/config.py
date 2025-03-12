@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     # CORS
     CORS_ORIGINS: List[str] = json.loads(os.getenv("CORS_ORIGINS", '["http://localhost:5173", "chrome-extension://*/"]'))
     
+    # Claude API
+    CLAUDE_API_KEY: str = os.getenv("CLAUDE_API_KEY", "")
+    CLAUDE_MODEL: str = "claude-3-5-haiku-latest"
+    
     class Config:
         case_sensitive = True
 
