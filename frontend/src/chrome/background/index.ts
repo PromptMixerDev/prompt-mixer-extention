@@ -5,8 +5,9 @@
  * manages extension state, and interacts with the backend API.
  */
 
-// Import Chrome types
+// Import Chrome types and services
 import type { ChromeMessage, ChromeMessageSender, ChromeWindow } from '../../types/chrome';
+import { authService } from '../../services/auth';
 
 // Initialize the side panel when the extension is installed or updated
 chrome.runtime.onInstalled.addListener(() => {
@@ -35,37 +36,49 @@ chrome.runtime.onMessage.addListener((message: ChromeMessage, sender: ChromeMess
   // Handle different message types
   switch (message.type) {
     case 'IMPROVE_PROMPT':
-      // Call the backend API to improve the prompt
-      fetch('http://localhost:8000/api/v1/prompts/improve', {
-        method: 'POST',
-        headers: {
+      // Get auth token and then make the API call
+      authService.getAuthToken().then(token => {
+        // Prepare headers
+        const headers: Record<string, string> = {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: message.data.prompt
-        })
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        };
+        
+        // Add Authorization header if token exists
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
         }
-        return response.json();
-      })
-      .then(data => {
-        sendResponse({
-          type: 'IMPROVED_PROMPT',
-          data: {
-            improvedPrompt: data.improved_prompt
+        
+        // Call the backend API to improve the prompt
+        fetch('http://localhost:8000/api/v1/prompts/improve', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            prompt: message.data.prompt,
+            url: message.data.url
+          })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
           }
-        });
-      })
-      .catch(error => {
-        console.error('Error improving prompt:', error);
-        sendResponse({
-          type: 'ERROR',
-          data: {
-            message: `Error improving prompt: ${error.message}`
-          }
+          return response.json();
+        })
+        .then(data => {
+          sendResponse({
+            type: 'IMPROVED_PROMPT',
+            data: {
+              improvedPrompt: data.improved_prompt
+            }
+          });
+        })
+        .catch(error => {
+          console.error('Error improving prompt:', error);
+          sendResponse({
+            type: 'ERROR',
+            data: {
+              message: `Error improving prompt: ${error.message}`
+            }
+          });
         });
       });
       break;

@@ -1,7 +1,12 @@
 import re
+import json
 import logging
+import asyncio
+from typing import Optional
 from anthropic import Anthropic
 from app.core.config import settings
+from app.models.models import PromptHistory
+from app.core.database import SessionLocal
 
 logger = logging.getLogger(__name__)
 
@@ -63,12 +68,14 @@ class PromptImprovementService:
         self.client = Anthropic(api_key=settings.CLAUDE_API_KEY)
         self.model = settings.CLAUDE_MODEL
     
-    async def improve_prompt(self, original_prompt: str) -> str:
+    async def improve_prompt(self, original_prompt: str, url: Optional[str] = None, user_id: Optional[int] = None) -> str:
         """
-        Improve a prompt using Claude API
+        Improve a prompt using Claude API and save to history
         
         Args:
             original_prompt: The original prompt to improve
+            url: The URL where the prompt was improved
+            user_id: Optional user ID
             
         Returns:
             The improved prompt
@@ -90,6 +97,10 @@ class PromptImprovementService:
             
             # Extract the improved prompt from the response
             improved_prompt = self._extract_improved_prompt(response.content[0].text)
+            
+            # Save to history
+            self._save_to_history(original_prompt, improved_prompt, url, user_id)
+            
             return improved_prompt
         
         except Exception as e:
@@ -116,6 +127,82 @@ class PromptImprovementService:
             # If no match found, return the full response
             logger.warning("Could not extract improved prompt from response")
             return response_text
+    
+    def _save_to_history(self, original_prompt: str, improved_prompt: str, url: Optional[str] = None, user_id: Optional[int] = None) -> None:
+        """
+        Save the original and improved prompts to history
+        
+        Args:
+            original_prompt: The original prompt
+            improved_prompt: The improved prompt
+            url: The URL where the prompt was improved
+            user_id: Optional user ID
+        """
+        try:
+            # Create a new database session
+            db = SessionLocal()
+            
+            try:
+                # Create a new history entry
+                history_entry = PromptHistory(
+                    original_prompt=original_prompt,
+                    improved_prompt=improved_prompt,
+                    url=url,
+                    user_id=user_id
+                )
+                
+                # Add to database and commit
+                db.add(history_entry)
+                db.commit()
+                db.refresh(history_entry)
+                
+                logger.info(f"Saved prompt history entry with ID: {history_entry.id}")
+            finally:
+                # Close the database session
+                db.close()
+        except Exception as e:
+            logger.error(f"Error saving to history: {str(e)}")
+            # Don't raise the exception to avoid breaking the main functionality
+    
+    async def get_history(self, skip: int = 0, limit: int = 100, user_id: Optional[int] = None) -> tuple:
+        """
+        Get prompt improvement history
+        
+        Args:
+            skip: Number of records to skip
+            limit: Maximum number of records to return
+            user_id: Optional user ID to filter by
+            
+        Returns:
+            Tuple of (history_items, total_count)
+        """
+        try:
+            # Create a new database session
+            db = SessionLocal()
+            
+            try:
+                # Create base query
+                query = db.query(PromptHistory)
+                
+                # Filter by user_id if provided
+                if user_id is not None:
+                    query = query.filter(PromptHistory.user_id == user_id)
+                
+                # Get total count
+                total = query.count()
+                
+                # Get history items
+                history = query.order_by(
+                    PromptHistory.created_at.desc()
+                ).offset(skip).limit(limit).all()
+                
+                return history, total
+            finally:
+                # Close the database session
+                db.close()
+        except Exception as e:
+            logger.error(f"Error getting history: {str(e)}")
+            raise
 
 # Create a singleton instance
 prompt_improvement_service = PromptImprovementService()

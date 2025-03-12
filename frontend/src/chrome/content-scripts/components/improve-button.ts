@@ -87,7 +87,10 @@ export function createImproveButton(
     chrome.runtime.sendMessage(
       {
         type: 'IMPROVE_PROMPT',
-        data: { prompt: promptText }
+        data: { 
+          prompt: promptText,
+          url: window.location.href // Добавляем URL текущей страницы
+        }
       },
       (response) => {
         if (response && response.type === 'IMPROVED_PROMPT') {
