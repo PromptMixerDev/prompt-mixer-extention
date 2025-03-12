@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt Mixer Extension",
+  "version": "0.1.0",
+  "description": "A Chrome extension for working with AI prompts",
+  "action": {
+    "default_title": "Prompt Mixer"
+  },
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "scripting",
+    "identity",
+    "windows"
+  ],
+  "oauth2": {
+    "client_id": "331223637725-uf6jd48rqs99dlc0gt0csc3a5fc6me17.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://localhost:8000 https://*.googleapis.com https://*.gstatic.com https://*.firebaseio.com https://*.firebase.com https://*.firebaseauth.com wss://*.firebaseio.com"
+  },
+  "host_permissions": [
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "http://localhost:8000/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chat.openai.com/*"],
+      "js": ["content-scripts/gpt-injector.js"]
+    },
+    {
+      "matches": ["https://claude.ai/*"],
+      "js": ["content-scripts/claude-injector.js"]
+    }
+  ]
+}
