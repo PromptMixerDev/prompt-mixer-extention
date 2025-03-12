@@ -36,9 +36,29 @@ import { createImproveButton, positionButton, updateButtonVisibility } from './c
     // Создаем функции для получения и установки текста промпта
     const getPromptText = () => inputField.textContent || '';
     const setPromptText = (text: string) => {
+      // Очищаем поле ввода
       inputField.innerHTML = '';
-      const textNode = document.createTextNode(text);
-      inputField.appendChild(textNode);
+      
+      // Создаем новый диапазон
+      const range = document.createRange();
+      const sel = window.getSelection();
+      
+      if (sel) {
+        // Устанавливаем диапазон в начало поля ввода
+        range.setStart(inputField, 0);
+        range.collapse(true);
+        
+        // Очищаем текущее выделение и добавляем новый диапазон
+        sel.removeAllRanges();
+        sel.addRange(range);
+        
+        // Вставляем текст с сохранением форматирования
+        document.execCommand('insertText', false, text);
+      } else {
+        // Запасной вариант, если getSelection() вернул null
+        inputField.textContent = text;
+      }
+      
       inputField.dispatchEvent(new Event('input', { bubbles: true }));
     };
     

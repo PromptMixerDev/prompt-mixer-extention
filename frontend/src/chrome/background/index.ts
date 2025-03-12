@@ -35,17 +35,39 @@ chrome.runtime.onMessage.addListener((message: ChromeMessage, sender: ChromeMess
   // Handle different message types
   switch (message.type) {
     case 'IMPROVE_PROMPT':
-      // In a real implementation, this would call the backend API
-      // For now, we'll just simulate a response
-      setTimeout(() => {
+      // Call the backend API to improve the prompt
+      fetch('http://localhost:8000/api/v1/prompts/improve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: message.data.prompt
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
         sendResponse({
           type: 'IMPROVED_PROMPT',
           data: {
-            originalPrompt: message.data.prompt,
-            improvedPrompt: `Improved: ${message.data.prompt}`
+            improvedPrompt: data.improved_prompt
           }
         });
-      }, 1000);
+      })
+      .catch(error => {
+        console.error('Error improving prompt:', error);
+        sendResponse({
+          type: 'ERROR',
+          data: {
+            message: `Error improving prompt: ${error.message}`
+          }
+        });
+      });
       break;
 
     case 'GET_USER_PROMPTS':

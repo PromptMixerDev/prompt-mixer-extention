@@ -23,7 +23,7 @@ export function createImproveButton(
   button.id = 'improve-prompt-button';
   button.setAttribute('title', 'Improve Prompt'); // Тултип
   button.style.cssText = `
-    background-color: #6b46fe;
+    background-color:rgb(0, 0, 0);
     color: white;
     border: none;
     border-radius: 12px;
@@ -37,11 +37,17 @@ export function createImproveButton(
     transition: background-color 0.3s;
   `;
   
-  // Добавляем SVG иконку (временная иконка, будет заменена на предоставленную пользователем)
-  button.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor"/>
-    <path d="M2 17l10 5 10-5M2 12l10 5 10-5" fill="currentColor"/>
-  </svg>`;
+  // Добавляем SVG иконку
+  button.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_102_2005)">
+<path d="M12.7505 0.90625L13.7396 2.76087L15.5942 3.75L13.7396 4.73913L12.7505 6.59375L11.7613 4.73913L9.90675 3.75L11.7613 2.76087L12.7505 0.90625ZM6.00049 3.25L8.00048 7L11.7505 8.99999L8.00048 11L6.00049 14.75L4.00049 11L0.250488 8.99999L4.00049 7L6.00049 3.25ZM14.7505 12.25L13.5005 9.90629L12.2505 12.25L9.90675 13.5L12.2505 14.75L13.5005 17.0938L14.7505 14.75L17.0942 13.5L14.7505 12.25Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_102_2005">
+<rect width="18" height="18" fill="white"/>
+</clipPath>
+</defs>
+</svg>`;
   
   // Добавляем обработчик клика
   button.addEventListener('click', () => {
@@ -52,22 +58,24 @@ export function createImproveButton(
     }
     
     // Меняем иконку на анимированную
-    button.innerHTML = `<svg class="spinner" width="20" height="20" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
-    </svg>`;
+    button.innerHTML = `<svg class="spinner" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.773 4.22703L12.7123 5.28769C11.7622 4.33763 10.4497 3.75 9 3.75C6.10051 3.75 3.75 6.10051 3.75 9C3.75 11.8995 6.10051 14.25 9 14.25C11.8995 14.25 14.25 11.8995 14.25 9H15.75C15.75 12.728 12.728 15.75 9 15.75C5.27208 15.75 2.25 12.728 2.25 9C2.25 5.27208 5.27208 2.25 9 2.25C10.864 2.25 12.5515 3.00552 13.773 4.22703Z" fill="white"/>
+</svg>`;
     
     // Добавляем стиль для анимации
-    const styleId = 'improve-button-spinner-style';
+    const styleId = 'improve-button-animation-style';
     if (!document.getElementById(styleId)) {
       const style = document.createElement('style');
       style.id = styleId;
       style.textContent = `
-        .spinner {
-          animation: spin 1s linear infinite;
-        }
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        
+        .spinner {
+          animation: spin 1.5s linear infinite;
+          transform-origin: center;
         }
       `;
       document.head.appendChild(style);
@@ -87,10 +95,16 @@ export function createImproveButton(
           setPromptText(response.data.improvedPrompt);
           
           // Возвращаем исходную иконку
-          button.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor"/>
-            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" fill="currentColor"/>
-          </svg>`;
+          button.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_102_2005)">
+<path d="M12.7505 0.90625L13.7396 2.76087L15.5942 3.75L13.7396 4.73913L12.7505 6.59375L11.7613 4.73913L9.90675 3.75L11.7613 2.76087L12.7505 0.90625ZM6.00049 3.25L8.00048 7L11.7505 8.99999L8.00048 11L6.00049 14.75L4.00049 11L0.250488 8.99999L4.00049 7L6.00049 3.25ZM14.7505 12.25L13.5005 9.90629L12.2505 12.25L9.90675 13.5L12.2505 14.75L13.5005 17.0938L14.7505 14.75L17.0942 13.5L14.7505 12.25Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_102_2005">
+<rect width="18" height="18" fill="white"/>
+</clipPath>
+</defs>
+</svg>`;
           button.disabled = false;
         } else {
           // Обрабатываем ошибку
@@ -98,10 +112,16 @@ export function createImproveButton(
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>
           </svg>`;
           setTimeout(() => {
-            button.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor"/>
-              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" fill="currentColor"/>
-            </svg>`;
+            button.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_102_2005)">
+<path d="M12.7505 0.90625L13.7396 2.76087L15.5942 3.75L13.7396 4.73913L12.7505 6.59375L11.7613 4.73913L9.90675 3.75L11.7613 2.76087L12.7505 0.90625ZM6.00049 3.25L8.00048 7L11.7505 8.99999L8.00048 11L6.00049 14.75L4.00049 11L0.250488 8.99999L4.00049 7L6.00049 3.25ZM14.7505 12.25L13.5005 9.90629L12.2505 12.25L9.90675 13.5L12.2505 14.75L13.5005 17.0938L14.7505 14.75L17.0942 13.5L14.7505 12.25Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_102_2005">
+<rect width="18" height="18" fill="white"/>
+</clipPath>
+</defs>
+</svg>`;
             button.disabled = false;
           }, 2000);
         }
@@ -122,7 +142,6 @@ export function updateButtonVisibility(
 ): void {
   const promptText = getPromptText();
   const isEmpty = !promptText || promptText.trim() === '';
-  console.log('Text is empty:', isEmpty, 'Text:', JSON.stringify(promptText)); // Для отладки
   buttonContainer.style.display = isEmpty ? 'none' : 'block';
 }
 
