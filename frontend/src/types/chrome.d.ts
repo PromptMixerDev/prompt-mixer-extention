@@ -3,7 +3,10 @@
  */
 
 export interface ChromeStorageArea {
-  get(keys: string | string[] | object | null, callback: (items: { [key: string]: any }) => void): void;
+  get(
+    keys: string | string[] | object | null,
+    callback: (items: { [key: string]: any }) => void
+  ): void;
   set(items: object, callback?: () => void): void;
   remove(keys: string | string[], callback?: () => void): void;
   clear(callback?: () => void): void;
@@ -14,8 +17,12 @@ export interface ChromeStorage {
   sync: ChromeStorageArea;
   session: ChromeStorageArea;
   onChanged: {
-    addListener(callback: (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => void): void;
-    removeListener(callback: (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => void): void;
+    addListener(
+      callback: (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => void
+    ): void;
+    removeListener(
+      callback: (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => void
+    ): void;
   };
 }
 
@@ -26,6 +33,23 @@ export interface ChromeTab {
   title?: string;
   active?: boolean;
   index?: number;
+}
+
+export interface ChromeTabs {
+  query(queryInfo: { [key: string]: any }, callback: (tabs: ChromeTab[]) => void): void;
+  sendMessage(
+    tabId: number,
+    message: any,
+    options?: { frameId?: number },
+    responseCallback?: (response: any) => void
+  ): void;
+  create(createProperties: { [key: string]: any }, callback?: (tab: ChromeTab) => void): void;
+  update(
+    tabId: number,
+    updateProperties: { [key: string]: any },
+    callback?: (tab?: ChromeTab) => void
+  ): void;
+  remove(tabIds: number | number[], callback?: () => void): void;
 }
 
 export interface ChromeWindow {
@@ -103,12 +127,28 @@ export interface ChromeRuntime {
     message?: string;
   };
   onInstalled: {
-    addListener(callback: (details: { reason: string; previousVersion?: string; id?: string }) => void): void;
-    removeListener(callback: (details: { reason: string; previousVersion?: string; id?: string }) => void): void;
+    addListener(
+      callback: (details: { reason: string; previousVersion?: string; id?: string }) => void
+    ): void;
+    removeListener(
+      callback: (details: { reason: string; previousVersion?: string; id?: string }) => void
+    ): void;
   };
   onMessage: {
-    addListener(callback: (message: ChromeMessage, sender: ChromeMessageSender, sendResponse: (response?: any) => void) => boolean | void): void;
-    removeListener(callback: (message: ChromeMessage, sender: ChromeMessageSender, sendResponse: (response?: any) => void) => boolean | void): void;
+    addListener(
+      callback: (
+        message: ChromeMessage,
+        sender: ChromeMessageSender,
+        sendResponse: (response?: any) => void
+      ) => boolean | void
+    ): void;
+    removeListener(
+      callback: (
+        message: ChromeMessage,
+        sender: ChromeMessageSender,
+        sendResponse: (response?: any) => void
+      ) => boolean | void
+    ): void;
   };
   onConnect: {
     addListener(callback: (port: any) => void): void;
@@ -126,7 +166,10 @@ export interface ChromeSidePanel {
 
 export interface ChromeIdentity {
   getRedirectURL(): string;
-  launchWebAuthFlow(options: { url: string; interactive: boolean }, callback: (responseUrl?: string) => void): void;
+  launchWebAuthFlow(
+    options: { url: string; interactive: boolean },
+    callback: (responseUrl?: string) => void
+  ): void;
   getAuthToken(options: { interactive: boolean }, callback: (token?: string) => void): void;
   removeCachedAuthToken(options: { token: string }, callback?: () => void): void;
 }
@@ -138,6 +181,7 @@ export interface Chrome {
   action: ChromeAction;
   windows: ChromeWindows;
   identity: ChromeIdentity;
+  tabs: ChromeTabs;
 }
 
 declare global {

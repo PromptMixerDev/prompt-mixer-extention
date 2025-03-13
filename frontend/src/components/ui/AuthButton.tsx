@@ -3,12 +3,12 @@ import { useAuth } from '@context/AuthContext';
 
 /**
  * Auth button component
- * 
+ *
  * Displays a sign in button if user is not authenticated,
  * or user info and sign out button if authenticated
  */
 const AuthButton: React.FC = () => {
-  const { currentUser, token, loading, signInWithGoogle, signOut } = useAuth();
+  const { currentUser, loading, signInWithGoogle, signOut } = useAuth();
   const [isSigningIn, setIsSigningIn] = useState(false);
 
   /**
@@ -34,23 +34,19 @@ const AuthButton: React.FC = () => {
       {currentUser ? (
         <div className="user-info">
           {currentUser.photoURL && (
-            <img 
-              src={currentUser.photoURL} 
-              alt={currentUser.displayName || 'User'} 
+            <img
+              src={currentUser.photoURL}
+              alt={currentUser.displayName || 'User'}
               className="user-avatar"
             />
           )}
           <span className="user-name">{currentUser.displayName}</span>
-          <button 
-            onClick={signOut}
-            className="sign-out-button"
-            aria-label="Sign out"
-          >
+          <button onClick={signOut} className="sign-out-button" aria-label="Sign out">
             Sign Out
           </button>
         </div>
       ) : (
-        <button 
+        <button
           onClick={handleSignIn}
           className="sign-in-button"
           disabled={isSigningIn}

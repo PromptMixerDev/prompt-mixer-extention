@@ -9,8 +9,8 @@ const API_URL = 'http://localhost:8000/api/v1';
  * Get auth token from chrome.storage
  */
 const getAuthToken = async (): Promise<string | null> => {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(['auth'], (result) => {
+  return new Promise(resolve => {
+    chrome.storage.local.get(['auth'], result => {
       resolve(result.auth?.token || null);
     });
   });
@@ -24,11 +24,11 @@ const createAuthHeaders = async (): Promise<HeadersInit> => {
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
-  
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  
+
   return headers;
 };
 
@@ -43,7 +43,7 @@ export const authApi = {
     try {
       // Получить токен от chrome.identity
       const googleToken = await new Promise<string>((resolve, reject) => {
-        chrome.identity.getAuthToken({ interactive: true }, (token) => {
+        chrome.identity.getAuthToken({ interactive: true }, token => {
           if (chrome.runtime.lastError) {
             reject(new Error(chrome.runtime.lastError.message));
             return;
@@ -55,7 +55,7 @@ export const authApi = {
           resolve(token);
         });
       });
-      
+
       // Отправить токен на бэкенд
       const response = await fetch(`${API_URL}/auth/google`, {
         method: 'POST',
@@ -64,23 +64,23 @@ export const authApi = {
         },
         body: JSON.stringify({ token: googleToken }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Authentication failed: ${response.statusText}`);
       }
-      
+
       const authData = await response.json();
-      
+
       return {
         token: authData.access_token,
-        user: authData.user
+        user: authData.user,
       };
     } catch (error) {
       console.error('Error authenticating with Google:', error);
       throw error;
     }
   },
-  
+
   /**
    * Get user info from token
    */
@@ -88,19 +88,19 @@ export const authApi = {
     try {
       const headers = await createAuthHeaders();
       const response = await fetch(`${API_URL}/users/me`, {
-        headers
+        headers,
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to get user info: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Error getting user info:', error);
       throw error;
     }
-  }
+  },
 };
 
 /**
@@ -114,20 +114,20 @@ export const promptsApi = {
     try {
       const headers = await createAuthHeaders();
       const response = await fetch(`${API_URL}/prompts`, {
-        headers
+        headers,
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to get prompts: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Error getting prompts:', error);
       return [];
     }
   },
-  
+
   /**
    * Create a new prompt
    */
@@ -137,20 +137,20 @@ export const promptsApi = {
       const response = await fetch(`${API_URL}/prompts`, {
         method: 'POST',
         headers,
-        body: JSON.stringify(promptData)
+        body: JSON.stringify(promptData),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to create prompt: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Error creating prompt:', error);
       throw error;
     }
   },
-  
+
   /**
    * Update a prompt
    */
@@ -160,20 +160,20 @@ export const promptsApi = {
       const response = await fetch(`${API_URL}/prompts/${promptId}`, {
         method: 'PUT',
         headers,
-        body: JSON.stringify(promptData)
+        body: JSON.stringify(promptData),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to update prompt: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Error updating prompt:', error);
       throw error;
     }
   },
-  
+
   /**
    * Delete a prompt
    */
@@ -182,9 +182,9 @@ export const promptsApi = {
       const headers = await createAuthHeaders();
       const response = await fetch(`${API_URL}/prompts/${promptId}`, {
         method: 'DELETE',
-        headers
+        headers,
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to delete prompt: ${response.statusText}`);
       }
@@ -193,7 +193,7 @@ export const promptsApi = {
       throw error;
     }
   },
-  
+
   /**
    * Get shared prompts
    */
@@ -201,17 +201,17 @@ export const promptsApi = {
     try {
       const headers = await createAuthHeaders();
       const response = await fetch(`${API_URL}/prompts/shared`, {
-        headers
+        headers,
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to get shared prompts: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Error getting shared prompts:', error);
       return [];
     }
-  }
+  },
 };

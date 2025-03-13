@@ -25,14 +25,16 @@ export default defineConfig({
       input: {
         index: path.resolve(__dirname, 'index.html'),
         background: path.resolve(__dirname, 'src/chrome/background/index.ts'),
-        'gpt-injector': path.resolve(__dirname, 'src/chrome/content-scripts/gpt-injector.ts'),
-        'claude-injector': path.resolve(__dirname, 'src/chrome/content-scripts/claude-injector.ts'),
+        'claude-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/claude-content-script.ts'),
+        'openai-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/openai-content-script.ts'),
+        'chatgpt-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/chatgpt-content-script.ts'),
       },
       output: {
-        entryFileNames: (chunk) => {
+        entryFileNames: chunk => {
           if (chunk.name === 'background') return 'background.js';
-          if (chunk.name === 'gpt-injector') return 'content-scripts/gpt-injector.js';
-          if (chunk.name === 'claude-injector') return 'content-scripts/claude-injector.js';
+          if (chunk.name === 'claude-content-script') return 'content-scripts/claude-content-script.js';
+          if (chunk.name === 'openai-content-script') return 'content-scripts/openai-content-script.js';
+          if (chunk.name === 'chatgpt-content-script') return 'content-scripts/chatgpt-content-script.js';
           return 'assets/[name]-[hash].js';
         },
       },
