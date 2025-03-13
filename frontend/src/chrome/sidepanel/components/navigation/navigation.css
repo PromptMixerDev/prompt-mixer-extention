@@ -1,0 +1,26 @@
+/* Navigation styles */
+.navigation {
+  height: 44px;
+  display: flex;
+  background-color: #4a6fa5; /* Blue */
+}
+
+.nav-tab {
+  padding: 10px 15px;
+  margin-right: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: white;
+  transition: background-color 0.3s;
+  user-select: none;
+  font-size: 14px;
+}
+
+.nav-tab:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-tab.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: bold;
+}

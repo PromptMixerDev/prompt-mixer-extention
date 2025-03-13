@@ -33,7 +33,8 @@
       "@context/*": ["./src/context/*"],
       "@chrome/*": ["./src/chrome/*"],
       "@assets/*": ["./src/assets/*"],
-      "@types/*": ["./src/types/*"]
+      "@types/*": ["./src/types/*"],
+      "@styles/*": ["./src/styles/*"]
     }
   },
   "include": ["src"],

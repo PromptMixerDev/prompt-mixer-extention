@@ -18,6 +18,7 @@ export default defineConfig({
       '@chrome': path.resolve(__dirname, './src/chrome'),
       '@assets': path.resolve(__dirname, './src/assets'),
       '@types': path.resolve(__dirname, './src/types'),
+      '@styles': path.resolve(__dirname, './src/styles'),
     },
   },
   build: {

@@ -1,0 +1,6 @@
+/* History detail styles - just a colored block */
+.history-detail {
+  background-color: #f0e0a0; /* Light yellow */
+  min-height: 300px;
+  width: 100%;
+}

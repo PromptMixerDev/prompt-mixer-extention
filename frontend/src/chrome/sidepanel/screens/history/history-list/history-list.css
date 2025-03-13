@@ -1,0 +1,5 @@
+/* History list styles - just a colored block */
+.history-list {
+  background-color: #e6c86e; /* Yellow */
+  width: 100%;
+}
