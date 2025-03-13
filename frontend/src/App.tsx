@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import './App.css';
 import { PromptProvider } from '@context/PromptContext';
 import { AuthProvider } from '@context/AuthContext';

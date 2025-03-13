@@ -24,11 +24,14 @@
     ]
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://localhost:8000 https://*.googleapis.com https://*.gstatic.com https://*.firebaseio.com https://*.firebase.com https://*.firebaseauth.com wss://*.firebaseio.com"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://localhost:8000 https://*.googleapis.com https://*.gstatic.com"
   },
   "host_permissions": [
     "https://chat.openai.com/*",
+    "https://chatgpt.com/*",
+    "https://openai.com/*",
     "https://claude.ai/*",
+    "https://anthropic.com/*",
     "http://localhost:8000/*"
   ],
   "background": {
@@ -37,12 +40,27 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://chat.openai.com/*"],
-      "js": ["content-scripts/gpt-injector.js"]
+      "matches": [
+        "https://claude.ai/*", 
+        "https://anthropic.com/*"
+      ],
+      "js": ["content-scripts/claude-content-script.js"],
+      "run_at": "document_end"
     },
     {
-      "matches": ["https://claude.ai/*"],
-      "js": ["content-scripts/claude-injector.js"]
+      "matches": [
+        "https://chat.openai.com/*", 
+        "https://openai.com/*"
+      ],
+      "js": ["content-scripts/openai-content-script.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://chatgpt.com/*"
+      ],
+      "js": ["content-scripts/chatgpt-content-script.js"],
+      "run_at": "document_end"
     }
   ]
 }

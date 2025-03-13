@@ -34,7 +34,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     // Check if there's a saved auth data in chrome.storage
-    chrome.storage.local.get(['auth'], (result) => {
+    chrome.storage.local.get(['auth'], result => {
       if (result.auth) {
         setCurrentUser(result.auth.user as User);
         setToken(result.auth.token as string);
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       return await authService.signInWithGoogle();
     } catch (error) {
-      console.error("Error in signInWithGoogle", error);
+      console.error('Error in signInWithGoogle', error);
       return null;
     }
   };
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setCurrentUser(null);
       setToken(null);
     } catch (error) {
-      console.error("Error in signOut", error);
+      console.error('Error in signOut', error);
     }
   };
 
@@ -87,14 +87,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     token,
     loading,
     signInWithGoogle,
-    signOut
+    signOut,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 /**
@@ -102,10 +98,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
  */
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
-  
+
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  
+
   return context;
 }

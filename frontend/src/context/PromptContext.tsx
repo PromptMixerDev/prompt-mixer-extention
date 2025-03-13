@@ -1,9 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { 
-  UserPrompt, 
-  SharedPrompt, 
-  PromptContextType 
-} from '../types/prompt';
+import { UserPrompt, SharedPrompt, PromptContextType } from '../types/prompt';
 
 /**
  * Context for managing prompts in the application
@@ -20,13 +16,13 @@ interface PromptProviderProps {
 export function PromptProvider({ children }: PromptProviderProps) {
   // State for user prompts
   const [userPrompts, setUserPrompts] = useState<UserPrompt[]>([]);
-  
+
   // State for shared prompts
   const [sharedPrompts, setSharedPrompts] = useState<SharedPrompt[]>([]);
-  
+
   // State for loading status
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+
   // State for error messages
   const [error, setError] = useState<string | null>(null);
 
@@ -41,12 +37,12 @@ export function PromptProvider({ children }: PromptProviderProps) {
   const loadPrompts = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Load user prompts from Chrome storage
       chrome.storage.local.get(['userPrompts'], (result: { userPrompts?: UserPrompt[] }) => {
         setUserPrompts(result.userPrompts || []);
-        
+
         // Simulate loading shared prompts from an API
         // In a real implementation, this would be an API call
         setTimeout(() => {
@@ -66,7 +62,7 @@ export function PromptProvider({ children }: PromptProviderProps) {
               createdAt: new Date().toISOString(),
             },
           ]);
-          
+
           setIsLoading(false);
         }, 1000);
       });
@@ -87,13 +83,13 @@ export function PromptProvider({ children }: PromptProviderProps) {
         id: `user-${Date.now()}`,
         createdAt: new Date().toISOString(),
       };
-      
+
       const updatedPrompts = [...userPrompts, newPrompt];
       setUserPrompts(updatedPrompts);
-      
+
       // Save to Chrome storage
       chrome.storage.local.set({ userPrompts: updatedPrompts });
-      
+
       return newPrompt;
     } catch (err) {
       console.error('Error adding prompt:', err);
@@ -107,16 +103,16 @@ export function PromptProvider({ children }: PromptProviderProps) {
    */
   const updatePrompt = async (id: string, updatedPrompt: Partial<UserPrompt>) => {
     try {
-      const updatedPrompts = userPrompts.map((prompt) => 
+      const updatedPrompts = userPrompts.map(prompt =>
         prompt.id === id ? { ...prompt, ...updatedPrompt } : prompt
       );
-      
+
       setUserPrompts(updatedPrompts);
-      
+
       // Save to Chrome storage
       chrome.storage.local.set({ userPrompts: updatedPrompts });
-      
-      return updatedPrompts.find((prompt) => prompt.id === id);
+
+      return updatedPrompts.find(prompt => prompt.id === id);
     } catch (err) {
       console.error('Error updating prompt:', err);
       setError('Failed to update prompt. Please try again.');
@@ -129,9 +125,9 @@ export function PromptProvider({ children }: PromptProviderProps) {
    */
   const deletePrompt = async (id: string) => {
     try {
-      const updatedPrompts = userPrompts.filter((prompt) => prompt.id !== id);
+      const updatedPrompts = userPrompts.filter(prompt => prompt.id !== id);
       setUserPrompts(updatedPrompts);
-      
+
       // Save to Chrome storage
       chrome.storage.local.set({ userPrompts: updatedPrompts });
     } catch (err) {
@@ -146,25 +142,25 @@ export function PromptProvider({ children }: PromptProviderProps) {
    */
   const copySharedPrompt = async (id: string) => {
     try {
-      const sharedPrompt = sharedPrompts.find((prompt) => prompt.id === id);
-      
+      const sharedPrompt = sharedPrompts.find(prompt => prompt.id === id);
+
       if (!sharedPrompt) {
         throw new Error('Shared prompt not found');
       }
-      
+
       const newPrompt = {
         ...sharedPrompt,
         id: `user-${Date.now()}`,
         createdAt: new Date().toISOString(),
         copiedFrom: id,
       };
-      
+
       const updatedPrompts = [...userPrompts, newPrompt];
       setUserPrompts(updatedPrompts);
-      
+
       // Save to Chrome storage
       chrome.storage.local.set({ userPrompts: updatedPrompts });
-      
+
       return newPrompt;
     } catch (err) {
       console.error('Error copying shared prompt:', err);
@@ -180,7 +176,7 @@ export function PromptProvider({ children }: PromptProviderProps) {
     try {
       // In a real implementation, this would call the backend API
       // For now, we'll just simulate a response
-      return new Promise<string>((resolve) => {
+      return new Promise<string>(resolve => {
         setTimeout(() => {
           resolve(`Improved: ${promptText}`);
         }, 1000);
@@ -206,24 +202,20 @@ export function PromptProvider({ children }: PromptProviderProps) {
     improvePrompt,
   };
 
-  return (
-    <PromptContext.Provider value={value}>
-      {children}
-    </PromptContext.Provider>
-  );
+  return <PromptContext.Provider value={value}>{children}</PromptContext.Provider>;
 }
 
 /**
  * Custom hook for using the PromptContext
- * 
+ *
  * @returns The PromptContext value
  */
 export function usePrompts(): PromptContextType {
   const context = useContext(PromptContext);
-  
+
   if (context === undefined) {
     throw new Error('usePrompts must be used within a PromptProvider');
   }
-  
+
   return context;
 }
