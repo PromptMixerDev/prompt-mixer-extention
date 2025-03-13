@@ -1,0 +1,140 @@
+/* 
+ * Design System Tokens
+ * This file contains both light and dark theme variables
+ */
+
+/* Base tokens (shared between themes) */
+
+:root {
+  /* Typography */
+  --font-family-base: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  --font-size-5xl: 42px;
+  
+  
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  
+  --line-height-0: 1;
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* Spacing */
+  --spacing-0: 0;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  
+  /* Borders */
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 12px;
+  --border-radius-full: 9999px;
+  
+  --border-width-thin: 1px;
+  --border-width-thick: 2px;
+  
+  /* Transitions */
+  --transition-fast: 60ms ease-in 10ms;
+  
+  /* Z-index */
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1100;
+  --z-index-fixed: 1200;
+  --z-index-modal-backdrop: 1300;
+  --z-index-modal: 1400;
+  --z-index-popover: 1500;
+  --z-index-tooltip: 1600;
+}
+
+/* Light theme (default) */
+
+:root, .light-theme {
+
+  /* Brand colors */
+  --color-primary: #4285f4;
+  --color-secondary: #34a853;
+  --color-accent: #fbbc05;  
+
+  
+  /* Semantic colors */
+  --color-error: #ea4335;
+  --color-warning: #fbbc05;
+  --color-success: rgb(68, 131, 97);
+  --color-info: #4285f4;
+
+  
+  /* Element colors */
+  --color-variable: rgb(68, 131, 97);
+  --color-variable-light: rgba(68, 131, 97, 0.06);
+
+  --tooltip-background: rgb(55, 53, 47);
+  --tooltip-text: rgb(255, 255, 255);
+
+  
+  /* Backgroung colors */
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f1f3f4;
+  --color-background-tertiary: #e8eaed;
+
+  /* Border colors */
+  --color-border: hsla(45, 8%, 20%, 0.1);
+  --color-divider: #e0e0e0;
+
+
+  /* Text colors */
+  --color-text-primary: rgb(55, 53, 47);
+  --color-text-secondary: rgb(120, 119, 116);
+  --color-text-tertiary: rgba(55, 53, 47, 0.35);
+  
+  --color-text-disabled: rgba(55, 53, 47, 0.35);
+  --color-text-on-primary: #ffffff;
+  --color-text-on-secondary: #ffffff;
+
+
+  /* Buttons colors */
+  --button-transparent-bg: transparent;
+  --button-transparent-text: var(--color-text-primary);
+  --button-transparent-hover-bg: rgba(55, 53, 47, 0.06);
+  --button-transparent-active-bg: transparent;
+  
+  /* Shadows */
+  --shadow-popup: rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
+  --shadow-card: rgba(0, 0, 0, 0.02) 0px 12px 32px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+  --shadow-card-hover: rgba(0, 0, 0, 0.03) 0px 12px 32px, rgba(0, 0, 0, 0.85) 0px 0px 0px 1px;
+
+
+    /* Main variable for colored tiles */
+    --color-prompt-tile-slate: #666460;
+    --color-prompt-tile-silver: #AFABA3;
+    --color-prompt-tile-cooper: #9D6D5A;
+    --color-prompt-tile-amber: #BA841E;
+    --color-prompt-tile-tangerine: #C76F22;
+    --color-prompt-tile-emerald: #2E8E5D;
+    --color-prompt-tile-cobalt: #2E74C1;
+    --color-prompt-tile-violet: #8256B1;
+    --color-prompt-tile-magenta: #B93D71;
+    --color-prompt-tile-crimson: #BD4642;
+
+
+
+}
+
+/* Dark theme - будет добавлено позже */

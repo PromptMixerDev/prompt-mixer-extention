@@ -1,0 +1,5 @@
+/* Content area styles */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+}

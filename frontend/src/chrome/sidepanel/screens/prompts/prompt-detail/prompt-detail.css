@@ -1,0 +1,6 @@
+/* Prompt detail styles - simple colored block */
+.prompt-detail {
+  background-color: #9fdf9f; /* Light green */
+  width: 100%;
+}
+
