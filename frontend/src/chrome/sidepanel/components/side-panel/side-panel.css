@@ -1,6 +1,5 @@
 /* Side panel styles */
 .side-panel {
-  font-family: var(--font-family-base);
   display: flex;
   flex-direction: column;
   height: 100%;
