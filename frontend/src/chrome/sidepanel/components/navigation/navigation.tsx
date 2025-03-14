@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './navigation.css';
+import Button from '@components/ui/button/button';
 
 /**
- * Navigation tabs for the side panel
+ * Navigation component for the side panel
  */
 const Navigation: React.FC = () => {
   const [activeTab, setActiveTab] = useState('prompt');
@@ -19,23 +20,37 @@ const Navigation: React.FC = () => {
 
   return (
     <div className="navigation">
-      <div 
-        className={`nav-tab ${activeTab === 'prompt' ? 'active' : ''}`}
-        onClick={() => handleTabClick('prompt')}
-      >
-        Prompts
+      <div className="navigation-left">
+        <Button 
+          kind="glyph" 
+          size="medium" 
+          variant="tertiary" 
+          icon="prompt-line"
+          onClick={() => handleTabClick('prompt')} 
+        />
+        <Button 
+          kind="glyph" 
+          size="medium" 
+          variant="tertiary" 
+          icon="history-line"
+          onClick={() => handleTabClick('history')} 
+        />
+        <Button 
+          kind="glyph" 
+          size="medium" 
+          variant="tertiary" 
+          icon="search-line"
+          onClick={() => handleTabClick('marketplace')} 
+        />
       </div>
-      <div 
-        className={`nav-tab ${activeTab === 'history' ? 'active' : ''}`}
-        onClick={() => handleTabClick('history')}
-      >
-        History
-      </div>
-      <div 
-        className={`nav-tab ${activeTab === 'marketplace' ? 'active' : ''}`}
-        onClick={() => handleTabClick('marketplace')}
-      >
-        Marketplace
+      <div className="navigation-right">
+        <Button 
+          kind="glyph" 
+          size="medium" 
+          variant="tertiary" 
+          icon="menu-line"
+          onClick={() => {/* действие меню */}} 
+        />
       </div>
     </div>
   );

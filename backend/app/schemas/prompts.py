@@ -7,6 +7,8 @@ class PromptRequest(BaseModel):
     Schema for prompt improvement request
     """
     prompt: str = Field(..., description="Original prompt to improve")
+    title: Optional[str] = Field(None, description="Title of the prompt")
+    description: Optional[str] = Field(None, description="Description of the prompt")
     url: Optional[str] = Field(None, description="URL where the prompt was improved")
 
 class PromptResponse(BaseModel):
@@ -19,6 +21,8 @@ class PromptHistoryBase(BaseModel):
     """
     Base schema for prompt history
     """
+    title: Optional[str] = None
+    description: Optional[str] = None
     original_prompt: str
     improved_prompt: str
     url: Optional[str] = None

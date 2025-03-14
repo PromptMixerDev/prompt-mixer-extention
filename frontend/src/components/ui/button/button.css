@@ -1,0 +1,122 @@
+/* Button component styles */
+
+/* Base button styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+  padding: 0 var(--spacing-3);
+  gap: var(--spacing-1);
+  white-space: nowrap;
+  outline: none;
+}
+
+.button:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.button--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Button sizes */
+.button--small {
+  height: 24px;
+  font-size: var(--font-size-xs);
+}
+
+.button--medium {
+  height: 28px;
+  font-size: var(--font-size-sm);
+}
+
+.button--large {
+  height: 32px;
+  font-size: var(--font-size-sm);
+}
+
+/* Button variants */
+.button--primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.button--primary:hover:not(.button--disabled) {
+  background-color: var(--color-primary);
+  filter: brightness(0.9);
+}
+
+.button--secondary {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+.button--secondary:hover:not(.button--disabled) {
+  background-color: var(--button-transparent-hover-bg);
+}
+
+.button--tertiary {
+  background-color: transparent;
+  color: var(--color-text-primary);
+}
+
+.button--tertiary:hover:not(.button--disabled) {
+  background-color: var(--button-transparent-hover-bg);
+}
+
+/* Button kinds */
+.button--glyph {
+  padding: 0 !important; /* Override any inherited padding */
+  aspect-ratio: 1/1; /* Ensures square shape */
+  gap: 0; /* Remove gap between elements */
+}
+
+.button--small.button--glyph {
+  width: 24px;
+}
+
+.button--medium.button--glyph {
+  width: 28px;
+}
+
+.button--large.button--glyph {
+  width: 32px;
+}
+
+/* Icon styles */
+.button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure icon is perfectly centered in glyph buttons */
+.button--glyph .button__icon {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.button__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.button--small .button__icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Text styles */
+.button__text {
+  line-height: var(--line-height-0);
+}

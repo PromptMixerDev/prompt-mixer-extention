@@ -19,7 +19,7 @@ const getAuthToken = async (): Promise<string | null> => {
 /**
  * Create headers with auth token
  */
-const createAuthHeaders = async (): Promise<HeadersInit> => {
+export const createAuthHeaders = async (): Promise<HeadersInit> => {
   const token = await getAuthToken();
   const headers: HeadersInit = {
     'Content-Type': 'application/json',

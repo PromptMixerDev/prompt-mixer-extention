@@ -4,7 +4,23 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Плагин для импорта SVG как строки
+    {
+      name: 'vite-plugin-svg-raw',
+      enforce: 'pre',
+      async transform(code, id) {
+        if (id.endsWith('.svg?raw')) {
+          const fs = await import('fs');
+          const path = await import('path');
+          const svgPath = id.replace('?raw', '');
+          const svgContent = fs.readFileSync(svgPath, 'utf-8');
+          return `export default ${JSON.stringify(svgContent)};`;
+        }
+      },
+    },
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
