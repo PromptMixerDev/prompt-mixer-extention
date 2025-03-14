@@ -11,7 +11,7 @@ interface HistoryCardProps {
   title?: string;
   url: string;
   date: string;
-  modelType?: 'chat-gpt' | 'claude' | 'deep-seek'; // Type of AI model
+  modelType?: 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'base-logo'; // Type of AI model
   className?: string;
   onClick?: () => void;
   // Loading state
@@ -48,7 +48,7 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
 }) => {
   // Determine model type based on URL if not explicitly provided
   const determineModelType = (): 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'base-logo' => {
-    if (modelType) return modelType as 'chat-gpt' | 'claude' | 'deep-seek';
+    if (modelType) return modelType;
     
     // OpenAI URLs (не ChatGPT)
     if (url.includes('openai.com') && !url.includes('chat.openai.com')) {
@@ -114,7 +114,7 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
         <div className="url text-default text-medium text-primary">{title || 'Untitled Prompt'}</div>
       </div>
       <div className="history-card-right">
-        <div className="date text-small text-regular text-secondary">{date}</div>
+        <div className="date text-small text-regular text-tertiary">{date}</div>
       </div>
     </div>
   );

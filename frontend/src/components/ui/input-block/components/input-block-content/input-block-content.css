@@ -1,0 +1,51 @@
+.input-block-content {
+  width: 100%;
+  max-height: 240px; /* Maximum height */
+  padding: var(--spacing-2);
+  padding-bottom: var(--spacing-4);
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary, #333);
+  background-color: var(--background-primary, #fff);
+  white-space: pre-wrap; /* Preserve line breaks */
+  word-break: break-word; /* Break long words */
+  overflow-wrap: break-word; /* Ensure text wraps */
+  overflow-y: auto; /* Add vertical scrolling when needed */
+  transition: max-height 0.3s ease; /* Smooth transition for height changes */
+}
+
+.input-block-content:focus {
+  background-color: var(--button-transparent-hover-bg);
+  max-height: none; /* Expand to full height when focused */
+}
+
+/* Placeholder styling */
+.input-block-content.empty:before {
+  content: attr(data-placeholder);
+  color: var(--text-secondary, #999);
+  pointer-events: none;
+  position: absolute;
+}
+
+/* Variable styling */
+.input-block-content .variable {
+  margin: 0 1px;
+  white-space: nowrap;
+  display: inline-block;
+  color: var(--accent-primary, #007bff);
+  font-weight: 500;
+}
+
+/* Read-only styling */
+.input-block-content.read-only {
+  cursor: default;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Expanded state for read-only content when clicked */
+.input-block-content.read-only.expanded {
+  max-height: none; /* Expand to full height when clicked in read-only mode */
+}

@@ -11,7 +11,7 @@
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);
   transition: all var(--transition-fast);
-  padding: 0 var(--spacing-3);
+  padding: 0 var(--spacing-2);
   gap: var(--spacing-1);
   white-space: nowrap;
   outline: none;
@@ -29,7 +29,7 @@
 /* Button sizes */
 .button--small {
   height: 24px;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
 }
 
 .button--medium {
@@ -79,6 +79,51 @@
   gap: 0; /* Remove gap between elements */
 }
 
+/* Button glyph-text styles */
+.button--glyph-text {
+
+}
+
+/* Prevent icon scaling in glyph-text buttons */
+.button--glyph-text .button__icon {
+  flex: 0 0 auto; /* Prevent icon container from growing or shrinking */
+  width: 16px;
+  height: 16px;
+}
+
+/* Size-specific styles for glyph-text buttons */
+.button--small.button--glyph-text {
+  padding-left: var(--spacing-1);
+  padding-right: var(--spacing-2);
+  gap: var(--spacing-1);
+}
+
+.button--small.button--glyph-text .button__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.button--medium.button--glyph-text {
+  padding-left: var(--spacing-1);
+  padding-right: var(--spacing-2);
+  gap: var(--spacing-1);
+}
+
+.button--medium.button--glyph-text .button__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.button--large.button--glyph-text {
+  padding: 0 var(--spacing-2-5);
+  gap: var(--spacing-1);
+}
+
+.button--large.button--glyph-text .button__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
 .button--small.button--glyph {
   width: 24px;
 }
@@ -100,8 +145,8 @@
 
 /* Ensure icon is perfectly centered in glyph buttons */
 .button--glyph .button__icon {
-  width: 100%;
-  height: 100%;
+  width: 16px;
+  height: 16px;
   margin: 0;
   padding: 0;
 }
@@ -112,8 +157,8 @@
 }
 
 .button--small .button__icon svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 /* Text styles */

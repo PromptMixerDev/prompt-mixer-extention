@@ -1,0 +1,21 @@
+.input-block-label {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-2);
+  min-height: 40px;
+}
+
+.input-block-label-left {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  letter-spacing: -0.012em;
+}
+
+.input-block-label-right {
+  display: flex;
+  align-items: center;
+  opacity: 0; /* Hide buttons by default */
+  transition: opacity var(--transition-fast); /* Smooth transition */
+}

@@ -3,9 +3,9 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.schemas.prompts import PromptRequest, PromptResponse, PromptHistory, PromptHistoryList
 from app.services.prompt_improvement import prompt_improvement_service
-from app.core.database import get_db
+from app.core.database import get_db, SessionLocal
 from app.api.endpoints.users import get_current_user
-from app.models.models import User
+from app.models.models import User, PromptHistory as PromptHistoryModel
 
 router = APIRouter()
 
@@ -54,3 +54,33 @@ async def get_prompt_history(
         return {"items": history, "total": total}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting history: {str(e)}")
+
+@router.get("/history/{id}", response_model=PromptHistory)
+async def get_prompt_history_item(
+    id: int,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get prompt history item by ID
+    
+    This endpoint returns a specific prompt history entry by its ID.
+    """
+    try:
+        # Create a new database session
+        db = SessionLocal()
+        
+        try:
+            # Get history item by ID
+            history_item = db.query(PromptHistoryModel).filter(
+                PromptHistoryModel.id == id,
+                PromptHistoryModel.user_id == current_user.id
+            ).first()
+            
+            if not history_item:
+                raise HTTPException(status_code=404, detail="History item not found")
+                
+            return history_item
+        finally:
+            db.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting history item: {str(e)}")

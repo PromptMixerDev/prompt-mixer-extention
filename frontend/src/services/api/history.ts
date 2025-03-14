@@ -1,4 +1,5 @@
 import { createAuthHeaders } from './auth';
+import { PromptHistoryItem, PromptHistoryListResponse } from '../../types/history';
 
 /**
  * API URL
@@ -12,7 +13,7 @@ export const historyApi = {
   /**
    * Get prompt improvement history
    */
-  async getHistory(skip = 0, limit = 100): Promise<any> {
+  async getHistory(skip = 0, limit = 100): Promise<PromptHistoryListResponse> {
     try {
       const headers = await createAuthHeaders();
       const response = await fetch(`${API_URL}/prompts/history?skip=${skip}&limit=${limit}`, {
@@ -31,9 +32,9 @@ export const historyApi = {
   },
 
   /**
-   * Get history item details
+   * Get history item by ID
    */
-  async getHistoryItem(id: string): Promise<any> {
+  async getHistoryItem(id: string): Promise<PromptHistoryItem> {
     try {
       const headers = await createAuthHeaders();
       const response = await fetch(`${API_URL}/prompts/history/${id}`, {

@@ -11,6 +11,7 @@
 .text-default {
   font-size: var(--font-size-sm);
   line-height: var(--line-height-tight);
+  letter-spacing: -0.012em;
   
 }
 
@@ -57,4 +58,8 @@
 
 .text-secondary {
   color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary);
 }
