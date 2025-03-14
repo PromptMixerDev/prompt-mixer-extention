@@ -61,6 +61,8 @@ class PromptHistory(Base):
     __tablename__ = "prompt_history"
 
     id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(255), nullable=True)  # Название промпта
+    description = Column(Text, nullable=True)  # Описание промпта
     original_prompt = Column(Text, nullable=False)
     improved_prompt = Column(Text, nullable=False)
     url = Column(String, nullable=True)  # URL страницы, где был улучшен промпт

@@ -1,0 +1,23 @@
+/* 
+ * Custom styles for react-loading-skeleton
+ * These styles override the default styles from the library
+ */
+
+.react-loading-skeleton {
+  --animation-direction: left-right;
+  --pseudo-element-display: block;
+  
+  background-color: var(--skeleton-base-color) !important;
+  border-radius: var(--skeleton-border-radius) !important;
+}
+
+.react-loading-skeleton::after {
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  ) !important;
+}
+
+/* Animation keyframes are already defined by the library */

@@ -1,5 +1,40 @@
-/* History list styles - just a colored block */
+/* History list styles */
 .history-list {
-  background-color: #e6c86e; /* Yellow */
   width: 100%;
+}
+
+.history-list h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
+  color: var(--color-text-primary);
+  margin-top: var(--spacing-12);
+  margin-bottom: var(--spacing-6);
+}
+
+.history-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding-left: var(--spacing-3);
+  padding-right: var(--spacing-3);
+  padding-bottom: var(--spacing-16);
+}
+
+.empty-state, .loading-state, .error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-6);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.loading-state {
+  color: var(--color-info);
+}
+
+.error-state {
+  color: var(--color-error);
 }

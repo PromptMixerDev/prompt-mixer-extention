@@ -25,6 +25,8 @@ async def improve_prompt(
         
         improved_prompt = await prompt_improvement_service.improve_prompt(
             request.prompt,
+            title=request.title,
+            description=request.description,
             url=request.url,
             user_id=user_id
         )

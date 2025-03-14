@@ -56,9 +56,14 @@ Your output should follow this structure:
 [Your rewritten, significantly improved version of the prompt]
 </improved_prompt>
 
-<final_review>
-[Your review of the improved prompt and any final adjustments]
-</final_review>
+<title>
+[Concise 3-4 word title for the prompt]
+</title>
+
+<description>
+[One-sentence description of what the prompt is designed to do]
+</description>
+
 
 Remember, the goal is to create a substantially better version of the original prompt, not just minor improvements. Focus on enhancing its effectiveness, clarity, and ability to elicit high-quality responses from an AI model.
 """
@@ -68,12 +73,16 @@ class PromptImprovementService:
         self.client = Anthropic(api_key=settings.CLAUDE_API_KEY)
         self.model = settings.CLAUDE_MODEL
     
-    async def improve_prompt(self, original_prompt: str, url: Optional[str] = None, user_id: Optional[int] = None) -> str:
+    async def improve_prompt(self, original_prompt: str, title: Optional[str] = None, 
+                           description: Optional[str] = None, url: Optional[str] = None, 
+                           user_id: Optional[int] = None) -> str:
         """
         Improve a prompt using Claude API and save to history
         
         Args:
             original_prompt: The original prompt to improve
+            title: Optional title of the prompt
+            description: Optional description of the prompt
             url: The URL where the prompt was improved
             user_id: Optional user ID
             
@@ -95,11 +104,20 @@ class PromptImprovementService:
                 ]
             )
             
+            response_text = response.content[0].text
+            
             # Extract the improved prompt from the response
-            improved_prompt = self._extract_improved_prompt(response.content[0].text)
+            improved_prompt = self._extract_improved_prompt(response_text)
+            
+            # Extract title and description if not provided
+            if title is None:
+                title = self._extract_title(response_text)
+            
+            if description is None:
+                description = self._extract_description(response_text)
             
             # Save to history
-            self._save_to_history(original_prompt, improved_prompt, url, user_id)
+            self._save_to_history(original_prompt, improved_prompt, title, description, url, user_id)
             
             return improved_prompt
         
@@ -128,13 +146,55 @@ class PromptImprovementService:
             logger.warning("Could not extract improved prompt from response")
             return response_text
     
-    def _save_to_history(self, original_prompt: str, improved_prompt: str, url: Optional[str] = None, user_id: Optional[int] = None) -> None:
+    def _extract_title(self, response_text: str) -> Optional[str]:
+        """
+        Extract the title from the Claude response
+        
+        Args:
+            response_text: The full response from Claude
+            
+        Returns:
+            The extracted title or None if not found
+        """
+        pattern = r"<title>(.*?)</title>"
+        match = re.search(pattern, response_text, re.DOTALL)
+        
+        if match:
+            return match.group(1).strip()
+        else:
+            logger.warning("Could not extract title from response")
+            return None
+
+    def _extract_description(self, response_text: str) -> Optional[str]:
+        """
+        Extract the description from the Claude response
+        
+        Args:
+            response_text: The full response from Claude
+            
+        Returns:
+            The extracted description or None if not found
+        """
+        pattern = r"<description>(.*?)</description>"
+        match = re.search(pattern, response_text, re.DOTALL)
+        
+        if match:
+            return match.group(1).strip()
+        else:
+            logger.warning("Could not extract description from response")
+            return None
+    
+    def _save_to_history(self, original_prompt: str, improved_prompt: str, 
+                        title: Optional[str] = None, description: Optional[str] = None,
+                        url: Optional[str] = None, user_id: Optional[int] = None) -> None:
         """
         Save the original and improved prompts to history
         
         Args:
             original_prompt: The original prompt
             improved_prompt: The improved prompt
+            title: Optional title of the prompt
+            description: Optional description of the prompt
             url: The URL where the prompt was improved
             user_id: Optional user ID
         """
@@ -145,6 +205,8 @@ class PromptImprovementService:
             try:
                 # Create a new history entry
                 history_entry = PromptHistory(
+                    title=title,
+                    description=description,
                     original_prompt=original_prompt,
                     improved_prompt=improved_prompt,
                     url=url,
