@@ -1,0 +1,18 @@
+.input-block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: var(--border-radius-md);
+  border: 1px solid transparent;
+  transition: var(--transition-fast);
+  overflow: hidden;
+}
+
+.input-block:hover {
+  border-color: var(--color-border);
+}
+
+/* Show buttons on hover */
+.input-block:hover .input-block-label-right {
+  opacity: 1;
+}

@@ -77,7 +77,7 @@ const TimeDivider: React.FC<TimeDividerProps> = ({
   // Обычный рендер компонента
   return (
     <div className={`time-divider ${className}`}>
-      <div className="text-small text-medium text-secondary">{formatDate(date)}</div>
+      <div className="text-small text-medium text-tertiary">{formatDate(date)}</div>
     </div>
   );
 };

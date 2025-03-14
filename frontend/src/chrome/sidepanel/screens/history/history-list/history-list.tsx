@@ -3,9 +3,15 @@ import './history-list.css';
 import HistoryCard from '@components/ui/history-card/history-card';
 import TimeDivider from '@components/ui/time-divider/time-divider';
 import { historyApi } from '@services/api/history';
+import { PromptHistoryItem } from '../../../../../types/history';
 
 // Function to determine model type from URL
-const getModelTypeFromUrl = (url: string): 'chat-gpt' | 'claude' | 'deep-seek' | undefined => {
+const getModelTypeFromUrl = (url: string): 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'base-logo' => {
+  // OpenAI URLs (не ChatGPT)
+  if (url.includes('openai.com') && !url.includes('chat.openai.com')) {
+    return 'open-ai';
+  }
+  
   // ChatGPT URLs
   if (url.includes('chat.openai.com') || 
       url.includes('chatgpt.com')) {
@@ -22,7 +28,7 @@ const getModelTypeFromUrl = (url: string): 'chat-gpt' | 'claude' | 'deep-seek' |
     return 'deep-seek';
   }
   
-  return undefined;
+  return 'base-logo';
 };
 
 /**
@@ -30,7 +36,7 @@ const getModelTypeFromUrl = (url: string): 'chat-gpt' | 'claude' | 'deep-seek' |
  * Displays a list of prompt improvement historyf h
  */
 const HistoryList: React.FC = () => {
-  const [historyItems, setHistoryItems] = useState<any[]>([]);
+  const [historyItems, setHistoryItems] = useState<PromptHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,7 +93,7 @@ const HistoryList: React.FC = () => {
           {/* Группировка элементов по дате */}
           {(() => {
             // Создаем объект для группировки элементов по дате
-            const groupedItems: Record<string, { date: Date; items: any[] }> = {};
+            const groupedItems: Record<string, { date: Date; items: PromptHistoryItem[] }> = {};
             
             // Группируем элементы по дате (без учета времени)
             historyItems.forEach(item => {
