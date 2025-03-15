@@ -9,7 +9,6 @@ export interface BasePrompt {
   id: string;
   title: string;
   content: string;
-  tags: string[];
   createdAt: string;
 }
 
@@ -17,7 +16,9 @@ export interface BasePrompt {
  * User prompt interface
  */
 export interface UserPrompt extends BasePrompt {
-  copiedFrom?: string; // ID of the shared prompt if copied
+  description?: string;
+  variables?: PromptVariable[];
+  copiedFrom?: string; // Legacy field: ID of the shared prompt if copied
 }
 
 /**
@@ -32,8 +33,7 @@ export interface SharedPrompt extends BasePrompt {
  */
 export interface PromptVariable {
   name: string;
-  defaultValue?: string;
-  description?: string;
+  value?: string; // Текущее значение переменной
 }
 
 /**

@@ -63,6 +63,7 @@ export const authApi = {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ token: googleToken }),
+        redirect: 'follow'
       });
 
       if (!response.ok) {
@@ -89,6 +90,7 @@ export const authApi = {
       const headers = await createAuthHeaders();
       const response = await fetch(`${API_URL}/users/me`, {
         headers,
+        redirect: 'follow'
       });
 
       if (!response.ok) {
@@ -115,6 +117,7 @@ export const promptsApi = {
       const headers = await createAuthHeaders();
       const response = await fetch(`${API_URL}/prompts`, {
         headers,
+        redirect: 'follow'
       });
 
       if (!response.ok) {
@@ -138,6 +141,7 @@ export const promptsApi = {
         method: 'POST',
         headers,
         body: JSON.stringify(promptData),
+        redirect: 'follow'
       });
 
       if (!response.ok) {
@@ -161,6 +165,7 @@ export const promptsApi = {
         method: 'PUT',
         headers,
         body: JSON.stringify(promptData),
+        redirect: 'follow'
       });
 
       if (!response.ok) {
@@ -183,6 +188,7 @@ export const promptsApi = {
       const response = await fetch(`${API_URL}/prompts/${promptId}`, {
         method: 'DELETE',
         headers,
+        redirect: 'follow'
       });
 
       if (!response.ok) {
@@ -202,6 +208,7 @@ export const promptsApi = {
       const headers = await createAuthHeaders();
       const response = await fetch(`${API_URL}/prompts/shared`, {
         headers,
+        redirect: 'follow'
       });
 
       if (!response.ok) {

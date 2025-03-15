@@ -1,5 +1,57 @@
 /* Prompt list styles */
 .prompt-list {
-  background-color: #6abf69; /* Green */
   width: 100%;
+}
+
+.prompt-list h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
+  color: var(--color-text-primary);
+  margin-top: var(--spacing-12);
+  margin-bottom: var(--spacing-6);
+  letter-spacing: -0.01em;
+}
+
+.prompts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: var(--spacing-3);
+  padding-right: var(--spacing-3);
+  padding-bottom: var(--spacing-16);
+}
+
+.empty-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-6);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  gap: var(--spacing-4);
+}
+
+.error-state {
+  color: var(--color-error);
+}
+
+.add-prompt-button {
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  margin-top: var(--spacing-4);
+  align-self: center;
+}
+
+.add-prompt-button:hover {
+  background-color: var(--color-primary-dark);
 }
