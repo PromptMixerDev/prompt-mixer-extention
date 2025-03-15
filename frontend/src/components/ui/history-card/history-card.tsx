@@ -109,7 +109,7 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
       <div className="history-card-left">
         <LogoImage 
           logoName={logoType} 
-          size="medium"
+          size="small"
         />
         <div className="url text-default text-medium text-primary">{title || 'Untitled Prompt'}</div>
       </div>

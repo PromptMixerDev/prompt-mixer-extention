@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserPrompt, SharedPrompt, PromptContextType } from '../types/prompt';
+import { libraryApi } from '../services/api/library';
 
 /**
  * Context for managing prompts in the application
@@ -32,40 +33,39 @@ export function PromptProvider({ children }: PromptProviderProps) {
   }, []);
 
   /**
-   * Load prompts from storage or API
+   * Load prompts from API
    */
   const loadPrompts = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Load user prompts from Chrome storage
-      chrome.storage.local.get(['userPrompts'], (result: { userPrompts?: UserPrompt[] }) => {
-        setUserPrompts(result.userPrompts || []);
+      // Load user prompts from API
+      const { items } = await libraryApi.getLibraryItems();
+      setUserPrompts(items);
 
-        // Simulate loading shared prompts from an API
-        // In a real implementation, this would be an API call
-        setTimeout(() => {
-          setSharedPrompts([
-            {
-              id: 'shared-1',
-              title: 'SEO Optimization',
-              content: 'Optimize the following content for SEO: {{content}}',
-              tags: ['seo', 'marketing'],
-              createdAt: new Date().toISOString(),
-            },
-            {
-              id: 'shared-2',
-              title: 'Code Review',
-              content: 'Review the following code and suggest improvements: ```{{code}}```',
-              tags: ['programming', 'review'],
-              createdAt: new Date().toISOString(),
-            },
-          ]);
+      // Simulate loading shared prompts from an API
+      // In a real implementation, this would be an API call
+      setTimeout(() => {
+        setSharedPrompts([
+          {
+            id: 'shared-1',
+            title: 'SEO Optimization',
+            content: 'Optimize the following content for SEO: {{content}}',
+            createdAt: new Date().toISOString(),
+            tags: ['SEO', 'Content Writing']
+          },
+          {
+            id: 'shared-2',
+            title: 'Code Review',
+            content: 'Review the following code and suggest improvements: ```{{code}}```',
+            createdAt: new Date().toISOString(),
+            tags: ['Programming', 'Development']
+          },
+        ]);
 
-          setIsLoading(false);
-        }, 1000);
-      });
+        setIsLoading(false);
+      }, 1000);
     } catch (err) {
       console.error('Error loading prompts:', err);
       setError('Failed to load prompts. Please try again.');
@@ -78,18 +78,12 @@ export function PromptProvider({ children }: PromptProviderProps) {
    */
   const addPrompt = async (prompt: Omit<UserPrompt, 'id' | 'createdAt'>) => {
     try {
-      const newPrompt = {
-        ...prompt,
-        id: `user-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-      };
-
-      const updatedPrompts = [...userPrompts, newPrompt];
-      setUserPrompts(updatedPrompts);
-
-      // Save to Chrome storage
-      chrome.storage.local.set({ userPrompts: updatedPrompts });
-
+      // Create prompt via API
+      const newPrompt = await libraryApi.createLibraryItem(prompt);
+      
+      // Update local state
+      setUserPrompts(prevPrompts => [...prevPrompts, newPrompt]);
+      
       return newPrompt;
     } catch (err) {
       console.error('Error adding prompt:', err);
@@ -103,16 +97,15 @@ export function PromptProvider({ children }: PromptProviderProps) {
    */
   const updatePrompt = async (id: string, updatedPrompt: Partial<UserPrompt>) => {
     try {
-      const updatedPrompts = userPrompts.map(prompt =>
-        prompt.id === id ? { ...prompt, ...updatedPrompt } : prompt
+      // Update prompt via API
+      const updated = await libraryApi.updateLibraryItem(id, updatedPrompt);
+      
+      // Update local state
+      setUserPrompts(prevPrompts => 
+        prevPrompts.map(prompt => prompt.id === id ? updated : prompt)
       );
-
-      setUserPrompts(updatedPrompts);
-
-      // Save to Chrome storage
-      chrome.storage.local.set({ userPrompts: updatedPrompts });
-
-      return updatedPrompts.find(prompt => prompt.id === id);
+      
+      return updated;
     } catch (err) {
       console.error('Error updating prompt:', err);
       setError('Failed to update prompt. Please try again.');
@@ -125,11 +118,11 @@ export function PromptProvider({ children }: PromptProviderProps) {
    */
   const deletePrompt = async (id: string) => {
     try {
-      const updatedPrompts = userPrompts.filter(prompt => prompt.id !== id);
-      setUserPrompts(updatedPrompts);
-
-      // Save to Chrome storage
-      chrome.storage.local.set({ userPrompts: updatedPrompts });
+      // Delete prompt via API
+      await libraryApi.deleteLibraryItem(id);
+      
+      // Update local state
+      setUserPrompts(prevPrompts => prevPrompts.filter(prompt => prompt.id !== id));
     } catch (err) {
       console.error('Error deleting prompt:', err);
       setError('Failed to delete prompt. Please try again.');
@@ -148,18 +141,14 @@ export function PromptProvider({ children }: PromptProviderProps) {
         throw new Error('Shared prompt not found');
       }
 
-      const newPrompt = {
-        ...sharedPrompt,
-        id: `user-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        copiedFrom: id,
-      };
-
-      const updatedPrompts = [...userPrompts, newPrompt];
-      setUserPrompts(updatedPrompts);
-
-      // Save to Chrome storage
-      chrome.storage.local.set({ userPrompts: updatedPrompts });
+      // Create new prompt via API
+      const newPrompt = await libraryApi.createLibraryItem({
+        title: sharedPrompt.title,
+        content: sharedPrompt.content
+      });
+      
+      // Update local state
+      setUserPrompts(prevPrompts => [...prevPrompts, newPrompt]);
 
       return newPrompt;
     } catch (err) {
@@ -174,13 +163,21 @@ export function PromptProvider({ children }: PromptProviderProps) {
    */
   const improvePrompt = async (promptText: string) => {
     try {
-      // In a real implementation, this would call the backend API
-      // For now, we'll just simulate a response
-      return new Promise<string>(resolve => {
-        setTimeout(() => {
-          resolve(`Improved: ${promptText}`);
-        }, 1000);
+      // Call the backend API to improve the prompt
+      const response = await fetch('http://localhost:8000/api/v1/prompts/improve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt: promptText })
       });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to improve prompt: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      return data.improved_prompt;
     } catch (err) {
       console.error('Error improving prompt:', err);
       setError('Failed to improve prompt. Please try again.');

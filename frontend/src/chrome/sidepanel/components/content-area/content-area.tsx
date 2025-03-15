@@ -4,6 +4,7 @@ import PromptDetail from '../../screens/prompts/prompt-detail/prompt-detail';
 import HistoryList from '../../screens/history/history-list/history-list';
 import HistoryDetail from '../../screens/history/history-detail/history-detail';
 import Marketplace from '../../screens/marketplace/marketplace';
+import BackHeader from '@components/ui/back-header/back-header';
 import './content-area.css';
 
 /**
@@ -48,6 +49,24 @@ const ContentArea: React.FC = () => {
     };
   }, []);
 
+  // Обработчик кнопки "назад"
+  const handleBack = () => {
+    setActiveScreen('list');
+    setSelectedItemId(null);
+  };
+
+  // Получить заголовок для кнопки "назад"
+  const getBackTitle = () => {
+    switch (activeTab) {
+      case 'prompt':
+        return 'Back to Prompts';
+      case 'history':
+        return 'Back to History';
+      default:
+        return 'Back';
+    }
+  };
+
   // Render the appropriate screen based on the active tab and screen
   const renderContent = () => {
     switch (activeTab) {
@@ -70,7 +89,17 @@ const ContentArea: React.FC = () => {
     }
   };
 
-  return <div className="content-area">{renderContent()}</div>;
+  return (
+    <div className="content-area">
+      {activeScreen === 'detail' && (
+        <BackHeader 
+          onClick={handleBack} 
+          title={getBackTitle()} 
+        />
+      )}
+      {renderContent()}
+    </div>
+  );
 };
 
 export default ContentArea;

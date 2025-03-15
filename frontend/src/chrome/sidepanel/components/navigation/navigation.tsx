@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './navigation.css';
 import Button from '@components/ui/button/button';
+import { Tooltip } from '@components/tech/tooltip/tooltip';
 
 /**
  * Navigation component for the side panel
@@ -21,36 +22,46 @@ const Navigation: React.FC = () => {
   return (
     <div className="navigation">
       <div className="navigation-left">
-        <Button 
-          kind="glyph" 
-          size="medium" 
-          variant="tertiary" 
-          icon="prompt-line"
-          onClick={() => handleTabClick('prompt')} 
-        />
-        <Button 
-          kind="glyph" 
-          size="medium" 
-          variant="tertiary" 
-          icon="history-line"
-          onClick={() => handleTabClick('history')} 
-        />
-        <Button 
-          kind="glyph" 
-          size="medium" 
-          variant="tertiary" 
-          icon="search-line"
-          onClick={() => handleTabClick('marketplace')} 
-        />
+        <Tooltip content="My library" position="bottom">
+          <Button 
+            kind="glyph" 
+            size="medium" 
+            variant="tertiary" 
+            icon="prompt-line"
+            onClick={() => handleTabClick('prompt')} 
+          />
+        </Tooltip>
+        
+        <Tooltip content="Improvment history" position="bottom">
+          <Button 
+            kind="glyph" 
+            size="medium" 
+            variant="tertiary" 
+            icon="history-line"
+            onClick={() => handleTabClick('history')} 
+          />
+        </Tooltip>
+        
+        <Tooltip content="Search prompts" position="bottom-center">
+          <Button 
+            kind="glyph" 
+            size="medium" 
+            variant="tertiary" 
+            icon="search-line"
+            onClick={() => handleTabClick('marketplace')} 
+          />
+        </Tooltip>
       </div>
       <div className="navigation-right">
-        <Button 
-          kind="glyph" 
-          size="medium" 
-          variant="tertiary" 
-          icon="menu-line"
-          onClick={() => {/* действие меню */}} 
-        />
+        <Tooltip content="Open menu" position="bottom-right">
+          <Button 
+            kind="glyph" 
+            size="medium" 
+            variant="tertiary" 
+            icon="menu-line"
+            onClick={() => {/* действие меню */}} 
+          />
+        </Tooltip>
       </div>
     </div>
   );

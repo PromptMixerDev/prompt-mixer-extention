@@ -1,7 +1,7 @@
-/* LogoImage component styles */
+/* LibraryIcon component styles */
 
-/* Base logo styles */
-.logo-image {
+/* Base icon styles */
+.library-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,8 +10,8 @@
   overflow: hidden;
 }
 
-/* Logo icon */
-.logo-icon {
+/* Icon SVG */
+.library-icon-svg {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,33 +19,33 @@
   height: 100%;
 }
 
-.logo-icon svg {
-  width: 100%;
-  height: 100%;
+.library-icon-svg svg {
+  width: 16px;
+  height: 16px;
   object-fit: cover;
   color: var(--color-text-primary);
 }
 
 /* Size variants */
-.logo-image-small {
+.library-icon-small {
   width: 24px;
   height: 24px;
   border-radius: var(--border-radius-md);
 }
 
-.logo-image-medium {
+.library-icon-medium {
   width: 28px;
   height: 28px;
   border-radius: var(--border-radius-md);
 }
 
-.logo-image-large {
+.library-icon-large {
   width: 32px;
   height: 32px;
   border-radius: var(--border-radius-xlg);
 }
 
-.logo-image-xlarge {
+.library-icon-xlarge {
   width: 44px;
   height: 44px;
   border-radius: var(--border-radius-xlg);

@@ -1,0 +1,51 @@
+/* LibraryCard component styles */
+
+/* Base card styles */
+.library-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  width: 100%;
+  padding: var(--spacing-1);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  user-select: none;
+}
+
+.library-card:hover {
+  background-color: var(--button-transparent-hover-bg);
+}
+
+/* Left section with icon and title */
+.library-card-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex: 1 1 auto;
+  min-width: 0; /* Важно для работы text-overflow */
+  overflow: hidden;
+}
+
+/* Prevent icon from shrinking */
+.library-card-left .library-icon {
+  flex-shrink: 0; /* Предотвращает сжатие иконки */
+}
+
+/* Title */
+.title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px; /* Adjust based on your layout needs */
+  text-decoration: none;
+}
+
+/* Right section with button */
+.library-card-right {
+  display: flex;
+  align-items: center;
+  padding-right: var(--spacing-1);
+  flex: 0 0 auto;
+}

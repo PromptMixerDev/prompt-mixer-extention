@@ -17,6 +17,7 @@ interface InputBlockContentProps {
   className?: string;
   placeholder?: string;
   readOnly?: boolean;
+  autoFocus?: boolean;
 }
 
 export const InputBlockContent: React.FC<InputBlockContentProps> = ({ 
@@ -25,12 +26,15 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
   className = '',
   placeholder = 'Enter text...',
   readOnly = false,
+  autoFocus = false,
 }) => {
   const [text, setText] = useState(value);
   const [htmlContent, setHtmlContent] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<{ start: number; end: number }>({ start: 0, end: 0 });
+  // Ref для отслеживания источника изменений (пользовательский ввод или внешнее обновление)
+  const isInternalChangeRef = useRef(false);
   
   // Toggle expanded state when clicked in read-only mode
   const handleClick = () => {
@@ -138,6 +142,9 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
       // Get raw text without HTML markup
       const rawText = contentRef.current.innerText || '';
       
+      // Отмечаем, что изменение произошло от пользователя
+      isInternalChangeRef.current = true;
+      
       // Update text state with content
       setText(rawText);
       
@@ -164,6 +171,13 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
   
   // Update text state when value prop changes externally
   useEffect(() => {
+    // Если изменение от пользователя, игнорируем обновление value
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      return;
+    }
+    
+    // Иначе обновляем текст из value
     if (value !== text) {
       setText(value);
     }
@@ -181,6 +195,13 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
       restoreSelection();
     }
   }, [htmlContent]);
+  
+  // Handle autoFocus
+  useEffect(() => {
+    if (autoFocus && contentRef.current && !readOnly) {
+      contentRef.current.focus();
+    }
+  }, [autoFocus, readOnly]);
   
   // Handle blur event - show placeholder if content is empty
   const handleBlur = () => {

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './history-detail.css';
 import InputBlock from '@components/ui/input-block/input-block';
-import BackHeader from '@components/ui/back-header/back-header';
 import LogoImage from '@components/ui/logo-image/logo-image';
 import Skeleton from 'react-loading-skeleton';
 import { historyApi } from '@services/api/history';
+import { libraryApi } from '@services/api/library';
 import { PromptHistoryItem } from '../../../../../types/history';
 
 interface HistoryDetailProps {
@@ -82,14 +82,6 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ id }) => {
   }, [id]);
 
   /**
-   * Handle back button click
-   */
-  const handleBack = () => {
-    // Dispatch event to notify content area to show history list
-    window.dispatchEvent(new Event('backToList'));
-  };
-
-  /**
    * Handle original prompt change
    */
   const handleOriginalPromptChange = (value: string) => {
@@ -105,12 +97,6 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ id }) => {
 
   return (
     <div className="history-detail">
-      <BackHeader 
-        onClick={handleBack} 
-        title="Back to History" 
-        isLoading={isLoading}
-      />
-      
       {isLoading ? (
         <div className="history-detail-meta">
           <LogoImage isLoading={true} size="large" />
@@ -160,10 +146,17 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ id }) => {
               label="Improved Prompt" 
               value={improvedPrompt}
               placeholder="Improved prompt will appear here..."
-              onRightButtonClick={() => {
-                // TODO: Implement adding to my prompts
-                // For now, just copy to clipboard
-                navigator.clipboard.writeText(improvedPrompt);
+              onRightButtonClick={async () => {
+                try {
+                  // Add to library
+                  await libraryApi.createFromHistory(id || '');
+                  
+                  // Show success message
+                  alert('Prompt added to library successfully!');
+                } catch (err) {
+                  console.error('Error adding prompt to library:', err);
+                  alert('Failed to add prompt to library. Please try again.');
+                }
               }}
             />
           </>

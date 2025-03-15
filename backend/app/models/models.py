@@ -20,6 +20,7 @@ class User(Base):
 
     # Relationships
     prompts = relationship("Prompt", back_populates="owner")
+    library_items = relationship("UserLibrary", back_populates="user")
 
 class Prompt(Base):
     __tablename__ = "prompts"
@@ -71,3 +72,23 @@ class PromptHistory(Base):
 
     # Relationships
     user = relationship("User", backref="prompt_history")
+
+class UserLibrary(Base):
+    """
+    Model for storing user's prompt library items
+    """
+    __tablename__ = "user_library"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    description = Column(Text, nullable=True)
+    content = Column(Text, nullable=False)  # Содержание промпта
+    variables = Column(JSON, nullable=True)  # Переменные промпта в формате JSON
+    user_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    # Relationships
+    user = relationship("User", back_populates="library_items")
+
+# UserLibraryTag class removed as it's no longer needed

@@ -59,6 +59,11 @@ interface InputBlockProps {
    * Whether the component is in loading state
    */
   isLoading?: boolean;
+  
+  /**
+   * Whether the input should automatically receive focus
+   */
+  autoFocus?: boolean;
 }
 
 /**
@@ -102,7 +107,8 @@ export const InputBlock: React.FC<InputBlockProps> = ({
   rightButtonIcon, 
   onRightButtonClick,
   readOnly,
-  isLoading = false
+  isLoading = false,
+  autoFocus = false
 }) => {
   // Get configuration based on variant
   const config = getInputBlockConfig(variant);
@@ -148,6 +154,7 @@ export const InputBlock: React.FC<InputBlockProps> = ({
         onChange={onChange}
         placeholder={placeholder}
         readOnly={finalReadOnly}
+        autoFocus={autoFocus}
       />
     </div>
   );
