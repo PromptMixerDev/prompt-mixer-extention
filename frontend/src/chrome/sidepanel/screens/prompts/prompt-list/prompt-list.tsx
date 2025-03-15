@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './prompt-list.css';
 import LibraryCard from '@components/ui/library-card/library-card';
+import Button from '@components/ui/button/button';
 import { usePrompts } from '@context/PromptContext';
 import { UserPrompt } from '../../../../../types/prompt';
 
@@ -32,8 +33,9 @@ const PromptList: React.FC = () => {
    * Handle create new prompt
    */
   const handleCreatePrompt = () => {
-    // TODO: Implement create new prompt functionality
-    console.log('Create new prompt');
+    // Dispatch event to notify content area to show new prompt detail
+    const event = new CustomEvent('itemSelect', { detail: { id: 'new' } });
+    window.dispatchEvent(event);
   };
 
   return (
@@ -55,7 +57,16 @@ const PromptList: React.FC = () => {
       ) : userPrompts.length === 0 ? (
         <div className="empty-state">
           <p>You don't have any prompts yet.</p>
-          <button className="add-prompt-button" onClick={handleCreatePrompt}>Create New Prompt</button>
+          <Button 
+            kind="glyph-text" 
+            variant="tertiary" 
+            icon="prompt-line" 
+            size="medium"
+            onClick={handleCreatePrompt}
+            className="new-prompt-button"
+          >
+            Create New Prompt
+          </Button>
         </div>
       ) : (
         <div className="prompts-container">
@@ -71,7 +82,16 @@ const PromptList: React.FC = () => {
                 onRightButtonClick={() => handleMenuClick(prompt.id)}
               />
             ))}
-          <button className="add-prompt-button" onClick={handleCreatePrompt}>+ New Prompt</button>
+          <Button 
+            kind="glyph-text" 
+            variant="tertiary" 
+            icon="prompt-line" 
+            size="medium"
+            onClick={handleCreatePrompt}
+            className="new-prompt-button"
+          >
+            New Prompt
+          </Button>
         </div>
       )}
     </div>

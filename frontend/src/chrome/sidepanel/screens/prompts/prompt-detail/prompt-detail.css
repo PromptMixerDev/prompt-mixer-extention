@@ -18,6 +18,8 @@
 .prompt-header-info {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 480px;
   gap: var(--spacing-2);
 }
 
@@ -28,10 +30,43 @@
   letter-spacing: -0.012em;
 }
 
+.prompt-header-title.editable {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  letter-spacing: -0.012em;
+}
+
+.prompt-header-title.editable::placeholder {
+  color: var(--color-text-tertiary);
+  opacity: 0.7;
+}
+
 .prompt-header-description {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   line-height: var(--line-height-tight);
+}
+
+.prompt-header-description.editable {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-tight);
+}
+
+.prompt-header-description.editable::placeholder {
+  color: var(--color-text-tertiary);
+  opacity: 0.7;
 }
 
 /* Tags */

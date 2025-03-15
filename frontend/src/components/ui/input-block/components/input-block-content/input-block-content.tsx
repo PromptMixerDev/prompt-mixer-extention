@@ -17,6 +17,7 @@ interface InputBlockContentProps {
   className?: string;
   placeholder?: string;
   readOnly?: boolean;
+  autoFocus?: boolean;
 }
 
 export const InputBlockContent: React.FC<InputBlockContentProps> = ({ 
@@ -25,6 +26,7 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
   className = '',
   placeholder = 'Enter text...',
   readOnly = false,
+  autoFocus = false,
 }) => {
   const [text, setText] = useState(value);
   const [htmlContent, setHtmlContent] = useState('');
@@ -193,6 +195,13 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
       restoreSelection();
     }
   }, [htmlContent]);
+  
+  // Handle autoFocus
+  useEffect(() => {
+    if (autoFocus && contentRef.current && !readOnly) {
+      contentRef.current.focus();
+    }
+  }, [autoFocus, readOnly]);
   
   // Handle blur event - show placeholder if content is empty
   const handleBlur = () => {

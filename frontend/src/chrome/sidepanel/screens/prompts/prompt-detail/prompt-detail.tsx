@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { usePrompts } from '@context/PromptContext';
 import LibraryIcon from '@components/ui/library-icon/library-icon';
 import InputBlock from '@components/ui/input-block/input-block';
@@ -17,24 +17,116 @@ interface PromptDetailProps {
  * Displays details of a selected prompt
  */
 const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
-  const { userPrompts, isLoading, error, updatePrompt } = usePrompts();
+  const { userPrompts, isLoading, error, updatePrompt, addPrompt } = usePrompts();
   
-  // Local state for content and variables
+  // Local state for content, title, description and variables
   const [localContent, setLocalContent] = useState('');
+  const [localTitle, setLocalTitle] = useState('');
+  const [localDescription, setLocalDescription] = useState('');
   const [variableValues, setVariableValues] = useState<Record<string, string>>({});
   
+  // State for tracking new prompt creation
+  const [isNewPrompt, setIsNewPrompt] = useState(false);
+  const [isPromptCreated, setIsPromptCreated] = useState(false);
+  
   // Find the selected prompt
-  const prompt = id ? userPrompts.find(p => p.id === id) : null;
+  const prompt = id && id !== 'new' ? userPrompts.find(p => p.id === id) : null;
   
-  // Ref для отслеживания предыдущих значений переменных
+  /**
+   * Generate a name for untitled prompts
+   */
+  const getUntitledPromptName = () => {
+    const untitledPrompts = userPrompts.filter(p => p.title.startsWith('Untitled prompt'));
+    if (untitledPrompts.length === 0) return 'Untitled prompt';
+    
+    // Find the maximum number
+    let maxNumber = 1;
+    untitledPrompts.forEach(p => {
+      const match = p.title.match(/Untitled prompt (\d+)/);
+      if (match) {
+        const num = parseInt(match[1]);
+        if (num >= maxNumber) maxNumber = num + 1;
+      } else {
+        // If there's an "Untitled prompt" without a number, we'll need at least "Untitled prompt 2"
+        maxNumber = Math.max(maxNumber, 2);
+      }
+    });
+    
+    return maxNumber === 1 ? 'Untitled prompt' : `Untitled prompt ${maxNumber}`;
+  };
+  
+  // Refs
   const prevVariableValuesRef = React.useRef<Record<string, string>>({});
+  const titleTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const descriptionTextareaRef = useRef<HTMLTextAreaElement>(null);
   
-  // Initialize local content when prompt changes
-  useEffect(() => {
-    if (prompt) {
-      setLocalContent(prompt.content);
+  // Функция для автоматического изменения высоты textarea
+  const autoResizeTextarea = (element: HTMLTextAreaElement) => {
+    element.style.height = 'auto';
+    element.style.height = `${element.scrollHeight}px`;
+  };
+  
+  /**
+   * Create a new prompt if needed
+   */
+  const createNewPromptIfNeeded = async () => {
+    if (isNewPrompt && !isPromptCreated && (localTitle || localContent)) {
+      try {
+        // Generate default title if user didn't enter one
+        const title = localTitle || getUntitledPromptName();
+        
+        // Create new prompt
+        const newPrompt = await addPrompt({
+          title,
+          content: localContent,
+          description: localDescription || undefined
+        });
+        
+        // Update state
+        setIsPromptCreated(true);
+        setIsNewPrompt(false);
+        
+        // Update URL and ID
+        const event = new CustomEvent('itemSelect', { detail: { id: newPrompt.id } });
+        window.dispatchEvent(event);
+      } catch (error) {
+        console.error('Error creating new prompt:', error);
+      }
     }
-  }, [prompt]);
+  };
+  
+  // Initialize state when id changes
+  useEffect(() => {
+    if (id === 'new') {
+      setIsNewPrompt(true);
+      setIsPromptCreated(false);
+      setLocalTitle('');
+      setLocalContent('');
+      setLocalDescription('');
+      setVariableValues({});
+    } else {
+      setIsNewPrompt(false);
+      if (prompt) {
+        setLocalContent(prompt.content);
+        setLocalTitle(prompt.title);
+        setLocalDescription(prompt.description || '');
+      }
+    }
+  }, [id, prompt]);
+  
+  // Эффект для автоматического изменения высоты textarea при изменении заголовка
+  useEffect(() => {
+    if (titleTextareaRef.current) {
+      autoResizeTextarea(titleTextareaRef.current);
+    }
+  }, [localTitle]);
+  
+  // Эффект для автоматического изменения высоты textarea при изменении описания
+  useEffect(() => {
+    if (descriptionTextareaRef.current) {
+      autoResizeTextarea(descriptionTextareaRef.current);
+    }
+  }, [localDescription]);
 
   // Initialize variable values when prompt changes
   useEffect(() => {
@@ -62,24 +154,60 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
     }));
   };
   
-  // Обновление контента промпта при изменении
+  // Общий эффект для создания нового промпта или обновления существующего
   useEffect(() => {
-    const updateContent = async () => {
-      if (prompt && localContent !== prompt.content) {
-        try {
-          await updatePrompt(prompt.id, { content: localContent });
-          console.log('Prompt content updated automatically');
-        } catch (error) {
-          console.error('Error updating prompt content:', error);
+    const createOrUpdatePrompt = async () => {
+      // Для нового промпта - создаем только один раз при изменении любого поля
+      if (isNewPrompt && !isPromptCreated && (localTitle || localContent)) {
+        await createNewPromptIfNeeded();
+        return; // Выходим, чтобы не выполнять обновления ниже
+      } 
+      
+      // Для существующего промпта - обновляем измененные поля
+      if (prompt) {
+        // Обновляем заголовок если изменился
+        if (localTitle !== prompt.title) {
+          try {
+            await updatePrompt(prompt.id, { title: localTitle });
+          } catch (error) {
+            console.error('Error updating prompt title:', error);
+          }
+        }
+        
+        // Обновляем описание если изменилось
+        if (localDescription !== (prompt.description || '')) {
+          try {
+            await updatePrompt(prompt.id, { description: localDescription });
+          } catch (error) {
+            console.error('Error updating prompt description:', error);
+          }
+        }
+        
+        // Обновляем контент если изменился
+        if (localContent !== prompt.content) {
+          try {
+            await updatePrompt(prompt.id, { content: localContent });
+          } catch (error) {
+            console.error('Error updating prompt content:', error);
+          }
         }
       }
     };
     
-    // Здесь можно добавить debounce для предотвращения слишком частых обновлений
-    const timeoutId = setTimeout(updateContent, 1000);
+    // Используем debounce для предотвращения слишком частых обновлений
+    const timeoutId = setTimeout(createOrUpdatePrompt, 1000);
     
     return () => clearTimeout(timeoutId);
-  }, [localContent, prompt, updatePrompt]);
+  }, [
+    localTitle, 
+    localDescription, 
+    localContent, 
+    prompt, 
+    updatePrompt, 
+    isNewPrompt, 
+    isPromptCreated, 
+    createNewPromptIfNeeded
+  ]);
   
   // Обновление значений переменных при изменении
   useEffect(() => {
@@ -106,7 +234,6 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
           
           // Обновляем промпт с новыми значениями переменных
           await updatePrompt(prompt.id, { variables: updatedVariables });
-          console.log('Variable values updated automatically');
         } catch (error) {
           console.error('Error updating variable values:', error);
         }
@@ -146,7 +273,58 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
     );
   }
 
-  // If error or prompt not found
+  // If it's a new prompt, show empty form
+  if (id === 'new' || isNewPrompt) {
+    return (
+      <div className="prompt-detail">
+        <div className="prompt-header">
+          <LibraryIcon iconName="prompt-line" size="xlarge" />
+          <div className="prompt-header-info">
+            <textarea
+              ref={titleTextareaRef}
+              className="prompt-header-title editable"
+              value={localTitle}
+              onChange={(e) => setLocalTitle(e.target.value)}
+              placeholder="Untitled prompt"
+              rows={1}
+              style={{ 
+                resize: 'none', 
+                overflow: 'hidden',
+                border: 'none',
+                background: 'transparent'
+              }}
+            />
+            <textarea
+              ref={descriptionTextareaRef}
+              className="prompt-header-description editable"
+              value={localDescription}
+              onChange={(e) => setLocalDescription(e.target.value)}
+              placeholder="Add description..."
+              rows={1}
+              style={{ 
+                resize: 'none', 
+                overflow: 'hidden',
+                border: 'none',
+                background: 'transparent'
+              }}
+            />
+          </div>
+        </div>
+        
+        <div className="prompt-content-box">
+          <InputBlock
+            variant="prompt"
+            label="Prompt"
+            value={localContent}
+            onChange={setLocalContent}
+            autoFocus={false}
+          />
+        </div>
+      </div>
+    );
+  }
+  
+  // If error or prompt not found (and not a new prompt)
   if (error || !prompt) {
     return (
       <div className="prompt-detail">
@@ -162,10 +340,34 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
       <div className="prompt-header">
         <LibraryIcon iconName="prompt-line" size="xlarge" />
         <div className="prompt-header-info">
-          <div className="prompt-header-title">{prompt.title}</div>
-          {prompt.description && (
-            <div className="prompt-header-description">{prompt.description}</div>
-          )}
+          <textarea
+            ref={titleTextareaRef}
+            className="prompt-header-title editable"
+            value={localTitle}
+            onChange={(e) => setLocalTitle(e.target.value)}
+            placeholder="Untitled prompt"
+            rows={1}
+            style={{ 
+              resize: 'none', 
+              overflow: 'hidden',
+              border: 'none',
+              background: 'transparent'
+            }}
+          />
+          <textarea
+            ref={descriptionTextareaRef}
+            className="prompt-header-description editable"
+            value={localDescription}
+            onChange={(e) => setLocalDescription(e.target.value)}
+            placeholder="Add description..."
+            rows={1}
+            style={{ 
+              resize: 'none', 
+              overflow: 'hidden',
+              border: 'none',
+              background: 'transparent'
+            }}
+          />
         </div>
       </div>
       
@@ -175,6 +377,7 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
           label="Prompt"
           value={localContent}
           onChange={setLocalContent}
+          autoFocus={false}
         />
       </div>
       
@@ -189,6 +392,7 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
                 value={variableValues[variable.name] || ''}
                 onChange={(value) => handleVariableChange(variable.name, value)}
                 placeholder={`Enter value for ${variable.name}`}
+                autoFocus={false}
               />
             ))}
           </div>

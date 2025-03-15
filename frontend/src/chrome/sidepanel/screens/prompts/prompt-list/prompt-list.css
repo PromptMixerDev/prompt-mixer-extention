@@ -38,20 +38,8 @@
   color: var(--color-error);
 }
 
-.add-prompt-button {
-  padding: var(--spacing-2) var(--spacing-4);
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color var(--transition-fast);
+/* Стили для кнопки добавления промпта */
+.new-prompt-button {
   margin-top: var(--spacing-4);
   align-self: center;
-}
-
-.add-prompt-button:hover {
-  background-color: var(--color-primary-dark);
 }
