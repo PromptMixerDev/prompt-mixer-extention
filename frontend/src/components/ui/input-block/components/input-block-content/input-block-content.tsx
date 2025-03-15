@@ -31,6 +31,8 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<{ start: number; end: number }>({ start: 0, end: 0 });
+  // Ref для отслеживания источника изменений (пользовательский ввод или внешнее обновление)
+  const isInternalChangeRef = useRef(false);
   
   // Toggle expanded state when clicked in read-only mode
   const handleClick = () => {
@@ -138,6 +140,9 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
       // Get raw text without HTML markup
       const rawText = contentRef.current.innerText || '';
       
+      // Отмечаем, что изменение произошло от пользователя
+      isInternalChangeRef.current = true;
+      
       // Update text state with content
       setText(rawText);
       
@@ -164,6 +169,13 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
   
   // Update text state when value prop changes externally
   useEffect(() => {
+    // Если изменение от пользователя, игнорируем обновление value
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      return;
+    }
+    
+    // Иначе обновляем текст из value
     if (value !== text) {
       setText(value);
     }

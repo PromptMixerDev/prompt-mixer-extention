@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { usePrompts } from '@context/PromptContext';
-import BackHeader from '@components/ui/back-header/back-header';
 import LibraryIcon from '@components/ui/library-icon/library-icon';
 import InputBlock from '@components/ui/input-block/input-block';
 import Skeleton from 'react-loading-skeleton';
@@ -27,6 +26,9 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
   // Find the selected prompt
   const prompt = id ? userPrompts.find(p => p.id === id) : null;
   
+  // Ref для отслеживания предыдущих значений переменных
+  const prevVariableValuesRef = React.useRef<Record<string, string>>({});
+  
   // Initialize local content when prompt changes
   useEffect(() => {
     if (prompt) {
@@ -43,16 +45,12 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
         initialValues[variable.name] = variable.value || '';
       });
       setVariableValues(initialValues);
+      
+      // Инициализируем предыдущие значения
+      prevVariableValuesRef.current = initialValues;
     }
   }, [prompt]);
 
-  /**
-   * Handle back button click
-   */
-  const handleBack = () => {
-    // Dispatch event to notify content area to show prompt list
-    window.dispatchEvent(new Event('backToList'));
-  };
 
   /**
    * Handle variable value change
@@ -62,30 +60,6 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
       ...prev,
       [name]: value
     }));
-  };
-
-  /**
-   * Handle edit button click
-   */
-  const handleEdit = () => {
-    // TODO: Implement edit functionality
-    console.log('Edit prompt:', prompt?.id);
-  };
-
-  /**
-   * Handle use button click
-   */
-  const handleUse = () => {
-    if (!prompt) return;
-    
-    // Replace variables in content
-    let content = localContent;
-    Object.entries(variableValues).forEach(([name, value]) => {
-      content = content.replace(new RegExp(`{{${name}}}`, 'g'), value);
-    });
-    
-    // TODO: Implement use functionality
-    console.log('Use prompt with content:', content);
   };
   
   // Обновление контента промпта при изменении
@@ -112,6 +86,18 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
     const updateVariableValues = async () => {
       if (prompt && prompt.variables && Object.keys(variableValues).length > 0) {
         try {
+          // Проверяем, действительно ли изменились значения переменных
+          const hasChanges = prompt.variables.some(variable => 
+            prevVariableValuesRef.current[variable.name] !== variableValues[variable.name]
+          );
+          
+          if (!hasChanges) {
+            return; // Если нет изменений, не обновляем
+          }
+          
+          // Сохраняем текущие значения как предыдущие
+          prevVariableValuesRef.current = {...variableValues};
+          
           // Создаем обновленный список переменных с текущими значениями
           const updatedVariables = prompt.variables.map(variable => ({
             ...variable,
@@ -137,11 +123,6 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
   if (isLoading) {
     return (
       <div className="prompt-detail">
-        <BackHeader 
-          onClick={handleBack} 
-          title="Back to Prompts" 
-          isLoading={true}
-        />
         <div className="prompt-detail-skeleton">
           <Skeleton height={32} width={200} /> {/* Title */}
           <div className="prompt-tags">
@@ -169,10 +150,6 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
   if (error || !prompt) {
     return (
       <div className="prompt-detail">
-        <BackHeader 
-          onClick={handleBack} 
-          title="Back to Prompts" 
-        />
         <div className="error-message">
           {error || "Prompt not found"}
         </div>
@@ -182,23 +159,15 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
 
   return (
     <div className="prompt-detail">
-      <BackHeader 
-        onClick={handleBack} 
-        title="Back to Prompts" 
-      />
-      
       <div className="prompt-header">
-        <LibraryIcon iconName="prompt-line" size="large" />
-        <h2>{prompt.title}</h2>
-      </div>
-      
-      {/* Tags removed as they are no longer needed */}
-      
-      {prompt.description && (
-        <div className="prompt-description">
-          <p>{prompt.description}</p>
+        <LibraryIcon iconName="prompt-line" size="xlarge" />
+        <div className="prompt-header-info">
+          <div className="prompt-header-title">{prompt.title}</div>
+          {prompt.description && (
+            <div className="prompt-header-description">{prompt.description}</div>
+          )}
         </div>
-      )}
+      </div>
       
       <div className="prompt-content-box">
         <InputBlock
@@ -206,14 +175,11 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
           label="Prompt"
           value={localContent}
           onChange={setLocalContent}
-          rightButtonText="Use Prompt"
-          onRightButtonClick={handleUse}
         />
       </div>
       
-      <div className="prompt-variables">
-        <h3>Variables</h3>
-        {prompt.variables && prompt.variables.length > 0 ? (
+      {prompt.variables && prompt.variables.length > 0 && (
+        <div className="prompt-variables">
           <div className="variables-container">
             {prompt.variables.map(variable => (
               <InputBlock
@@ -226,17 +192,8 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
               />
             ))}
           </div>
-        ) : (
-          <div className="no-variables">
-            <p>No variables found in this prompt.</p>
-          </div>
-        )}
-      </div>
-      
-      <div className="action-buttons">
-        <button className="edit-button" onClick={handleEdit}>Edit Details</button>
-        <button className="use-button" onClick={handleUse}>Use Prompt</button>
-      </div>
+        </div>
+      )}
     </div>
   );
 };

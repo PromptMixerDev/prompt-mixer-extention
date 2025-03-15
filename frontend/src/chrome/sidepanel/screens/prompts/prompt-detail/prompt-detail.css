@@ -1,23 +1,37 @@
 /* Prompt detail styles */
 .prompt-detail {
   width: 100%;
-  padding: var(--spacing-2);
 }
 
 /* Header with icon and title */
 .prompt-header {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  margin-top: var(--spacing-4);
-  margin-bottom: var(--spacing-4);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
+  padding-top: var(--spacing-6);
+  padding-bottom: var(--spacing-12);
 }
 
-.prompt-header h2 {
-  font-size: var(--font-size-lg);
+.prompt-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.prompt-header-title {
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  margin: 0;
+  letter-spacing: -0.012em;
+}
+
+.prompt-header-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-tight);
 }
 
 /* Tags */
@@ -52,7 +66,9 @@
 
 /* Content box */
 .prompt-content-box {
-  margin-bottom: var(--spacing-4);
+  padding-left: var(--spacing-2);
+  padding-right: var(--spacing-2);
+  margin-bottom: var(--spacing-8);
 }
 
 .prompt-content-box h3 {
@@ -63,24 +79,11 @@
   margin-bottom: var(--spacing-2);
 }
 
-.prompt-content-box pre {
-  background-color: var(--color-background-secondary);
-  border-radius: var(--border-radius-md);
-  padding: var(--spacing-3);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-normal);
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-x: auto;
-  color: var(--color-text-primary);
-  width: 100%;
-  box-sizing: border-box;
-}
-
 /* Variables */
 .prompt-variables {
-  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-6);
+  padding-left: var(--spacing-2);
+  padding-right: var(--spacing-2);
 }
 
 .prompt-variables h3 {

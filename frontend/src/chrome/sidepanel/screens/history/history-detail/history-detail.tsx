@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './history-detail.css';
 import InputBlock from '@components/ui/input-block/input-block';
-import BackHeader from '@components/ui/back-header/back-header';
 import LogoImage from '@components/ui/logo-image/logo-image';
 import Skeleton from 'react-loading-skeleton';
 import { historyApi } from '@services/api/history';
@@ -83,14 +82,6 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ id }) => {
   }, [id]);
 
   /**
-   * Handle back button click
-   */
-  const handleBack = () => {
-    // Dispatch event to notify content area to show history list
-    window.dispatchEvent(new Event('backToList'));
-  };
-
-  /**
    * Handle original prompt change
    */
   const handleOriginalPromptChange = (value: string) => {
@@ -106,12 +97,6 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ id }) => {
 
   return (
     <div className="history-detail">
-      <BackHeader 
-        onClick={handleBack} 
-        title="Back to History" 
-        isLoading={isLoading}
-      />
-      
       {isLoading ? (
         <div className="history-detail-meta">
           <LogoImage isLoading={true} size="large" />

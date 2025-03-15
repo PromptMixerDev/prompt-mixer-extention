@@ -53,12 +53,14 @@ export function PromptProvider({ children }: PromptProviderProps) {
             title: 'SEO Optimization',
             content: 'Optimize the following content for SEO: {{content}}',
             createdAt: new Date().toISOString(),
+            tags: ['SEO', 'Content Writing']
           },
           {
             id: 'shared-2',
             title: 'Code Review',
             content: 'Review the following code and suggest improvements: ```{{code}}```',
             createdAt: new Date().toISOString(),
+            tags: ['Programming', 'Development']
           },
         ]);
 

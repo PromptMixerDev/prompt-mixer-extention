@@ -26,6 +26,7 @@ export interface UserPrompt extends BasePrompt {
  */
 export interface SharedPrompt extends BasePrompt {
   author?: string;
+  tags?: string[];
 }
 
 /**
