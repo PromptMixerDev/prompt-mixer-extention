@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.env
+venv/
+ENV/
+.vscode/
+.idea/
+*.db
+prompt_mixer.db
+.git
+.gitignore
+README.md
