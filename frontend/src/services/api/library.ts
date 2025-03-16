@@ -1,11 +1,7 @@
 import { createAuthHeaders } from './auth';
 import { UserPrompt } from '../../types/prompt';
 import { PromptVariable } from '../../types/prompt';
-
-/**
- * API URL
- */
-const API_URL = 'http://localhost:8000/api/v1';
+import { getApiUrl } from '@utils/config';
 
 /**
  * Interface for library item creation
@@ -73,7 +69,7 @@ export const libraryApi = {
   async getLibraryItems(skip = 0, limit = 100): Promise<{ items: UserPrompt[], total: number }> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/library?skip=${skip}&limit=${limit}`, {
+      const response = await fetch(getApiUrl(`library?skip=${skip}&limit=${limit}`), {
         headers,
         redirect: 'follow' // Автоматически следовать перенаправлениям
       });
@@ -107,7 +103,7 @@ export const libraryApi = {
   async getLibraryItem(id: string): Promise<UserPrompt> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/library/${id}`, {
+      const response = await fetch(getApiUrl(`library/${id}`), {
         headers,
         redirect: 'follow'
       });
@@ -150,7 +146,7 @@ export const libraryApi = {
         variables: prompt.variables
       };
       
-      const response = await fetch(`${API_URL}/library`, {
+      const response = await fetch(getApiUrl('library'), {
         method: 'POST',
         headers,
         body: JSON.stringify(data),
@@ -195,7 +191,7 @@ export const libraryApi = {
       if (prompt.content !== undefined) data.content = prompt.content;
       if (prompt.variables !== undefined) data.variables = prompt.variables;
       
-      const response = await fetch(`${API_URL}/library/${id}`, {
+      const response = await fetch(getApiUrl(`library/${id}`), {
         method: 'PUT',
         headers,
         body: JSON.stringify(data),
@@ -228,7 +224,7 @@ export const libraryApi = {
     try {
       const headers = await createAuthHeaders();
       
-      const response = await fetch(`${API_URL}/library/${id}`, {
+      const response = await fetch(getApiUrl(`library/${id}`), {
         method: 'DELETE',
         headers,
         redirect: 'follow'
@@ -257,7 +253,7 @@ export const libraryApi = {
     try {
       const headers = await createAuthHeaders();
       
-      const response = await fetch(`${API_URL}/library/from-history/${historyId}`, {
+      const response = await fetch(getApiUrl(`library/from-history/${historyId}`), {
         method: 'POST',
         headers,
         redirect: 'follow'

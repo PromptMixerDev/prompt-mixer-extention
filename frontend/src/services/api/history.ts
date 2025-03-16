@@ -1,10 +1,6 @@
 import { createAuthHeaders } from './auth';
 import { PromptHistoryItem, PromptHistoryListResponse } from '../../types/history';
-
-/**
- * API URL
- */
-const API_URL = 'http://localhost:8000/api/v1';
+import { getApiUrl } from '@utils/config';
 
 /**
  * API client for prompt history
@@ -16,7 +12,7 @@ export const historyApi = {
   async getHistory(skip = 0, limit = 100): Promise<PromptHistoryListResponse> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/prompts/history?skip=${skip}&limit=${limit}`, {
+      const response = await fetch(getApiUrl(`prompts/history?skip=${skip}&limit=${limit}`), {
         headers,
         redirect: 'follow'
       });
@@ -45,7 +41,7 @@ export const historyApi = {
   async getHistoryItem(id: string): Promise<PromptHistoryItem> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/prompts/history/${id}`, {
+      const response = await fetch(getApiUrl(`prompts/history/${id}`), {
         headers,
         redirect: 'follow'
       });

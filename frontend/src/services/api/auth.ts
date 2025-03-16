@@ -1,9 +1,5 @@
 import { User } from '@services/auth';
-
-/**
- * API URL
- */
-const API_URL = 'http://localhost:8000/api/v1';
+import { getApiUrl } from '@utils/config';
 
 /**
  * Get auth token from chrome.storage
@@ -57,7 +53,7 @@ export const authApi = {
       });
 
       // Отправить токен на бэкенд
-      const response = await fetch(`${API_URL}/auth/google`, {
+      const response = await fetch(getApiUrl('auth/google'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +84,7 @@ export const authApi = {
   async getUserInfo(): Promise<User> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/users/me`, {
+      const response = await fetch(getApiUrl('users/me'), {
         headers,
         redirect: 'follow'
       });
@@ -115,7 +111,7 @@ export const promptsApi = {
   async getUserPrompts(): Promise<any[]> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/prompts`, {
+      const response = await fetch(getApiUrl('prompts'), {
         headers,
         redirect: 'follow'
       });
@@ -137,7 +133,7 @@ export const promptsApi = {
   async createPrompt(promptData: any): Promise<any> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/prompts`, {
+      const response = await fetch(getApiUrl('prompts'), {
         method: 'POST',
         headers,
         body: JSON.stringify(promptData),
@@ -161,7 +157,7 @@ export const promptsApi = {
   async updatePrompt(promptId: string, promptData: any): Promise<any> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/prompts/${promptId}`, {
+      const response = await fetch(getApiUrl(`prompts/${promptId}`), {
         method: 'PUT',
         headers,
         body: JSON.stringify(promptData),
@@ -185,7 +181,7 @@ export const promptsApi = {
   async deletePrompt(promptId: string): Promise<void> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/prompts/${promptId}`, {
+      const response = await fetch(getApiUrl(`prompts/${promptId}`), {
         method: 'DELETE',
         headers,
         redirect: 'follow'
@@ -206,7 +202,7 @@ export const promptsApi = {
   async getSharedPrompts(): Promise<any[]> {
     try {
       const headers = await createAuthHeaders();
-      const response = await fetch(`${API_URL}/prompts/shared`, {
+      const response = await fetch(getApiUrl('prompts/shared'), {
         headers,
         redirect: 'follow'
       });
