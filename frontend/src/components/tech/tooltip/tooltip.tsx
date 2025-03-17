@@ -55,7 +55,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const [tooltipStyle, setTooltipStyle] = useState({});
   const targetRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<number | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   // Функция для расчета позиции тултипа
   const calculatePosition = () => {
@@ -131,8 +131,13 @@ export const Tooltip: React.FC<TooltipProps> = ({
   };
   
   // Обработчики событий мыши
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (e: React.MouseEvent) => {
     if (disabled) return;
+    
+    // Проверяем, есть ли у родительского элемента атрибут data-disable-tooltip
+    const target = e.currentTarget as HTMLElement;
+    const parent = target.closest('[data-disable-tooltip="true"]');
+    if (parent) return;
     
     timeoutRef.current = setTimeout(() => {
       setIsVisible(true);

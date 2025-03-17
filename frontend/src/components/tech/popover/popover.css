@@ -1,0 +1,18 @@
+.popover__wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.popover__trigger {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.popover__content {
+  position: absolute;
+  background: var(--color-background-primary);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-popup);
+  z-index: var(--z-index-popover);
+  overflow: hidden;
+}

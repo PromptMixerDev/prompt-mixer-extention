@@ -11,6 +11,8 @@ interface LibraryCardProps {
   // Basic properties
   title: string;
   iconName?: string;
+  iconId?: string;
+  colorId?: string;
   rightIconName?: string;
   className?: string;
   onClick?: () => void;
@@ -46,6 +48,8 @@ interface LibraryCardProps {
 const LibraryCard: React.FC<LibraryCardProps> = ({
   title,
   iconName = 'prompt-line',
+  iconId,
+  colorId,
   rightIconName = 'menu-line',
   className = '',
   onClick,
@@ -83,7 +87,9 @@ const LibraryCard: React.FC<LibraryCardProps> = ({
     >
       <div className="library-card-left">
         <LibraryIcon 
-          iconName={iconName} 
+          iconName={iconName}
+          iconId={iconId}
+          colorId={colorId}
           size="medium"
         />
         <div className="title text-default text-medium text-primary">{title}</div>

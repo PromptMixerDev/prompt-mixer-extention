@@ -3,6 +3,8 @@ import { usePrompts } from '@context/PromptContext';
 import LibraryIcon from '@components/ui/library-icon/library-icon';
 import InputBlock from '@components/ui/input-block/input-block';
 import Skeleton from 'react-loading-skeleton';
+import { IconSelectorPopup } from '@components/ui/popups/icon-selector-popup/icon-selector-popup';
+import { defaultIconId, defaultColorId, getRandomIconId, getRandomColorId } from '@components/ui/library-icon/icon-options';
 import './prompt-detail.css';
 
 /**
@@ -25,9 +27,36 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
   const [localDescription, setLocalDescription] = useState('');
   const [variableValues, setVariableValues] = useState<Record<string, string>>({});
   
+  // State for icon and color
+  const [localIconId, setLocalIconId] = useState<string>(defaultIconId);
+  const [localColorId, setLocalColorId] = useState<string>(defaultColorId);
+  
   // State for tracking new prompt creation
   const [isNewPrompt, setIsNewPrompt] = useState(false);
   const [isPromptCreated, setIsPromptCreated] = useState(false);
+  
+  // Обработчик выбора иконки и цвета
+  const handleIconSelect = (iconId: string, colorId: string) => {
+    try {
+      // Обновляем локальное состояние
+      setLocalIconId(iconId);
+      setLocalColorId(colorId);
+      
+      // Если это существующий промпт, сохраняем изменения
+      if (prompt) {
+        // Создаем объект с данными для обновления
+        const updateData = { iconId, colorId };
+        
+        // Вызываем функцию обновления
+        updatePrompt(prompt.id, updateData)
+          .catch(error => {
+            console.error('Ошибка при обновлении иконки и цвета:', error);
+          });
+      }
+    } catch (error) {
+      console.error('Ошибка при выборе иконки и цвета:', error);
+    }
+  };
   
   // Find the selected prompt
   const prompt = id && id !== 'new' ? userPrompts.find(p => p.id === id) : null;
@@ -79,7 +108,9 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
         const newPrompt = await addPrompt({
           title,
           content: localContent,
-          description: localDescription || undefined
+          description: localDescription || undefined,
+          iconId: localIconId,
+          colorId: localColorId
         });
         
         // Update state
@@ -104,12 +135,16 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
       setLocalContent('');
       setLocalDescription('');
       setVariableValues({});
+      setLocalIconId(getRandomIconId());
+      setLocalColorId(getRandomColorId());
     } else {
       setIsNewPrompt(false);
       if (prompt) {
         setLocalContent(prompt.content);
         setLocalTitle(prompt.title);
         setLocalDescription(prompt.description || '');
+        setLocalIconId(prompt.iconId || defaultIconId);
+        setLocalColorId(prompt.colorId || defaultColorId);
       }
     }
   }, [id, prompt]);
@@ -278,7 +313,20 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
     return (
       <div className="prompt-detail">
         <div className="prompt-header">
-          <LibraryIcon iconName="prompt-line" size="xlarge" />
+          <IconSelectorPopup
+            trigger={
+              <LibraryIcon 
+                key={`${localIconId}-${localColorId}`}
+                size="xlarge" 
+                iconId={localIconId}
+                colorId={localColorId}
+                editable={true}
+              />
+            }
+            currentIconId={localIconId}
+            currentColorId={localColorId}
+            onSelect={handleIconSelect}
+          />
           <div className="prompt-header-info">
             <textarea
               ref={titleTextareaRef}
@@ -338,7 +386,20 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
   return (
     <div className="prompt-detail">
       <div className="prompt-header">
-        <LibraryIcon iconName="prompt-line" size="xlarge" />
+        <IconSelectorPopup
+          trigger={
+            <LibraryIcon 
+              key={`${localIconId}-${localColorId}`}
+              size="xlarge" 
+              iconId={localIconId}
+              colorId={localColorId}
+              editable={true}
+            />
+          }
+          currentIconId={localIconId}
+          currentColorId={localColorId}
+          onSelect={handleIconSelect}
+        />
         <div className="prompt-header-info">
           <textarea
             ref={titleTextareaRef}

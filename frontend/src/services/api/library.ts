@@ -11,6 +11,8 @@ interface LibraryItemCreate {
   description?: string;
   content: string;
   variables?: PromptVariable[];
+  iconId?: string;
+  colorId?: string;
 }
 
 /**
@@ -21,6 +23,8 @@ interface LibraryItemUpdate {
   description?: string;
   content?: string;
   variables?: PromptVariable[];
+  iconId?: string;
+  colorId?: string;
 }
 
 /**
@@ -35,6 +39,8 @@ interface LibraryItem {
   user_id: number;
   created_at: string;
   updated_at: string | null;
+  icon_id?: string;
+  color_id?: string;
 }
 
 /**
@@ -49,14 +55,18 @@ interface LibraryListResponse {
  * Convert API library item to UserPrompt
  */
 const convertToUserPrompt = (item: LibraryItem): UserPrompt => {
-  return {
+  const result = {
     id: item.id.toString(),
     title: item.title,
     content: item.content,
     createdAt: item.created_at,
     variables: item.variables || [],
-    description: item.description || undefined
+    description: item.description || undefined,
+    iconId: item.icon_id || undefined,
+    colorId: item.color_id || undefined
   };
+  
+  return result;
 };
 
 /**
@@ -143,7 +153,9 @@ export const libraryApi = {
         title: prompt.title,
         description: prompt.description,
         content: prompt.content,
-        variables: prompt.variables
+        variables: prompt.variables,
+        iconId: prompt.iconId,
+        colorId: prompt.colorId
       };
       
       const response = await fetch(getApiUrl('library'), {
@@ -190,8 +202,12 @@ export const libraryApi = {
       if (prompt.description !== undefined) data.description = prompt.description;
       if (prompt.content !== undefined) data.content = prompt.content;
       if (prompt.variables !== undefined) data.variables = prompt.variables;
+      if (prompt.iconId !== undefined) data.iconId = prompt.iconId;
+      if (prompt.colorId !== undefined) data.colorId = prompt.colorId;
       
-      const response = await fetch(getApiUrl(`library/${id}`), {
+      const apiUrl = getApiUrl(`library/${id}`);
+      
+      const response = await fetch(apiUrl, {
         method: 'PUT',
         headers,
         body: JSON.stringify(data),
@@ -206,11 +222,26 @@ export const libraryApi = {
           // или вызов метода повторной аутентификации
           throw new Error('Authentication error');
         }
+        
+        // Пытаемся получить текст ошибки
+        const errorText = await response.text();
+        console.error('Error updating library item:', errorText);
+        
         throw new Error(`Failed to update library item: ${response.statusText}`);
       }
 
       const item: LibraryItem = await response.json();
-      return convertToUserPrompt(item);
+      
+      // Если сервер не возвращает iconId и colorId, добавляем их из запроса
+      if (data.iconId && !item.icon_id) {
+        item.icon_id = data.iconId;
+      }
+      if (data.colorId && !item.color_id) {
+        item.color_id = data.colorId;
+      }
+      
+      const convertedItem = convertToUserPrompt(item);
+      return convertedItem;
     } catch (error) {
       console.error('Error updating library item:', error);
       throw error;
