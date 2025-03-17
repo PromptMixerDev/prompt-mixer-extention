@@ -21,6 +21,8 @@ def get_current_user(
     """
     Get current user from token
     """
+    print(f"get_current_user: Received token: {token[:10]}...")
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -28,20 +30,47 @@ def get_current_user(
     )
     
     try:
+        print(f"get_current_user: Decoding token with SECRET_KEY: {settings.SECRET_KEY[:5]}... and ALGORITHM: {settings.ALGORITHM}")
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
+        print(f"get_current_user: Token decoded successfully. Payload: {payload}")
+        
         user_id: str = payload.get("sub")
         if user_id is None:
+            print("get_current_user: No 'sub' field in token payload")
             raise credentials_exception
-    except JWTError:
+        
+        print(f"get_current_user: User ID from token: {user_id}")
+    except JWTError as e:
+        print(f"get_current_user: JWT error: {str(e)}")
+        raise credentials_exception
+    except Exception as e:
+        print(f"get_current_user: Unexpected error decoding token: {str(e)}")
+        print(f"get_current_user: Error type: {type(e).__name__}")
+        import traceback
+        print(f"get_current_user: Traceback: {traceback.format_exc()}")
         raise credentials_exception
     
-    user = auth_service.get_user(db, int(user_id))
-    if user is None:
+    try:
+        print(f"get_current_user: Getting user with ID: {user_id}")
+        user = auth_service.get_user(db, int(user_id))
+        
+        if user is None:
+            print(f"get_current_user: User with ID {user_id} not found")
+            raise credentials_exception
+        
+        print(f"get_current_user: User found: {user.id}, {user.email}")
+        return user
+    except ValueError as e:
+        print(f"get_current_user: ValueError: {str(e)}")
         raise credentials_exception
-    
-    return user
+    except Exception as e:
+        print(f"get_current_user: Unexpected error getting user: {str(e)}")
+        print(f"get_current_user: Error type: {type(e).__name__}")
+        import traceback
+        print(f"get_current_user: Traceback: {traceback.format_exc()}")
+        raise credentials_exception
 
 @router.get("/me", response_model=UserSchema)
 async def read_users_me(current_user: User = Depends(get_current_user)):

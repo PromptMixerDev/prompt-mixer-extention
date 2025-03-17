@@ -34,14 +34,19 @@ class UserLibraryService:
             Tuple of (items, total_count)
         """
         try:
+            logger.info(f"Getting library items for user_id={user_id}, skip={skip}, limit={limit}")
+            
             # Create base query
             query = db.query(UserLibrary).filter(UserLibrary.user_id == user_id)
+            logger.debug(f"Query: {str(query)}")
             
             # Get total count
             total = query.count()
+            logger.info(f"Total items found: {total}")
             
             # Get items with pagination
             items = query.order_by(desc(UserLibrary.created_at)).offset(skip).limit(limit).all()
+            logger.info(f"Retrieved {len(items)} items after pagination")
             
             # Convert to list of dictionaries
             result = []
@@ -66,10 +71,13 @@ class UserLibraryService:
                 
                 result.append(item_dict)
             
+            logger.info(f"Returning {len(result)} items")
             return result, total
         
         except Exception as e:
             logger.error(f"Error getting library items: {str(e)}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             raise
     
     @staticmethod

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { MenuPopup } from '@components/ui/popups/menu-popup/menu-popup';
-import LibraryIcon from '@components/ui/library-icon/library-icon';
-import { availableIcons, availableColors, defaultIconId, defaultColorId } from '@components/ui/library-icon/icon-options';
+import { availableIcons, availableColors, defaultIconId, defaultColorId, getColorById } from '@components/ui/library-icon/icon-options';
 import './icon-selector-popup.css';
 
 interface IconSelectorPopupProps {
@@ -68,7 +67,6 @@ export const IconSelectorPopup: React.FC<IconSelectorPopupProps> = ({
       <div className="icon-selector-popup">
         {/* Секция выбора цвета */}
         <div className="icon-selector-popup__section">
-          <div className="icon-selector-popup__section-title">Выберите цвет</div>
           <div className="icon-selector-popup__colors">
             {availableColors.map(color => (
               <div
@@ -87,7 +85,6 @@ export const IconSelectorPopup: React.FC<IconSelectorPopupProps> = ({
         
         {/* Секция выбора иконки */}
         <div className="icon-selector-popup__section">
-          <div className="icon-selector-popup__section-title">Выберите иконку</div>
           <div className="icon-selector-popup__icons">
             {availableIcons.map(icon => (
               <div
@@ -99,11 +96,10 @@ export const IconSelectorPopup: React.FC<IconSelectorPopupProps> = ({
                 }}
                 title={icon.name}
               >
-                <LibraryIcon
-                  key={`${icon.id}-${currentColorId}`}
-                  size="medium"
-                  iconId={icon.id}
-                  colorId={currentColorId}
+                <span 
+                  className="icon-selector-popup__icon-svg"
+                  style={{ color: getColorById(currentColorId)?.value }}
+                  dangerouslySetInnerHTML={{ __html: icon.svg }}
                 />
               </div>
             ))}

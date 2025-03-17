@@ -6,7 +6,7 @@ import {
   getColorById, 
   defaultIconId, 
   defaultColorId, 
-  generalIcons 
+  generalIcons
 } from './icon-options';
 
 /**
@@ -90,6 +90,9 @@ const LibraryIcon: React.FC<LibraryIconProps> = ({
     return result;
   };
   
+  // Получаем SVG контент
+  const iconSvg = getIconSvg();
+  
   // Получаем цвет из ID
   const getColorStyle = (): React.CSSProperties => {
     if (!colorId) {
@@ -112,8 +115,7 @@ const LibraryIcon: React.FC<LibraryIconProps> = ({
     return result;
   };
   
-  // Получаем SVG контент и стили цвета
-  const iconSvg = getIconSvg();
+  // Получаем стили цвета
   const colorStyle = getColorStyle();
 
   // Generate icon classes

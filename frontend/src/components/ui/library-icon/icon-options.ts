@@ -2,14 +2,11 @@
  * Метаданные для иконок и цветов, используемых в компоненте LibraryIcon
  */
 
-// Импортируем все SVG иконки
-import aliensFillSvg from '@assets/icons/fill/aliens-fill.svg?raw';
-import armchairFillSvg from '@assets/icons/fill/armchair-fill.svg?raw';
-import bearSmileFillSvg from '@assets/icons/fill/bear-smile-fill.svg?raw';
-import emotionHappyFillSvg from '@assets/icons/fill/emotion-happy-fill.svg?raw';
-import lightbulbFillSvg from '@assets/icons/fill/lightbulb-fill.svg?raw';
-import serviceBellFillSvg from '@assets/icons/fill/service-bell-fill.svg?raw';
-import settingsFillSvg from '@assets/icons/fill/settings-fill.svg?raw';
+// Импортируем части иконок
+import { iconsPart1 } from './icons-part1';
+import { iconsPart2 } from './icons-part2';
+import { iconsPart3 } from './icons-part3';
+import { iconsPart4 } from './icons-part4';
 
 // Импортируем общие иконки
 import baseIconSvg from '@assets/icons/general/base-icon.svg?raw';
@@ -17,6 +14,23 @@ import promptLineSvg from '@assets/icons/general/prompt-line.svg?raw';
 import historyLineSvg from '@assets/icons/general/history-line.svg?raw';
 import searchLineSvg from '@assets/icons/general/search-line.svg?raw';
 import menuLineSvg from '@assets/icons/general/menu-line.svg?raw';
+
+// Объединяем все иконки в один массив
+export const availableIcons = [
+  ...iconsPart1,
+  ...iconsPart2,
+  ...iconsPart3,
+  ...iconsPart4
+];
+
+// Объект с общими иконками
+export const generalIcons = {
+  'base-icon': baseIconSvg,
+  'prompt-line': promptLineSvg,
+  'history-line': historyLineSvg,
+  'search-line': searchLineSvg,
+  'menu-line': menuLineSvg,
+};
 
 // Доступные цвета из токенов
 export const availableColors = [
@@ -70,62 +84,6 @@ export const availableColors = [
     name: 'Crimson',
     value: 'var(--color-prompt-tile-crimson)'
   }
-];
-
-// Объект с общими иконками
-export const generalIcons = {
-  'base-icon': baseIconSvg,
-  'prompt-line': promptLineSvg,
-  'history-line': historyLineSvg,
-  'search-line': searchLineSvg,
-  'menu-line': menuLineSvg,
-};
-
-// Доступные иконки
-export const availableIcons = [
-  {
-    id: 'aliens-fill',
-    name: 'Aliens',
-    path: 'fill/aliens-fill',
-    svg: aliensFillSvg
-  },
-  {
-    id: 'armchair-fill',
-    name: 'Armchair',
-    path: 'fill/armchair-fill',
-    svg: armchairFillSvg
-  },
-  {
-    id: 'bear-smile-fill',
-    name: 'Bear Smile',
-    path: 'fill/bear-smile-fill',
-    svg: bearSmileFillSvg
-  },
-  {
-    id: 'emotion-happy-fill',
-    name: 'Happy Face',
-    path: 'fill/emotion-happy-fill',
-    svg: emotionHappyFillSvg
-  },
-  {
-    id: 'lightbulb-fill',
-    name: 'Lightbulb',
-    path: 'fill/lightbulb-fill',
-    svg: lightbulbFillSvg
-  },
-  {
-    id: 'service-bell-fill',
-    name: 'Service Bell',
-    path: 'fill/service-bell-fill',
-    svg: serviceBellFillSvg
-  },
-  {
-    id: 'settings-fill',
-    name: 'Settings',
-    path: 'fill/settings-fill',
-    svg: settingsFillSvg
-  },
-  // Можно добавить больше иконок при необходимости
 ];
 
 // Значения по умолчанию
