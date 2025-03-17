@@ -25,12 +25,16 @@ class UserLibraryBase(BaseModel):
     description: Optional[str] = Field(None, description="Description of the prompt")
     content: str = Field(..., description="Content of the prompt")
     variables: Optional[List[PromptVariable]] = Field(None, description="Variables used in the prompt")
+    icon_id: Optional[str] = Field(None, description="ID of the icon from availableIcons")
+    color_id: Optional[str] = Field(None, description="ID of the color from availableColors")
 
 class UserLibraryCreate(UserLibraryBase):
     """
     Schema for creating a user library item
     """
-    pass
+    # Дополнительные поля для совместимости с фронтендом (camelCase)
+    iconId: Optional[str] = Field(None, description="ID of the icon from availableIcons (camelCase)")
+    colorId: Optional[str] = Field(None, description="ID of the color from availableColors (camelCase)")
 
 class UserLibraryUpdate(BaseModel):
     """
@@ -40,6 +44,12 @@ class UserLibraryUpdate(BaseModel):
     description: Optional[str] = Field(None, description="Description of the prompt")
     content: Optional[str] = Field(None, description="Content of the prompt")
     variables: Optional[List[PromptVariable]] = Field(None, description="Variables used in the prompt")
+    icon_id: Optional[str] = Field(None, description="ID of the icon from availableIcons")
+    color_id: Optional[str] = Field(None, description="ID of the color from availableColors")
+    
+    # Дополнительные поля для совместимости с фронтендом (camelCase)
+    iconId: Optional[str] = Field(None, description="ID of the icon from availableIcons (camelCase)")
+    colorId: Optional[str] = Field(None, description="ID of the color from availableColors (camelCase)")
 
 class UserLibraryInDBBase(UserLibraryBase):
     """

@@ -77,6 +77,8 @@ const PromptList: React.FC = () => {
                 key={prompt.id}
                 title={prompt.title}
                 iconName="prompt-line"
+                iconId={prompt.iconId}
+                colorId={prompt.colorId}
                 rightIconName="menu-line"
                 onClick={() => handlePromptSelect(prompt.id)}
                 onRightButtonClick={() => handleMenuClick(prompt.id)}

@@ -1,0 +1,6 @@
+/* Стили для разделителя */
+.menu-divider {
+  height: 1px;
+  margin: var(--spacing-1) 0;
+  background-color: var(--color-divider);
+}

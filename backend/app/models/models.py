@@ -84,6 +84,8 @@ class UserLibrary(Base):
     description = Column(Text, nullable=True)
     content = Column(Text, nullable=False)  # Содержание промпта
     variables = Column(JSON, nullable=True)  # Переменные промпта в формате JSON
+    icon_id = Column(String, nullable=True)  # ID иконки из availableIcons
+    color_id = Column(String, nullable=True)  # ID цвета из availableColors
     user_id = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

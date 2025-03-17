@@ -58,6 +58,12 @@ class UserLibraryService:
                     "updated_at": item.updated_at
                 }
                 
+                # Добавляем поля icon_id и color_id, если они есть
+                if hasattr(item, 'icon_id'):
+                    item_dict["icon_id"] = item.icon_id
+                if hasattr(item, 'color_id'):
+                    item_dict["color_id"] = item.color_id
+                
                 result.append(item_dict)
             
             return result, total
@@ -101,6 +107,12 @@ class UserLibraryService:
                 "updated_at": item.updated_at
             }
             
+            # Добавляем поля icon_id и color_id, если они есть
+            if hasattr(item, 'icon_id'):
+                item_dict["icon_id"] = item.icon_id
+            if hasattr(item, 'color_id'):
+                item_dict["color_id"] = item.color_id
+            
             return item_dict
         
         except Exception as e:
@@ -127,13 +139,30 @@ class UserLibraryService:
                 variables = UserLibraryService.extract_variables(item.content)
             
             # Create new item
-            db_item = UserLibrary(
-                title=item.title,
-                description=item.description,
-                content=item.content,
-                variables=variables,
-                user_id=user_id
-            )
+            db_item_data = {
+                "title": item.title,
+                "description": item.description,
+                "content": item.content,
+                "variables": variables,
+                "user_id": user_id
+            }
+            
+            # Добавляем поля icon_id и color_id, если они поддерживаются моделью
+            if hasattr(UserLibrary, 'icon_id'):
+                # Приоритет отдаем полю iconId (camelCase) для совместимости с фронтендом
+                if hasattr(item, 'iconId') and item.iconId:
+                    db_item_data["icon_id"] = item.iconId
+                elif item.icon_id:
+                    db_item_data["icon_id"] = item.icon_id
+                    
+            if hasattr(UserLibrary, 'color_id'):
+                # Приоритет отдаем полю colorId (camelCase) для совместимости с фронтендом
+                if hasattr(item, 'colorId') and item.colorId:
+                    db_item_data["color_id"] = item.colorId
+                elif item.color_id:
+                    db_item_data["color_id"] = item.color_id
+            
+            db_item = UserLibrary(**db_item_data)
             
             # Add to database
             db.add(db_item)
@@ -151,6 +180,12 @@ class UserLibraryService:
                 "created_at": db_item.created_at,
                 "updated_at": db_item.updated_at
             }
+            
+            # Добавляем поля icon_id и color_id, если они есть
+            if hasattr(db_item, 'icon_id'):
+                item_dict["icon_id"] = db_item.icon_id
+            if hasattr(db_item, 'color_id'):
+                item_dict["color_id"] = db_item.color_id
             
             return item_dict
         
@@ -198,6 +233,14 @@ class UserLibraryService:
                     db_item.variables
                 )
             
+            # Проверяем наличие полей iconId и colorId в запросе
+            # Это нужно для совместимости с фронтендом, который отправляет поля в camelCase
+            if hasattr(item, 'iconId') and item.iconId is not None:
+                update_data["icon_id"] = item.iconId
+            
+            if hasattr(item, 'colorId') and item.colorId is not None:
+                update_data["color_id"] = item.colorId
+            
             # Update item
             for key, value in update_data.items():
                 setattr(db_item, key, value)
@@ -216,6 +259,12 @@ class UserLibraryService:
                 "created_at": db_item.created_at,
                 "updated_at": db_item.updated_at
             }
+            
+            # Добавляем поля icon_id и color_id, если они есть
+            if hasattr(db_item, 'icon_id'):
+                item_dict["icon_id"] = db_item.icon_id
+            if hasattr(db_item, 'color_id'):
+                item_dict["color_id"] = db_item.color_id
             
             return item_dict
         
@@ -286,13 +335,21 @@ class UserLibraryService:
             variables = UserLibraryService.extract_variables(history_item.improved_prompt)
             
             # Create new library item
-            db_item = UserLibrary(
-                title=history_item.title or "Untitled Prompt",
-                description=history_item.description,
-                content=history_item.improved_prompt,
-                variables=variables,
-                user_id=user_id
-            )
+            db_item_data = {
+                "title": history_item.title or "Untitled Prompt",
+                "description": history_item.description,
+                "content": history_item.improved_prompt,
+                "variables": variables,
+                "user_id": user_id
+            }
+            
+            # Добавляем поля icon_id и color_id, если они поддерживаются моделью
+            if hasattr(UserLibrary, 'icon_id'):
+                db_item_data["icon_id"] = "lightbulb-fill"  # Значение по умолчанию
+            if hasattr(UserLibrary, 'color_id'):
+                db_item_data["color_id"] = "cobalt"         # Значение по умолчанию
+            
+            db_item = UserLibrary(**db_item_data)
             
             # Add to database
             db.add(db_item)
@@ -310,6 +367,12 @@ class UserLibraryService:
                 "created_at": db_item.created_at,
                 "updated_at": db_item.updated_at
             }
+            
+            # Добавляем поля icon_id и color_id, если они есть
+            if hasattr(db_item, 'icon_id'):
+                item_dict["icon_id"] = db_item.icon_id
+            if hasattr(db_item, 'color_id'):
+                item_dict["color_id"] = db_item.color_id
             
             return item_dict
         

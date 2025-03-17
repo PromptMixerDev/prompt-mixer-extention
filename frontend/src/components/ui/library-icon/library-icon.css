@@ -8,6 +8,16 @@
   border-radius: var(--border-radius-md);
   background-color: var(--color-background-secondary);
   overflow: hidden;
+  position: relative;
+}
+
+/* Editable icon styles */
+.library-icon.editable {
+  cursor: pointer;
+}
+
+.library-icon.editable:hover {
+  background-color: var(--button-transparent-hover-bg);
 }
 
 /* Icon SVG */
@@ -20,33 +30,43 @@
 }
 
 .library-icon-svg svg {
-  width: 16px;
-  height: 16px;
   object-fit: cover;
   color: var(--color-text-primary);
+  width: var(--custom-icon-size, auto);
+  height: var(--custom-icon-size, auto);
+}
+
+/* Размеры SVG для разных размеров контейнера */
+.library-icon-small .library-icon-svg svg { width: 14px; height: 14px; }
+.library-icon-medium .library-icon-svg svg { width: 16px; height: 16px; }
+.library-icon-large .library-icon-svg svg { width: 20px; height: 20px; }
+.library-icon-xlarge .library-icon-svg svg { width: 40px; height: 40px; }
+
+/* Colored icon styles */
+/* Для маленьких размеров: белая иконка на цветном фоне */
+.colored-icon.library-icon-small,
+.colored-icon.library-icon-medium {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.colored-icon.library-icon-small .library-icon-svg svg,
+.colored-icon.library-icon-medium .library-icon-svg svg {
+  color: white;
+}
+
+/* Для больших размеров: цветная иконка на белом фоне */
+.colored-icon.library-icon-large,
+.colored-icon.library-icon-xlarge {
+  background-color: white;
+}
+
+.colored-icon.library-icon-large .library-icon-svg svg,
+.colored-icon.library-icon-xlarge .library-icon-svg svg {
+  color: var(--icon-color, var(--color-text-primary));
 }
 
 /* Size variants */
-.library-icon-small {
-  width: 24px;
-  height: 24px;
-  border-radius: var(--border-radius-md);
-}
-
-.library-icon-medium {
-  width: 28px;
-  height: 28px;
-  border-radius: var(--border-radius-md);
-}
-
-.library-icon-large {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--border-radius-xlg);
-}
-
-.library-icon-xlarge {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--border-radius-xlg);
-}
+.library-icon-small { width: 24px; height: 24px; }
+.library-icon-medium { width: 28px; height: 28px; }
+.library-icon-large { width: 32px; height: 32px; }
+.library-icon-xlarge { width: 44px; height: 44px; }

@@ -101,9 +101,10 @@ export function PromptProvider({ children }: PromptProviderProps) {
       const updated = await libraryApi.updateLibraryItem(id, updatedPrompt);
       
       // Update local state
-      setUserPrompts(prevPrompts => 
-        prevPrompts.map(prompt => prompt.id === id ? updated : prompt)
-      );
+      setUserPrompts(prevPrompts => {
+        const newPrompts = prevPrompts.map(prompt => prompt.id === id ? updated : prompt);
+        return newPrompts;
+      });
       
       return updated;
     } catch (err) {

@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import './navigation.css';
 import Button from '@components/ui/button/button';
 import { Tooltip } from '@components/tech/tooltip/tooltip';
+import { NavigationMenuPopup } from '@components/ui/popups/navigation-menu-popup/navigation-menu-popup';
 
 /**
  * Navigation component for the side panel
  */
 const Navigation: React.FC = () => {
+  // Используем activeTab для визуального отображения активной вкладки
   const [activeTab, setActiveTab] = useState('prompt');
 
   /**
@@ -18,6 +20,7 @@ const Navigation: React.FC = () => {
     const event = new CustomEvent('tabChange', { detail: { tab } });
     window.dispatchEvent(event);
   };
+
 
   return (
     <div className="navigation">
@@ -53,15 +56,18 @@ const Navigation: React.FC = () => {
         </Tooltip>
       </div>
       <div className="navigation-right">
-        <Tooltip content="Open menu" position="bottom-right">
-          <Button 
-            kind="glyph" 
-            size="medium" 
-            variant="tertiary" 
-            icon="menu-line"
-            onClick={() => {/* действие меню */}} 
-          />
-        </Tooltip>
+        <NavigationMenuPopup
+          trigger={
+            <Tooltip content="Open menu" position="bottom-right">
+              <Button 
+                kind="glyph" 
+                size="medium" 
+                variant="tertiary" 
+                icon="menu-line"
+              />
+            </Tooltip>
+          }
+        />
       </div>
     </div>
   );

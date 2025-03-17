@@ -1,0 +1,71 @@
+/* Стили для попапа выбора иконки */
+.icon-selector-popup {
+  width: 240px;
+}
+
+.icon-selector-popup__section {
+  margin-bottom: var(--spacing-4);
+}
+
+.icon-selector-popup__section-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-2);
+  color: var(--color-text-secondary);
+}
+
+/* Сетка цветов */
+.icon-selector-popup__colors {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+}
+
+.icon-selector-popup__color {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--border-radius-full);
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+  border: 2px solid transparent;
+}
+
+.icon-selector-popup__color:hover {
+  transform: scale(1.01);
+}
+
+.icon-selector-popup__color.selected {
+  border-color: var(--color-text-primary);
+  box-shadow: 0 0 0 2px white;
+}
+
+/* Сетка иконок */
+.icon-selector-popup__icons {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--spacing-2);
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: var(--spacing-2);
+}
+
+.icon-selector-popup__icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2);
+  cursor: pointer;
+  border-radius: var(--border-radius-md);
+  transition: background-color 0.1s ease-in-out;
+}
+
+.icon-selector-popup__icon-wrapper:hover {
+  background-color: var(--color-background-secondary);
+}
+
+.icon-selector-popup__icon-wrapper.selected {
+  background-color: var(--color-background-tertiary);
+}
+
+/* Удалены стили для кнопок действий, так как они больше не используются */

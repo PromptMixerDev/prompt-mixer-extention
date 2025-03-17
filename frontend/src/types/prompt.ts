@@ -18,6 +18,8 @@ export interface BasePrompt {
 export interface UserPrompt extends BasePrompt {
   description?: string;
   variables?: PromptVariable[];
+  iconId?: string; // ID иконки из availableIcons
+  colorId?: string; // ID цвета из availableColors
   copiedFrom?: string; // Legacy field: ID of the shared prompt if copied
 }
 
