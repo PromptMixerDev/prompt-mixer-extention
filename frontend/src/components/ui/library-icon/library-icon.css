@@ -38,7 +38,7 @@
 
 /* Размеры SVG для разных размеров контейнера */
 .library-icon-small .library-icon-svg svg { width: 14px; height: 14px; }
-.library-icon-medium .library-icon-svg svg { width: 16px; height: 16px; }
+.library-icon-medium .library-icon-svg svg { width: 20px; height: 20px; }
 .library-icon-large .library-icon-svg svg { width: 20px; height: 20px; }
 .library-icon-xlarge .library-icon-svg svg { width: 40px; height: 40px; }
 

@@ -5,9 +5,13 @@ import { getApiUrl } from '@utils/config';
  * Get auth token from chrome.storage
  */
 const getAuthToken = async (): Promise<string | null> => {
+  console.log('Getting auth token from chrome.storage.local');
   return new Promise(resolve => {
     chrome.storage.local.get(['auth'], result => {
-      resolve(result.auth?.token || null);
+      console.log('Auth data from storage:', result);
+      const token = result.auth?.token || null;
+      console.log('Extracted token:', token ? `${token.substring(0, 10)}...` : 'null');
+      resolve(token);
     });
   });
 };
@@ -17,12 +21,17 @@ const getAuthToken = async (): Promise<string | null> => {
  */
 export const createAuthHeaders = async (): Promise<HeadersInit> => {
   const token = await getAuthToken();
+  console.log('Auth token from storage:', token);
+  
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+    console.log('Authorization header:', headers['Authorization']);
+  } else {
+    console.warn('No auth token found in storage');
   }
 
   return headers;
@@ -37,23 +46,33 @@ export const authApi = {
    */
   async authenticateWithGoogle(): Promise<{ token: string; user: User }> {
     try {
+      console.log('Starting Google authentication process');
+      
       // Получить токен от chrome.identity
       const googleToken = await new Promise<string>((resolve, reject) => {
+        console.log('Requesting token from chrome.identity');
         chrome.identity.getAuthToken({ interactive: true }, token => {
           if (chrome.runtime.lastError) {
+            console.error('Chrome identity error:', chrome.runtime.lastError);
             reject(new Error(chrome.runtime.lastError.message));
             return;
           }
           if (!token) {
+            console.error('No token returned from chrome.identity');
             reject(new Error('Failed to get auth token'));
             return;
           }
+          console.log('Received token from chrome.identity:', token.substring(0, 10) + '...');
           resolve(token);
         });
       });
 
       // Отправить токен на бэкенд
-      const response = await fetch(getApiUrl('auth/google'), {
+      console.log('Sending token to backend');
+      const url = getApiUrl('auth/google');
+      console.log('Auth URL:', url);
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,11 +81,19 @@ export const authApi = {
         redirect: 'follow'
       });
 
+      console.log('Auth response status:', response.status, response.statusText);
+      
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Auth error response:', errorText);
         throw new Error(`Authentication failed: ${response.statusText}`);
       }
 
       const authData = await response.json();
+      console.log('Auth response data:', {
+        ...authData,
+        access_token: authData.access_token ? authData.access_token.substring(0, 10) + '...' : null
+      });
 
       return {
         token: authData.access_token,

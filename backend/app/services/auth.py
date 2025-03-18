@@ -26,22 +26,24 @@ class AuthService:
         Authenticate user with Google token
         """
         try:
-            print(f"Authenticating with Google token: {token[:10]}...")
+            print(f"AuthService.authenticate_google: Authenticating with Google token: {token[:10]}...")
+            print(f"AuthService.authenticate_google: Token length: {len(token)}")
             
             # Verify Google token
+            print(f"AuthService.authenticate_google: Calling verify_google_token...")
             idinfo = verify_google_token(token)
-            print(f"Token verified. User info: {idinfo}")
+            print(f"AuthService.authenticate_google: Token verified. User info: {idinfo}")
             
             if "email" not in idinfo:
-                print(f"Error: No email in idinfo: {idinfo}")
+                print(f"AuthService.authenticate_google: Error: No email in idinfo: {idinfo}")
                 return None
             
             # Check if user exists
-            print(f"Checking if user exists with email: {idinfo['email']}")
+            print(f"AuthService.authenticate_google: Checking if user exists with email: {idinfo['email']}")
             user = self.get_user_by_email(db, idinfo["email"])
             
             if user:
-                print(f"User found: {user.id}, {user.email}")
+                print(f"AuthService.authenticate_google: User found: {user.id}, {user.email}")
                 # Update user if needed
                 update_data = {}
                 if not user.google_id:
@@ -52,10 +54,13 @@ class AuthService:
                     update_data["photo_url"] = idinfo.get("picture")
                 
                 if update_data:
-                    print(f"Updating user with data: {update_data}")
+                    print(f"AuthService.authenticate_google: Updating user with data: {update_data}")
                     user = self.update_user(db, user_id=user.id, obj_in=UserUpdate(**update_data))
+                    print(f"AuthService.authenticate_google: User updated: {user.id}, {user.email}")
+                else:
+                    print(f"AuthService.authenticate_google: No updates needed for user: {user.id}, {user.email}")
             else:
-                print(f"User not found, creating new user with email: {idinfo['email']}")
+                print(f"AuthService.authenticate_google: User not found, creating new user with email: {idinfo['email']}")
                 # Create new user
                 user_in = UserCreate(
                     email=idinfo["email"],
@@ -63,15 +68,22 @@ class AuthService:
                     google_id=idinfo["sub"],
                     photo_url=idinfo.get("picture")
                 )
+                print(f"AuthService.authenticate_google: Creating user with data: {user_in}")
                 user = self.create_user(db, obj_in=user_in)
-                print(f"New user created: {user.id}, {user.email}")
+                print(f"AuthService.authenticate_google: New user created: {user.id}, {user.email}")
             
+            print(f"AuthService.authenticate_google: Authentication successful, returning user: {user.id}, {user.email}")
             return user
         except ValueError as e:
-            print(f"Error authenticating with Google: {e}")
+            print(f"AuthService.authenticate_google: Error authenticating with Google: {e}")
+            import traceback
+            print(f"AuthService.authenticate_google: Traceback: {traceback.format_exc()}")
             return None
         except Exception as e:
-            print(f"Unexpected error in authenticate_google: {str(e)}")
+            print(f"AuthService.authenticate_google: Unexpected error in authenticate_google: {str(e)}")
+            print(f"AuthService.authenticate_google: Error type: {type(e).__name__}")
+            import traceback
+            print(f"AuthService.authenticate_google: Traceback: {traceback.format_exc()}")
             return None
     
     def create_user(self, db: Session, obj_in: UserCreate) -> User:

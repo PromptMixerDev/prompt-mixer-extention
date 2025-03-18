@@ -78,16 +78,34 @@ export const libraryApi = {
    */
   async getLibraryItems(skip = 0, limit = 100): Promise<{ items: UserPrompt[], total: number }> {
     try {
+      console.log(`Fetching library items: skip=${skip}, limit=${limit}`);
       const headers = await createAuthHeaders();
-      const response = await fetch(getApiUrl(`library?skip=${skip}&limit=${limit}`), {
+      console.log('Request headers:', headers);
+      
+      const url = getApiUrl(`library?skip=${skip}&limit=${limit}`);
+      console.log('Request URL:', url);
+      
+      const response = await fetch(url, {
         headers,
         redirect: 'follow' // Автоматически следовать перенаправлениям
       });
 
+      console.log('Response status:', response.status, response.statusText);
+      console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
+      
       if (!response.ok) {
         // Проверка на ошибки аутентификации
         if (response.status === 401 || response.status === 307) {
           console.error('Authentication error, redirecting to login');
+          
+          // Попытка получить текст ошибки
+          try {
+            const errorText = await response.text();
+            console.error('Error response body:', errorText);
+          } catch (e) {
+            console.error('Could not read error response body');
+          }
+          
           // Здесь можно добавить логику перенаправления на страницу входа
           // или вызов метода повторной аутентификации
           return { items: [], total: 0 };
@@ -96,6 +114,7 @@ export const libraryApi = {
       }
 
       const data: LibraryListResponse = await response.json();
+      console.log('Response data:', data);
       
       // Convert API items to UserPrompt format
       const items = data.items.map(convertToUserPrompt);

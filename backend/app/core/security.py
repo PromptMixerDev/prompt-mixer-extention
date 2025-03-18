@@ -50,6 +50,7 @@ def verify_google_token(token: str) -> dict:
     """
     try:
         print(f"Verifying Google token: {token[:10]}...")
+        print(f"GOOGLE_CLIENT_ID: {settings.GOOGLE_CLIENT_ID}")
         
         # First try to verify as ID token
         try:
@@ -62,33 +63,44 @@ def verify_google_token(token: str) -> dict:
         except ValueError as e:
             # Not an ID token, try as access token
             print(f"Not an ID token: {str(e)}")
+            print(f"Token format: {token[:10]}... (length: {len(token)})")
             pass
         
         # Try as access token
         print("Trying to verify as access token...")
         userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
         headers = {"Authorization": f"Bearer {token}"}
+        print(f"Request headers: {headers}")
+        
         import requests as http_requests
-        response = http_requests.get(userinfo_url, headers=headers)
-        
-        print(f"Access token response status: {response.status_code}")
-        
-        if response.status_code != 200:
-            response_text = response.text
-            print(f"Failed to get user info: {response.status_code}, Response: {response_text}")
-            raise ValueError(f"Failed to get user info: {response.status_code}, Response: {response_text}")
-        
-        userinfo = response.json()
-        print(f"Successfully verified as access token. User info: {userinfo}")
-        
-        # Create a dict similar to what id_token.verify_oauth2_token returns
-        return {
-            "sub": userinfo.get("id"),
-            "email": userinfo.get("email"),
-            "name": userinfo.get("name"),
-            "picture": userinfo.get("picture")
-        }
+        try:
+            response = http_requests.get(userinfo_url, headers=headers)
+            
+            print(f"Access token response status: {response.status_code}")
+            print(f"Access token response headers: {response.headers}")
+            
+            if response.status_code != 200:
+                response_text = response.text
+                print(f"Failed to get user info: {response.status_code}, Response: {response_text}")
+                raise ValueError(f"Failed to get user info: {response.status_code}, Response: {response_text}")
+            
+            userinfo = response.json()
+            print(f"Successfully verified as access token. User info: {userinfo}")
+            
+            # Create a dict similar to what id_token.verify_oauth2_token returns
+            return {
+                "sub": userinfo.get("id"),
+                "email": userinfo.get("email"),
+                "name": userinfo.get("name"),
+                "picture": userinfo.get("picture")
+            }
+        except http_requests.RequestException as req_error:
+            print(f"Request error when verifying access token: {str(req_error)}")
+            raise ValueError(f"Request error when verifying access token: {str(req_error)}")
     except Exception as e:
         # Invalid token
         print(f"Error verifying Google token: {str(e)}")
+        print(f"Error type: {type(e).__name__}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         raise ValueError(f"Invalid Google token: {str(e)}")

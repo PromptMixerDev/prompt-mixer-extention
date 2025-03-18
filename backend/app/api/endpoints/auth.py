@@ -42,18 +42,41 @@ async def login_with_google(
     """
     Authenticate with Google token
     """
-    user = auth_service.authenticate_google(db, auth_request.token)
-    if not user:
+    print(f"login_with_google: Received request with token: {auth_request.token[:10]}...")
+    print(f"login_with_google: Token length: {len(auth_request.token)}")
+    
+    try:
+        user = auth_service.authenticate_google(db, auth_request.token)
+        
+        if not user:
+            print("login_with_google: Authentication failed, user is None")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Google token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        print(f"login_with_google: Authentication successful, user: {user.id}, {user.email}")
+        access_token = auth_service.create_access_token_for_user(user.id)
+        print(f"login_with_google: Access token created: {access_token[:10]}...")
+        
+        response_data = {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": user
+        }
+        print(f"login_with_google: Returning response with user: {user.id}, {user.email}")
+        
+        return response_data
+    except HTTPException as e:
+        print(f"login_with_google: HTTP exception: {e.detail}, status_code: {e.status_code}")
+        raise
+    except Exception as e:
+        print(f"login_with_google: Unexpected error: {str(e)}")
+        print(f"login_with_google: Error type: {type(e).__name__}")
+        import traceback
+        print(f"login_with_google: Traceback: {traceback.format_exc()}")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid Google token",
-            headers={"WWW-Authenticate": "Bearer"},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Internal server error: {str(e)}",
         )
-    
-    access_token = auth_service.create_access_token_for_user(user.id)
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user": user
-    }

@@ -22,15 +22,27 @@ async def get_user_library(
     
     This endpoint returns the user's prompt library with pagination.
     """
+    print(f"get_user_library: Received request with skip={skip}, limit={limit}")
+    print(f"get_user_library: Current user: id={current_user.id}, email={current_user.email}")
+    
     try:
+        print(f"get_user_library: Calling user_library_service.get_library_items")
         items, total = user_library_service.get_library_items(
             db=db,
             user_id=current_user.id,
             skip=skip,
             limit=limit
         )
-        return {"items": items, "total": total}
+        print(f"get_user_library: Retrieved {len(items)} items out of {total} total")
+        
+        response = {"items": items, "total": total}
+        print(f"get_user_library: Returning response with {len(items)} items")
+        return response
     except Exception as e:
+        print(f"get_user_library: Error: {str(e)}")
+        print(f"get_user_library: Error type: {type(e).__name__}")
+        import traceback
+        print(f"get_user_library: Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Error getting user library: {str(e)}")
 
 @router.get("/{item_id}", response_model=UserLibrary)

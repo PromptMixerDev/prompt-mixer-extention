@@ -23,13 +23,20 @@ export const API_CONFIG = {
  * @returns The full API URL
  */
 export const getApiUrl = (endpoint: string): string => {
+  console.log('API_CONFIG.BASE_URL:', API_CONFIG.BASE_URL);
+  
   // Remove leading slash from endpoint if present
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+  console.log('Cleaned endpoint:', cleanEndpoint);
   
   // Remove trailing slash from base URL if present
   const baseUrl = API_CONFIG.BASE_URL.endsWith('/')
     ? API_CONFIG.BASE_URL.slice(0, -1)
     : API_CONFIG.BASE_URL;
+  console.log('Base URL:', baseUrl);
   
-  return `${baseUrl}/${cleanEndpoint}`;
+  const fullUrl = `${baseUrl}/${cleanEndpoint}`;
+  console.log('Full API URL:', fullUrl);
+  
+  return fullUrl;
 };
