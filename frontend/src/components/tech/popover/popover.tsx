@@ -50,11 +50,8 @@ const Content: React.FC<ContentProps> = ({ children }) => {
     const wrapperElement = contentRef.current.parentElement;
     
     // Находим триггер внутри wrapper
-    const triggerElement = wrapperElement.querySelector('.popover__trigger');
+    const triggerElement = wrapperElement.querySelector('.popover__trigger') as HTMLElement;
     if (!triggerElement) return;
-    
-    const triggerRect = triggerElement.getBoundingClientRect();
-    const contentRect = contentRef.current.getBoundingClientRect();
     
     // Получаем align из атрибута data-align
     const align = wrapperElement.getAttribute('data-align') as PopoverAlign || 'right';
@@ -66,51 +63,24 @@ const Content: React.FC<ContentProps> = ({ children }) => {
     // Расчет позиции в зависимости от выбранного положения
     switch (align) {
       case 'left':
-        top = (triggerRect.height - contentRect.height) / 2;
-        left = -contentRect.width - 8;
+        top = 0; // Выравнивание по верхнему краю триггера
+        left = -(contentRef.current as HTMLElement).offsetWidth - 8; // Слева от триггера с отступом
         break;
       case 'right':
-        top = (triggerRect.height - contentRect.height) / 2;
-        left = triggerRect.width + 8;
+        top = 0; // Выравнивание по верхнему краю триггера
+        left = triggerElement.offsetWidth + 4; // Справа от триггера с отступом
         break;
       case 'bottom-left':
-        top = triggerRect.height + 12; // Увеличиваем отступ
-        left = 0;
+        top = triggerElement.offsetHeight + 4; // Под триггером с отступом
+        left = 0; // Выравнивание по левому краю триггера
         break;
       case 'bottom-right':
-        top = triggerRect.height + 12; // Увеличиваем отступ
-        left = triggerRect.width - contentRect.width;
+        top = triggerElement.offsetHeight + 4; // Под триггером с отступом
+        left = triggerElement.offsetWidth - (contentRef.current as HTMLElement).offsetWidth; // Выравнивание по правому краю
         break;
       default:
-        top = triggerRect.height + 8;
+        top = triggerElement.offsetHeight + 4;
         left = 0;
-    }
-    
-    // Проверяем, не выходит ли контент за пределы экрана
-    const wrapperRect = wrapperElement.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    // Проверка по горизонтали
-    if (wrapperRect.left + left < 10) {
-      // Если выходит за левый край
-      left = -wrapperRect.left + 10;
-    } else if (wrapperRect.left + left + contentRect.width > viewportWidth - 10) {
-      // Если выходит за правый край
-      left = viewportWidth - wrapperRect.left - contentRect.width - 10;
-    }
-    
-    // Проверка по вертикали
-    if (wrapperRect.top + top < 10) {
-      // Если выходит за верхний край
-      top = -wrapperRect.top + 10;
-    } else if (wrapperRect.top + top + contentRect.height > viewportHeight - 10) {
-      // Если выходит за нижний край, показываем над триггером
-      if (align === 'bottom-left' || align === 'bottom-right') {
-        top = -contentRect.height - 8;
-      } else {
-        top = viewportHeight - wrapperRect.top - contentRect.height - 10;
-      }
     }
     
     setTooltipStyle({ top, left });

@@ -83,7 +83,7 @@ const getInputBlockConfig = (variant?: InputBlockVariant): InputBlockConfig => {
     case 'prompt':
       return { text: 'Add to chat', icon: 'chat-smile', readOnly: false };
     case 'history-improved':
-      return { text: 'Add to library', icon: 'prompt-line', readOnly: true };
+      return { text: 'Add to library', icon: 'add-line', readOnly: true };
     case 'history-original':
       return { text: '', icon: '', readOnly: true };
     case 'variable':
@@ -110,6 +110,9 @@ export const InputBlock: React.FC<InputBlockProps> = ({
   isLoading = false,
   autoFocus = false
 }) => {
+  // State to track if the content is focused
+  const [isFocused, setIsFocused] = React.useState(false);
+  
   // Get configuration based on variant
   const config = getInputBlockConfig(variant);
   
@@ -117,6 +120,15 @@ export const InputBlock: React.FC<InputBlockProps> = ({
   const finalButtonText = rightButtonText !== undefined ? rightButtonText : config.text;
   const finalButtonIcon = rightButtonIcon !== undefined ? rightButtonIcon : config.icon;
   const finalReadOnly = readOnly !== undefined ? readOnly : config.readOnly;
+  
+  // Handlers for focus events
+  const handleContentFocus = () => {
+    setIsFocused(true);
+  };
+  
+  const handleContentBlur = () => {
+    setIsFocused(false);
+  };
   
   // If component is in loading state, display skeleton
   if (isLoading) {
@@ -141,7 +153,7 @@ export const InputBlock: React.FC<InputBlockProps> = ({
   
   // Normal render
   return (
-    <div className="input-block">
+    <div className={`input-block ${isFocused ? 'input-block--focused' : ''}`}>
       <InputBlockLabel 
         rightButtonText={finalButtonText}
         rightButtonIcon={finalButtonIcon}
@@ -155,6 +167,8 @@ export const InputBlock: React.FC<InputBlockProps> = ({
         placeholder={placeholder}
         readOnly={finalReadOnly}
         autoFocus={autoFocus}
+        onFocus={handleContentFocus}
+        onBlur={handleContentBlur}
       />
     </div>
   );
