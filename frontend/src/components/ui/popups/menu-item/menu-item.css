@@ -2,12 +2,14 @@
 .menu-item {
   display: flex;
   align-items: center;
-  padding: var(--spacing-1) var(--spacing-1);
+  padding: 0 6px;
   cursor: pointer;
   font-size: var(--font-size-sm);
   color: var(--color-text-primary);
+  font-weight: 500;
   transition: background-color var(--transition-fast);
   border-radius: var(--border-radius-md);
+  height: 28px;
   user-select: none;
 }
 
@@ -22,6 +24,14 @@
 
 .menu-item--danger {
   color: var(--color-error);
+}
+
+.menu-item--secondary {
+  color: var(--color-text-secondary);
+}
+
+.menu-item--secondary .menu-item__icon svg {
+  fill: var(--color-text-secondary);
 }
 
 .menu-item--disabled {
