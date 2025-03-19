@@ -10,6 +10,7 @@
 .input-block-label-left {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
   letter-spacing: -0.012em;
 }
 

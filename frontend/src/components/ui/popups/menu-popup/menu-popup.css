@@ -2,7 +2,7 @@
 .menu-popup {
   min-width: 180px;
   max-width: 320px;
-  padding: var(--spacing-1) 0;
+  padding: var(--spacing-1);
   border-radius: var(--border-radius-md);
   overflow: hidden;
 }

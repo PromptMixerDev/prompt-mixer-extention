@@ -48,13 +48,12 @@ const BackHeader: React.FC<BackHeaderProps> = ({
     <div className="back-header">
       <Button 
         onClick={onClick} 
-        size="small" 
-        kind="glyph-text" 
+        size="medium" 
+        kind="glyph" 
         variant="tertiary"
         icon="arrow-left"
-      >
-        {title}
-      </Button>
+      />
+      {title && <span className="back-header-title">{title}</span>}
     </div>
   );
 };

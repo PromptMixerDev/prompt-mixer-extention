@@ -18,6 +18,8 @@ interface InputBlockContentProps {
   placeholder?: string;
   readOnly?: boolean;
   autoFocus?: boolean;
+  onFocus?: () => void; // Callback when content gets focus
+  onBlur?: () => void; // Callback when content loses focus
 }
 
 export const InputBlockContent: React.FC<InputBlockContentProps> = ({ 
@@ -27,6 +29,8 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
   placeholder = 'Enter text...',
   readOnly = false,
   autoFocus = false,
+  onFocus,
+  onBlur,
 }) => {
   const [text, setText] = useState(value);
   const [htmlContent, setHtmlContent] = useState('');
@@ -210,11 +214,19 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
         contentRef.current.classList.add('empty');
       }
     }
+    // Call the onBlur callback if provided
+    if (onBlur) {
+      onBlur();
+    }
   };
   
   const handleFocus = () => {
     if (contentRef.current) {
       contentRef.current.classList.remove('empty');
+    }
+    // Call the onFocus callback if provided
+    if (onFocus) {
+      onFocus();
     }
   };
   

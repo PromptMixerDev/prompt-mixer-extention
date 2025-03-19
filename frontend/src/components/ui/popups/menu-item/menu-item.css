@@ -2,11 +2,12 @@
 .menu-item {
   display: flex;
   align-items: center;
-  padding: var(--spacing-1) var(--spacing-3);
+  padding: var(--spacing-1) var(--spacing-1);
   cursor: pointer;
   font-size: var(--font-size-sm);
   color: var(--color-text-primary);
   transition: background-color var(--transition-fast);
+  border-radius: var(--border-radius-md);
   user-select: none;
 }
 

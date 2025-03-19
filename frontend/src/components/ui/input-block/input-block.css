@@ -12,6 +12,11 @@
   border-color: var(--color-border);
 }
 
+/* Apply border when content is focused */
+.input-block--focused {
+  border-color: var(--color-border);
+}
+
 /* Show buttons on hover */
 .input-block:hover .input-block-label-right {
   opacity: 1;

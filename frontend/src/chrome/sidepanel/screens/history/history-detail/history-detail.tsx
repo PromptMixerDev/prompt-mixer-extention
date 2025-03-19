@@ -6,6 +6,8 @@ import Skeleton from 'react-loading-skeleton';
 import { historyApi } from '@services/api/history';
 import { libraryApi } from '@services/api/library';
 import { PromptHistoryItem } from '../../../../../types/history';
+import { getRandomIconId, getRandomColorId } from '@components/ui/library-icon/icon-options';
+import { usePrompts } from '@context/PromptContext';
 
 interface HistoryDetailProps {
   id?: string | null;
@@ -15,6 +17,9 @@ interface HistoryDetailProps {
  * History detail component
  */
 const HistoryDetail: React.FC<HistoryDetailProps> = ({ id }) => {
+  // Получаем функцию addPrompt из контекста
+  const { addPrompt } = usePrompts();
+  
   const [originalPrompt, setOriginalPrompt] = useState<string>('');
   const [improvedPrompt, setImprovedPrompt] = useState<string>('');
   const [title, setTitle] = useState<string>('');
@@ -148,14 +153,27 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ id }) => {
               placeholder="Improved prompt will appear here..."
               onRightButtonClick={async () => {
                 try {
-                  // Add to library
-                  await libraryApi.createFromHistory(id || '');
+                  // Получаем данные истории промпта
+                  const historyItem = await historyApi.getHistoryItem(id || '');
                   
-                  // Show success message
-                  alert('Prompt added to library successfully!');
+                  // Выбираем случайную иконку и цвет
+                  const randomIconId = getRandomIconId();
+                  const randomColorId = getRandomColorId();
+                  
+                  // Используем addPrompt вместо libraryApi.createLibraryItem
+                  await addPrompt({
+                    title: historyItem.title || 'Untitled Prompt',
+                    description: historyItem.description || '',
+                    content: historyItem.improved_prompt || '',
+                    variables: [], // Можно добавить парсинг переменных, если нужно
+                    iconId: randomIconId,
+                    colorId: randomColorId
+                  });
+                  
+                  // Логируем успешное добавление в консоль
+                  console.log('Prompt added to library successfully');
                 } catch (err) {
                   console.error('Error adding prompt to library:', err);
-                  alert('Failed to add prompt to library. Please try again.');
                 }
               }}
             />

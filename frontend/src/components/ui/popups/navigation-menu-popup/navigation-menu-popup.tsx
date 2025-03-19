@@ -2,6 +2,7 @@ import React from 'react';
 import { MenuPopup } from '@components/ui/popups/menu-popup/menu-popup';
 import { MenuItem } from '@components/ui/popups/menu-item/menu-item';
 import { MenuDivider } from '@components/ui/popups/menu-divider/menu-divider';
+import { useAuth } from '@context/AuthContext';
 import './navigation-menu-popup.css';
 
 interface NavigationMenuPopupProps {
@@ -15,6 +16,9 @@ interface NavigationMenuPopupProps {
  * Компонент выпадающего меню для навигации
  */
 export const NavigationMenuPopup: React.FC<NavigationMenuPopupProps> = ({ trigger }) => {
+  // Получаем функцию signOut из контекста аутентификации
+  const { signOut } = useAuth();
+  
   /**
    * Обработчики для элементов меню
    */
@@ -28,9 +32,14 @@ export const NavigationMenuPopup: React.FC<NavigationMenuPopupProps> = ({ trigge
     // Здесь будет логика для открытия справки
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log('Logout clicked');
-    // Здесь будет логика для выхода из аккаунта
+    try {
+      await signOut(); // Вызываем функцию signOut из AuthContext
+      console.log('Logout successful');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (
