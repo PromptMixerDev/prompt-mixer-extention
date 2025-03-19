@@ -1,0 +1,11 @@
+/* Profile page styles */
+.profile-page {
+  width: 100%;
+  background-color: var(--color-background-primary);
+}
+
+.profile-page-upgrade-container {
+  width: 100%;
+  padding: var(--spacing-4);
+  /* Дополнительные стили для контейнера */
+}

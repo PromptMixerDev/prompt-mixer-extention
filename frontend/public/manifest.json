@@ -62,5 +62,11 @@
       "js": ["content-scripts/chatgpt-content-script.js"],
       "run_at": "document_end"
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/logo-animation.mp4"],
+      "matches": ["<all_urls>"]
+    }
   ]
 }

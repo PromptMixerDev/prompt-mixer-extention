@@ -20,7 +20,7 @@ interface MenuItemProps {
   /**
    * Вариант элемента меню
    */
-  variant?: 'default' | 'danger';
+  variant?: 'default' | 'danger' | 'secondary';
   
   /**
    * Отключает элемент меню

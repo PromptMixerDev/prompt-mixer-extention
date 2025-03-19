@@ -4,6 +4,7 @@ import PromptDetail from '../../screens/prompts/prompt-detail/prompt-detail';
 import HistoryList from '../../screens/history/history-list/history-list';
 import HistoryDetail from '../../screens/history/history-detail/history-detail';
 import Marketplace from '../../screens/marketplace/marketplace';
+import Profile from '../../screens/profile/profile';
 import BackHeader from '@components/ui/back-header/back-header';
 import './content-area.css';
 
@@ -51,17 +52,26 @@ const ContentArea: React.FC = () => {
 
   // Обработчик кнопки "назад"
   const handleBack = () => {
-    setActiveScreen('list');
-    setSelectedItemId(null);
+    if (activeTab === 'profile') {
+      // Для страницы профиля переключаемся на вкладку prompt
+      const event = new CustomEvent('tabChange', { detail: { tab: 'prompt' } });
+      window.dispatchEvent(event);
+    } else {
+      // Для других страниц возвращаемся к списку
+      setActiveScreen('list');
+      setSelectedItemId(null);
+    }
   };
 
   // Получить заголовок для кнопки "назад"
   const getBackTitle = () => {
     switch (activeTab) {
       case 'prompt':
-        return 'Back to Prompts';
+        return 'Back to prompts';
       case 'history':
-        return 'Back to History';
+        return 'Back to history';
+      case 'profile':
+        return 'Profile'; // Возвращаемся к промптам при нажатии "назад" на странице профиля
       default:
         return 'Back';
     }
@@ -84,6 +94,8 @@ const ContentArea: React.FC = () => {
         );
       case 'marketplace':
         return <Marketplace />;
+      case 'profile':
+        return <Profile />;
       default:
         return <div>Unknown tab</div>;
     }
@@ -91,7 +103,7 @@ const ContentArea: React.FC = () => {
 
   return (
     <div className="content-area">
-      {activeScreen === 'detail' && (
+      {(activeScreen === 'detail' || activeTab === 'profile') && (
         <BackHeader 
           onClick={handleBack} 
           title={getBackTitle()} 
