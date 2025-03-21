@@ -93,7 +93,7 @@ const UpgradeCard: React.FC<UpgradeCardProps> = ({
       <div className="upgrade-card-subcstibe">
         <div className="upgrade-card-subcstibe-left">
           <Button 
-            variant="primary" 
+            variant="candy" 
             size="large"
             onClick={handleSubscribeClick}
             className="upgrade-card-button"
@@ -108,7 +108,9 @@ const UpgradeCard: React.FC<UpgradeCardProps> = ({
           <div className="upgrade-card-price-period">{period}</div>
         </div>
       </div>
-      <div className="upgrade-card-notes"></div>
+      <div className="upgrade-card-notes">
+        The standard VAT rate may be changed, following the law of your country
+      </div>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import HistoryDetail from '../../screens/history/history-detail/history-detail';
 import Marketplace from '../../screens/marketplace/marketplace';
 import Profile from '../../screens/profile/profile';
 import BackHeader from '@components/ui/back-header/back-header';
+import { useAuth } from '@context/AuthContext';
 import './content-area.css';
 
 /**
@@ -13,9 +14,11 @@ import './content-area.css';
  * Displays different screens based on the active tab
  */
 const ContentArea: React.FC = () => {
+  const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState('prompt');
   const [activeScreen, setActiveScreen] = useState('list'); // 'list' or 'detail'
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  // Используем email из currentUser
 
   useEffect(() => {
     // Listen for tab change events
@@ -107,6 +110,12 @@ const ContentArea: React.FC = () => {
         <BackHeader 
           onClick={handleBack} 
           title={getBackTitle()} 
+          showRightContent={activeTab === 'profile'}
+          rightContent={
+            activeTab === 'profile' ? (
+              <span className="user-email">admin@example.com</span>
+            ) : null
+          }
         />
       )}
       {renderContent()}
