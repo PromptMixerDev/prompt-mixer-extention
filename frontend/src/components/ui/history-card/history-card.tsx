@@ -11,7 +11,7 @@ interface HistoryCardProps {
   title?: string;
   url: string;
   date: string;
-  modelType?: 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'base-logo'; // Type of AI model
+  modelType?: 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'gemini' | 'base-logo'; // Type of AI model
   className?: string;
   onClick?: () => void;
   // Loading state
@@ -47,7 +47,7 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
   ...rest
 }) => {
   // Determine model type based on URL if not explicitly provided
-  const determineModelType = (): 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'base-logo' => {
+  const determineModelType = (): 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'gemini' | 'base-logo' => {
     if (modelType) return modelType;
     
     // OpenAI URLs (не ChatGPT)
@@ -69,6 +69,11 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
     // DeepSeek URLs
     if (url.includes('deepseek.com')) {
       return 'deep-seek';
+    }
+    
+    // Gemini URLs
+    if (url.includes('gemini.google.com')) {
+      return 'gemini';
     }
     
     // If no model type could be determined, use the default icon
