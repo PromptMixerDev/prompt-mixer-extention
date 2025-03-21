@@ -109,9 +109,6 @@ const Content: React.FC<ContentProps> = ({ children }) => {
     };
 
     if (isOpen) {
-      // Рассчитываем позицию при открытии
-      setTimeout(calculatePosition, 0);
-
       // Добавляем обработчики
       document.addEventListener('click', handleGlobalClick);
       document.addEventListener('keydown', handleEscape);
@@ -124,6 +121,24 @@ const Content: React.FC<ContentProps> = ({ children }) => {
       };
     }
   }, [isOpen, setIsOpen]);
+  
+  // Используем useEffect для расчета позиции
+  useEffect(() => {
+    if (isOpen && contentRef.current) {
+      // Сначала скрываем попап
+      contentRef.current.style.opacity = '0';
+      
+      // Используем requestAnimationFrame для расчета позиции в следующем кадре
+      requestAnimationFrame(() => {
+        calculatePosition();
+        
+        // После расчета позиции показываем попап
+        if (contentRef.current) {
+          contentRef.current.style.opacity = '1';
+        }
+      });
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

@@ -3,15 +3,25 @@
   width: 100%;
 }
 
-.prompt-list h2 {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-semibold);
+.header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-3);
   padding-left: var(--spacing-4);
   padding-right: var(--spacing-4);
-  color: var(--color-text-primary);
   margin-top: var(--spacing-12);
   margin-bottom: var(--spacing-6);
+}
+
+.header-container h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
   letter-spacing: -0.01em;
+  margin: 0;
+  padding: 0;
 }
 
 .prompts-container {
@@ -40,6 +50,11 @@
 
 /* Стили для кнопки добавления промпта */
 .new-prompt-button {
+  align-self: flex-start;
+}
+
+/* Стили для кнопки в пустом состоянии */
+.empty-state .new-prompt-button {
   margin-top: var(--spacing-4);
   align-self: center;
 }

@@ -49,3 +49,14 @@
   padding-right: var(--spacing-1);
   flex: 0 0 auto;
 }
+
+/* Скрываем кнопку по умолчанию */
+.library-card-right button {
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+/* Показываем кнопку при наведении на карточку */
+.library-card:hover .library-card-right button {
+  opacity: 1;
+}

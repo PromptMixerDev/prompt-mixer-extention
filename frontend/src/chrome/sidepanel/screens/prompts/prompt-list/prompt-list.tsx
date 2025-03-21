@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './prompt-list.css';
 import LibraryCard from '@components/ui/library-card/library-card';
 import Button from '@components/ui/button/button';
+import { Tooltip } from '@components/tech/tooltip/tooltip';
 import { usePrompts } from '@context/PromptContext';
 import { UserPrompt } from '../../../../../types/prompt';
 
@@ -10,7 +11,8 @@ import { UserPrompt } from '../../../../../types/prompt';
  * Displays a list of user prompts
  */
 const PromptList: React.FC = () => {
-  const { userPrompts, isLoading, error, addPrompt } = usePrompts();
+  const { userPrompts, isLoading, error, addPrompt, deletePrompt } = usePrompts();
+  const [activePopupId, setActivePopupId] = useState<string | null>(null);
   
   /**
    * Handle prompt selection
@@ -22,11 +24,24 @@ const PromptList: React.FC = () => {
   };
 
   /**
-   * Handle menu button click
+   * Handle menu button click (Edit prompt)
    */
   const handleMenuClick = (id: string) => {
-    // TODO: Implement menu functionality
-    console.log('Menu clicked for prompt:', id);
+    // Переход к редактированию промпта (то же самое, что и при клике на карточку)
+    handlePromptSelect(id);
+  };
+
+  /**
+   * Handle remove prompt
+   */
+  const handleRemovePrompt = async (id: string) => {
+    try {
+      await deletePrompt(id);
+      // Успешное удаление, обновление не требуется, так как состояние обновляется в контексте
+    } catch (error) {
+      console.error('Error removing prompt:', error);
+      // Можно добавить обработку ошибок, например, показать уведомление
+    }
   };
 
   /**
@@ -40,7 +55,20 @@ const PromptList: React.FC = () => {
 
   return (
     <div className="prompt-list">
-      <h2>Your Prompts</h2>
+      <div className="header-container">
+        <h2>My library</h2>
+        <Tooltip content="Create new prompt" position="bottom-right">
+          <Button 
+            kind="glyph" 
+            variant="tertiary" 
+            icon="add-large-line" 
+            size="medium"
+            onClick={handleCreatePrompt}
+            className="new-prompt-button"
+            aria-label="Create new prompt"
+          />
+        </Tooltip>
+      </div>
       
       {isLoading ? (
         <div className="prompts-container">
@@ -60,7 +88,7 @@ const PromptList: React.FC = () => {
           <Button 
             kind="glyph-text" 
             variant="tertiary" 
-            icon="prompt-line" 
+            icon="add-large-line" 
             size="medium"
             onClick={handleCreatePrompt}
             className="new-prompt-button"
@@ -75,25 +103,31 @@ const PromptList: React.FC = () => {
             .map(prompt => (
               <LibraryCard
                 key={prompt.id}
+                id={prompt.id}
                 title={prompt.title}
                 iconName="prompt-line"
                 iconId={prompt.iconId}
                 colorId={prompt.colorId}
-                rightIconName="menu-line"
+                rightIconName="more-line"
                 onClick={() => handlePromptSelect(prompt.id)}
-                onRightButtonClick={() => handleMenuClick(prompt.id)}
+                onRightButtonClick={(id) => handleMenuClick(id || prompt.id)}
+                onRemove={(id) => handleRemovePrompt(id || prompt.id)}
+                isPopupActive={activePopupId === prompt.id}
+                onPopupOpenChange={(isOpen) => {
+                  if (isOpen) {
+                    setActivePopupId(prompt.id);
+                  } else if (activePopupId === prompt.id) {
+                    setActivePopupId(null);
+                  }
+                }}
+                onMouseEnter={() => {
+                  // Если есть активный попап и это не текущий элемент, закрываем его
+                  if (activePopupId !== null && activePopupId !== prompt.id) {
+                    setActivePopupId(null);
+                  }
+                }}
               />
             ))}
-          <Button 
-            kind="glyph-text" 
-            variant="tertiary" 
-            icon="prompt-line" 
-            size="medium"
-            onClick={handleCreatePrompt}
-            className="new-prompt-button"
-          >
-            New Prompt
-          </Button>
         </div>
       )}
     </div>

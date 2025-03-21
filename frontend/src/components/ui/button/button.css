@@ -72,6 +72,16 @@
   background-color: var(--button-transparent-hover-bg);
 }
 
+/* Candy variant - полупрозрачный фон и цветной текст */
+.button--candy {
+  background-color: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary);
+}
+
+.button--candy:hover:not(.button--disabled) {
+  background-color: rgba(var(--color-primary-rgb), 0.2);
+}
+
 /* Button kinds */
 .button--glyph {
   padding: 0 !important; /* Override any inherited padding */

@@ -3,12 +3,14 @@ import './library-card.css';
 import LibraryIcon from '@components/ui/library-icon/library-icon';
 import Button from '@components/ui/button/button';
 import Skeleton from 'react-loading-skeleton';
+import { PromptMenuPopup } from '@components/ui/popups/prompt-menu-popup/prompt-menu-popup';
 
 /**
  * LibraryCard component props interface
  */
 interface LibraryCardProps {
   // Basic properties
+  id?: string;
   title: string;
   iconName?: string;
   iconId?: string;
@@ -16,9 +18,14 @@ interface LibraryCardProps {
   rightIconName?: string;
   className?: string;
   onClick?: () => void;
-  onRightButtonClick?: () => void;
+  onRightButtonClick?: (id?: string) => void;
+  onRemove?: (id?: string) => void;
   // Loading state
   isLoading?: boolean;
+  // Popup state
+  isPopupActive?: boolean;
+  onPopupOpenChange?: (isOpen: boolean) => void;
+  onMouseEnter?: () => void;
 }
 
 /**
@@ -46,15 +53,20 @@ interface LibraryCardProps {
  * <LibraryCard title="" isLoading={true} />
  */
 const LibraryCard: React.FC<LibraryCardProps> = ({
+  id,
   title,
   iconName = 'prompt-line',
   iconId,
   colorId,
-  rightIconName = 'menu-line',
+  rightIconName = 'more-line',
   className = '',
   onClick,
   onRightButtonClick,
+  onRemove,
   isLoading = false,
+  isPopupActive,
+  onPopupOpenChange,
+  onMouseEnter,
   ...rest
 }) => {
   // Generate card classes
@@ -83,6 +95,7 @@ const LibraryCard: React.FC<LibraryCardProps> = ({
     <div 
       className={cardClasses} 
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       {...rest}
     >
       <div className="library-card-left">
@@ -95,15 +108,20 @@ const LibraryCard: React.FC<LibraryCardProps> = ({
         <div className="title text-default text-medium text-primary">{title}</div>
       </div>
       <div className="library-card-right">
-        <Button
-          kind="glyph"
-          variant="tertiary"
-          size="small"
-          icon={rightIconName}
-          onClick={(e) => {
-            e.stopPropagation(); // Предотвращаем всплытие события
-            onRightButtonClick && onRightButtonClick();
-          }}
+        <PromptMenuPopup
+          trigger={
+            <Button
+              kind="glyph"
+              variant="tertiary"
+              size="small"
+              icon={rightIconName}
+            />
+          }
+          promptId={id || ''}
+          onEdit={(promptId) => onRightButtonClick && onRightButtonClick(promptId)}
+          onRemove={(promptId) => onRemove && onRemove(promptId)}
+          isActive={isPopupActive}
+          onOpenChange={onPopupOpenChange}
         />
       </div>
     </div>

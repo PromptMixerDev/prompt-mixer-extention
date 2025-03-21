@@ -15,7 +15,7 @@ interface ButtonProps {
   
   // Specific properties for our design
   size?: 'small' | 'medium' | 'large';  // sizes: 24px, 28px, 32px
-  variant?: 'primary' | 'secondary' | 'tertiary';  // styles: with background, with outline, transparent
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'candy';  // styles: with background, with outline, transparent, candy
   kind?: 'text' | 'glyph-text' | 'glyph';  // types: text, icon+text, icon
   icon?: string;  // icon name (without .svg extension), defaults to 'base-icon' for glyph and glyph-text kinds
   
@@ -37,6 +37,9 @@ interface ButtonProps {
  * 
  * // Icon only (tertiary)
  * <Button variant="tertiary" size="small" kind="glyph" icon="search-line" />
+ * 
+ * // Candy button with colored text and semi-transparent background
+ * <Button variant="candy" size="medium">Candy Button</Button>
  * 
  * // Button in loading state (skeleton)
  * <Button isLoading={true}>Loading Button</Button>

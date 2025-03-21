@@ -1,0 +1,6 @@
+/* Prompt Menu Popup styles */
+/* Наследует основные стили от MenuPopup */
+
+.menu-popup {
+  overflow: visible;
+}

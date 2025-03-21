@@ -68,6 +68,7 @@
 
   /* Brand colors */
   --color-primary: #4285f4;
+  --color-primary-rgb: 66, 133, 244; /* RGB значения для основного цвета */
 
   
   /* Semantic colors */
