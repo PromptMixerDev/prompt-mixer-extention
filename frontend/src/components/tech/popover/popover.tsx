@@ -109,9 +109,6 @@ const Content: React.FC<ContentProps> = ({ children }) => {
     };
 
     if (isOpen) {
-      // Рассчитываем позицию при открытии
-      setTimeout(calculatePosition, 0);
-
       // Добавляем обработчики
       document.addEventListener('click', handleGlobalClick);
       document.addEventListener('keydown', handleEscape);
@@ -126,6 +123,13 @@ const Content: React.FC<ContentProps> = ({ children }) => {
   }, [isOpen, setIsOpen]);
 
   if (!isOpen) return null;
+
+  // Используем useLayoutEffect для расчета позиции до отрисовки
+  React.useLayoutEffect(() => {
+    if (isOpen && contentRef.current) {
+      calculatePosition();
+    }
+  }, [isOpen]);
 
   return (
     <div 
