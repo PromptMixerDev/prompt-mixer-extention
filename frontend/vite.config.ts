@@ -46,6 +46,7 @@ export default defineConfig({
         'claude-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/claude-content-script.ts'),
         'openai-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/openai-content-script.ts'),
         'chatgpt-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/chatgpt-content-script.ts'),
+        'gemini-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/gemini-content-script.ts'),
       },
       output: {
         entryFileNames: chunk => {
@@ -53,6 +54,7 @@ export default defineConfig({
           if (chunk.name === 'claude-content-script') return 'content-scripts/claude-content-script.js';
           if (chunk.name === 'openai-content-script') return 'content-scripts/openai-content-script.js';
           if (chunk.name === 'chatgpt-content-script') return 'content-scripts/chatgpt-content-script.js';
+          if (chunk.name === 'gemini-content-script') return 'content-scripts/gemini-content-script.js';
           return 'assets/[name]-[hash].js';
         },
       },

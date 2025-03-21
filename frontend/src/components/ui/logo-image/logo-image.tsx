@@ -9,7 +9,7 @@ interface LogoImageProps {
   // Size variants
   size?: 'small' | 'medium' | 'large' | 'xlarge';
   // Logo name without .svg extension
-  logoName?: 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'base-logo';
+  logoName?: 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'gemini' | 'base-logo';
   // Additional CSS class
   className?: string;
   // Loading state
@@ -36,6 +36,9 @@ interface LogoImageProps {
  * 
  * // Default logo
  * <LogoImage logoName="base-logo" />
+ * 
+ * // Gemini logo
+ * <LogoImage logoName="gemini" />
  * 
  * // Logo in loading state (skeleton)
  * <LogoImage isLoading={true} />
