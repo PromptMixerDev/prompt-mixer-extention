@@ -121,15 +121,26 @@ const Content: React.FC<ContentProps> = ({ children }) => {
       };
     }
   }, [isOpen, setIsOpen]);
-
-  if (!isOpen) return null;
-
-  // Используем useLayoutEffect для расчета позиции до отрисовки
-  React.useLayoutEffect(() => {
+  
+  // Используем useEffect для расчета позиции
+  useEffect(() => {
     if (isOpen && contentRef.current) {
-      calculatePosition();
+      // Сначала скрываем попап
+      contentRef.current.style.opacity = '0';
+      
+      // Используем requestAnimationFrame для расчета позиции в следующем кадре
+      requestAnimationFrame(() => {
+        calculatePosition();
+        
+        // После расчета позиции показываем попап
+        if (contentRef.current) {
+          contentRef.current.style.opacity = '1';
+        }
+      });
     }
   }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return (
     <div 
