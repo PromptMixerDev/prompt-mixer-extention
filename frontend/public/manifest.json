@@ -14,7 +14,9 @@
     "storage",
     "scripting",
     "identity",
-    "windows"
+    "windows",
+    "tabs",
+    "activeTab"
   ],
   "oauth2": {
     "client_id": "331223637725-uf6jd48rqs99dlc0gt0csc3a5fc6me17.apps.googleusercontent.com",
