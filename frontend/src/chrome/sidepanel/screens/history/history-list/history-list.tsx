@@ -4,6 +4,7 @@ import HistoryCard from '@components/ui/history-card/history-card';
 import TimeDivider from '@components/ui/time-divider/time-divider';
 import { historyApi } from '@services/api/history';
 import { PromptHistoryItem } from '../../../../../types/history';
+import EmptyState from '@components/ui/empty-state/empty-state';
 
 // Function to determine model type from URL
 const getModelTypeFromUrl = (url: string): 'chat-gpt' | 'claude' | 'deep-seek' | 'open-ai' | 'base-logo' => {
@@ -85,9 +86,15 @@ const HistoryList: React.FC = () => {
       ) : error ? (
         <div className="error-state">{error}</div>
       ) : historyItems.length === 0 ? (
-        <div className="empty-state">
-          <p>No improvement history yet.</p>
-        </div>
+        <EmptyState 
+          message="Looks like there aren't any history items yet!"
+          buttonText="Go to Library"
+          onButtonClick={() => {
+            // Dispatch event to navigate to library
+            const event = new CustomEvent('navigate', { detail: { screen: 'prompts' } });
+            window.dispatchEvent(event);
+          }}
+        />
       ) : (
         <div className="history-items">
           {/* Группировка элементов по дате */}

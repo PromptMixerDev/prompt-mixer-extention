@@ -1,0 +1,38 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+  height: 100%;
+  margin-top: 120px;
+
+}
+
+.empty-state__illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+}
+
+.empty-state__icon {
+  display: block;
+  width: 48px;
+  height: 48px;
+  color: inherit;
+}
+
+.empty-state__icon-placeholder {
+  width: 64px;
+  height: 64px;
+  background-color: var(--color-background-tertiary);
+  border-radius: var(--border-radius-md);
+}
+
+.empty-state__message {
+  max-width: 200px;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}

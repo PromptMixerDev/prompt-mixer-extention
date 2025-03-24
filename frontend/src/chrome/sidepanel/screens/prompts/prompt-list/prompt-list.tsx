@@ -5,6 +5,7 @@ import Button from '@components/ui/button/button';
 import { Tooltip } from '@components/tech/tooltip/tooltip';
 import { usePrompts } from '@context/PromptContext';
 import { UserPrompt } from '../../../../../types/prompt';
+import EmptyState from '@components/ui/empty-state/empty-state';
 
 /**
  * Prompt list component
@@ -83,19 +84,9 @@ const PromptList: React.FC = () => {
       ) : error ? (
         <div className="error-state">{error}</div>
       ) : userPrompts.length === 0 ? (
-        <div className="empty-state">
-          <p>You don't have any prompts yet.</p>
-          <Button 
-            kind="glyph-text" 
-            variant="tertiary" 
-            icon="add-large-line" 
-            size="medium"
-            onClick={handleCreatePrompt}
-            className="new-prompt-button"
-          >
-            Create New Prompt
-          </Button>
-        </div>
+        <EmptyState 
+          onButtonClick={handleCreatePrompt}
+        />
       ) : (
         <div className="prompts-container">
           {userPrompts
