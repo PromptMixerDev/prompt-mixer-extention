@@ -5,6 +5,7 @@ import InputBlock from '@components/ui/input-block/input-block';
 import Skeleton from 'react-loading-skeleton';
 import { IconSelectorPopup } from '@components/ui/popups/icon-selector-popup/icon-selector-popup';
 import { defaultIconId, defaultColorId, getRandomIconId, getRandomColorId } from '@components/ui/library-icon/icon-options';
+import chatService from '@services/chat';
 import './prompt-detail.css';
 
 /**
@@ -366,6 +367,7 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
             value={localContent}
             onChange={setLocalContent}
             autoFocus={false}
+            onRightButtonClick={() => chatService.processAndAddToChat(localContent, variableValues)}
           />
         </div>
       </div>
@@ -439,6 +441,7 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
           value={localContent}
           onChange={setLocalContent}
           autoFocus={false}
+          onRightButtonClick={() => chatService.processAndAddToChat(localContent, variableValues)}
         />
       </div>
       

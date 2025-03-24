@@ -36,6 +36,90 @@ chrome.runtime.onMessage.addListener(
 
     // Handle different message types
     switch (message.type) {
+      case 'ADD_TO_CHAT':
+        // Get active tab
+        chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+          if (tabs[0]?.id) {
+            try {
+              console.log('Background script: executing script to add text to chat');
+              
+              // Use executeScript to inject and run code in the page
+              chrome.scripting.executeScript({
+                target: { tabId: tabs[0].id as number },
+                func: (text: string) => {
+                  console.log('Executing script to insert text:', text);
+                  
+                  // Find active element
+                  const activeElement = document.activeElement;
+                  console.log('Active element:', activeElement);
+                  
+                  if (!activeElement) {
+                    console.error('No active element found');
+                    return false;
+                  }
+                  
+                  // If it's an input field, set text
+                  if (activeElement instanceof HTMLInputElement || 
+                      activeElement instanceof HTMLTextAreaElement) {
+                    console.log('Active element is input or textarea');
+                    
+                    // Get current value
+                    const currentValue = activeElement.value;
+                    
+                    // Get cursor position
+                    const cursorPos = activeElement.selectionStart || 0;
+                    
+                    // Insert text at cursor position
+                    const newValue = currentValue.substring(0, cursorPos) + 
+                                    text + 
+                                    currentValue.substring(cursorPos);
+                    
+                    // Set new value
+                    activeElement.value = newValue;
+                    
+                    // Set cursor position after inserted text
+                    activeElement.selectionStart = activeElement.selectionEnd = cursorPos + text.length;
+                    
+                    // Trigger input event
+                    activeElement.dispatchEvent(new Event('input', { bubbles: true }));
+                    
+                    console.log('Text inserted successfully in input/textarea');
+                    return true;
+                  } else if (activeElement.getAttribute('contenteditable') === 'true' || 
+                            activeElement.getAttribute('role') === 'textbox') {
+                    console.log('Active element is contenteditable');
+                    
+                    // Insert text at current position
+                    document.execCommand('insertText', false, text);
+                    
+                    console.log('Text inserted successfully in contenteditable');
+                    return true;
+                  } else {
+                    console.error('Active element is not a valid input field:', activeElement);
+                    return false;
+                  }
+                },
+                args: [message.data.text]
+              }).then(results => {
+                console.log('executeScript results:', results);
+                if (results && results.length > 0 && results[0].result) {
+                  sendResponse({ success: true, message: 'Text added to chat' });
+                } else {
+                  sendResponse({ success: false, message: 'Failed to add text to chat' });
+                }
+              }).catch(error => {
+                console.error('executeScript error:', error);
+                sendResponse({ success: false, message: 'Error executing script: ' + error.message });
+              });
+            } catch (error) {
+              console.error('Error sending message to tab:', error);
+              sendResponse({ success: false, message: 'Error: ' + (error as Error).message });
+            }
+          } else {
+            sendResponse({ success: false, message: 'No active tab found' });
+          }
+        });
+        break;
       case 'IMPROVE_PROMPT':
         // Get auth token and then make the API call
         authService.getAuthToken().then(token => {

@@ -174,6 +174,15 @@ export interface ChromeIdentity {
   removeCachedAuthToken(options: { token: string }, callback?: () => void): void;
 }
 
+export interface ChromeScripting {
+  executeScript(options: {
+    target: { tabId: number, frameIds?: number[] },
+    func: Function,
+    args?: any[],
+    injectImmediately?: boolean
+  }): Promise<any[]>;
+}
+
 export interface Chrome {
   storage: ChromeStorage;
   runtime: ChromeRuntime;
@@ -182,6 +191,7 @@ export interface Chrome {
   windows: ChromeWindows;
   identity: ChromeIdentity;
   tabs: ChromeTabs;
+  scripting: ChromeScripting;
 }
 
 declare global {
