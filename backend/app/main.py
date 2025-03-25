@@ -1,7 +1,6 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from starlette.middleware.base import BaseHTTPMiddleware
 from app.api.router import api_router
 from app.core.config import settings
 from app.models import models
@@ -10,45 +9,10 @@ from app.core.database import engine
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
-# Custom middleware to handle CORS preflight requests
-class NoRedirectMiddleware(BaseHTTPMiddleware):
-    """
-    Middleware to prevent redirects on preflight requests.
-    
-    This middleware checks if the request is a CORS preflight (OPTIONS) request
-    and ensures no redirects are returned for these requests, which would cause
-    CORS errors in browsers.
-    """
-    async def dispatch(self, request: Request, call_next):
-        # If this is a preflight request (OPTIONS), ensure we don't redirect
-        if request.method == "OPTIONS":
-            # Process the request normally
-            response = await call_next(request)
-            
-            # If the response is a redirect (3xx status code), 
-            # replace it with a 200 OK response to prevent CORS issues
-            if 300 <= response.status_code < 400:
-                return Response(
-                    status_code=200,
-                    headers={
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Methods": "*",
-                        "Access-Control-Allow-Headers": "*",
-                        "Access-Control-Allow-Credentials": "true",
-                    }
-                )
-            return response
-        
-        # For non-preflight requests, process normally
-        return await call_next(request)
-
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
-
-# Add the custom middleware to prevent redirects on preflight requests
-app.add_middleware(NoRedirectMiddleware)
 
 # Set up CORS
 app.add_middleware(

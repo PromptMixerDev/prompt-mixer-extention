@@ -30,17 +30,9 @@ export const getApiUrl = (endpoint: string): string => {
   console.log('Cleaned endpoint:', cleanEndpoint);
   
   // Remove trailing slash from base URL if present
-  let baseUrl = API_CONFIG.BASE_URL.endsWith('/')
+  const baseUrl = API_CONFIG.BASE_URL.endsWith('/')
     ? API_CONFIG.BASE_URL.slice(0, -1)
     : API_CONFIG.BASE_URL;
-  
-  // Always ensure HTTPS protocol for production backend
-  if (baseUrl.includes('prompt-mixer-backend')) {
-    // Force HTTPS for all backend URLs
-    baseUrl = baseUrl.replace(/^http:/, 'https:');
-    console.log('Ensured HTTPS URL:', baseUrl);
-  }
-  
   console.log('Base URL:', baseUrl);
   
   const fullUrl = `${baseUrl}/${cleanEndpoint}`;
