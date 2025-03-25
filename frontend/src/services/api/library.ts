@@ -87,7 +87,7 @@ export const libraryApi = {
       
       const response = await fetch(url, {
         headers,
-        redirect: 'follow' // Автоматически следовать перенаправлениям
+        redirect: 'error' // Prevent redirects which cause CORS issues with preflight requests
       });
 
       console.log('Response status:', response.status, response.statusText);
@@ -134,7 +134,7 @@ export const libraryApi = {
       const headers = await createAuthHeaders();
       const response = await fetch(getApiUrl(`library/${id}`), {
         headers,
-        redirect: 'follow'
+        redirect: 'error'
       });
 
       if (!response.ok) {
@@ -181,7 +181,7 @@ export const libraryApi = {
         method: 'POST',
         headers,
         body: JSON.stringify(data),
-        redirect: 'follow'
+        redirect: 'error'
       });
 
       if (!response.ok) {
@@ -230,7 +230,7 @@ export const libraryApi = {
         method: 'PUT',
         headers,
         body: JSON.stringify(data),
-        redirect: 'follow'
+        redirect: 'error'
       });
 
       if (!response.ok) {
@@ -277,7 +277,7 @@ export const libraryApi = {
       const response = await fetch(getApiUrl(`library/${id}`), {
         method: 'DELETE',
         headers,
-        redirect: 'follow'
+        redirect: 'error'
       });
 
       if (!response.ok) {
@@ -306,7 +306,7 @@ export const libraryApi = {
       const response = await fetch(getApiUrl(`library/from-history/${historyId}`), {
         method: 'POST',
         headers,
-        redirect: 'follow'
+        redirect: 'error'
       });
 
       if (!response.ok) {
