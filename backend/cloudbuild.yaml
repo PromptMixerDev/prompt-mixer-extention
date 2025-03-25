@@ -1,0 +1,61 @@
+# Google Cloud Build configuration file for backend
+# This file defines the steps to build and deploy the backend application
+
+steps:
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/prompt-mixer-backend:$COMMIT_SHA', '.']
+    dir: 'backend'
+    id: 'build-image'
+
+  # Step 2: Push the Docker image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/prompt-mixer-backend:$COMMIT_SHA']
+    id: 'push-image'
+    waitFor: ['build-image']
+
+  # Step 3: Tag the image as latest
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['tag', 'gcr.io/$PROJECT_ID/prompt-mixer-backend:$COMMIT_SHA', 'gcr.io/$PROJECT_ID/prompt-mixer-backend:latest']
+    id: 'tag-latest'
+    waitFor: ['push-image']
+
+  # Step 4: Push the latest tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/prompt-mixer-backend:latest']
+    id: 'push-latest'
+    waitFor: ['tag-latest']
+
+  # Step 5: Deploy to Cloud Run using substitution variables
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'prompt-mixer-backend'
+      - '--image=gcr.io/$PROJECT_ID/prompt-mixer-backend:$COMMIT_SHA'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8000'  # Match the port in run.py
+      - '--set-env-vars=DATABASE_URL=${_DATABASE_URL},SECRET_KEY=${_SECRET_KEY},GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID},CLAUDE_API_KEY=${_CLAUDE_API_KEY}'
+    id: 'deploy'
+    waitFor: ['push-image']
+
+# Images to be stored in Google Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/prompt-mixer-backend:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/prompt-mixer-backend:latest'
+
+# Timeout for the entire build process
+timeout: '1200s'
+
+# Define substitutions for variables
+# These can be set in the build trigger configuration
+substitutions:
+  _REGION: 'us-central1'
+  _DATABASE_URL: ''
+  _SECRET_KEY: ''
+  _GOOGLE_CLIENT_ID: ''
+  _CLAUDE_API_KEY: ''
+  _SERVICE_NAME: 'prompt-mixer-backend'
