@@ -26,22 +26,21 @@ steps:
     id: 'push-latest'
     waitFor: ['tag-latest']
 
-  # Step 5: Deploy to Cloud Run (uncomment and configure as needed)
-  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  #   entrypoint: 'gcloud'
-  #   args:
-  #     - 'run'
-  #     - 'deploy'
-  #     - 'prompt-mixer-backend'
-  #     - '--image=gcr.io/$PROJECT_ID/prompt-mixer-backend:$COMMIT_SHA'
-  #     - '--region=us-central1'
-  #     - '--platform=managed'
-  #     - '--allow-unauthenticated'
-  #     - '--port=8000'  # Match the port in run.py
-  #     - '--set-env-vars=DATABASE_URL=$$DATABASE_URL,SECRET_KEY=$$SECRET_KEY,GOOGLE_CLIENT_ID=$$GOOGLE_CLIENT_ID,CLAUDE_API_KEY=$$CLAUDE_API_KEY'
-  #   id: 'deploy'
-  #   waitFor: ['push-image']
-  #   secretEnv: ['DATABASE_URL', 'SECRET_KEY', 'GOOGLE_CLIENT_ID', 'CLAUDE_API_KEY']
+  # Step 5: Deploy to Cloud Run using substitution variables
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'prompt-mixer-backend'
+      - '--image=gcr.io/$PROJECT_ID/prompt-mixer-backend:$COMMIT_SHA'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8000'  # Match the port in run.py
+      - '--set-env-vars=DATABASE_URL=${_DATABASE_URL},SECRET_KEY=${_SECRET_KEY},GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID},CLAUDE_API_KEY=${_CLAUDE_API_KEY}'
+    id: 'deploy'
+    waitFor: ['push-image']
 
 # Images to be stored in Google Container Registry
 images:
@@ -51,19 +50,12 @@ images:
 # Timeout for the entire build process
 timeout: '1200s'
 
-# Optional: Define secrets for environment variables (uncomment and configure as needed)
-# availableSecrets:
-#   secretManager:
-#     - versionName: projects/$PROJECT_ID/secrets/DATABASE_URL/versions/latest
-#       env: 'DATABASE_URL'
-#     - versionName: projects/$PROJECT_ID/secrets/SECRET_KEY/versions/latest
-#       env: 'SECRET_KEY'
-#     - versionName: projects/$PROJECT_ID/secrets/GOOGLE_CLIENT_ID/versions/latest
-#       env: 'GOOGLE_CLIENT_ID'
-#     - versionName: projects/$PROJECT_ID/secrets/CLAUDE_API_KEY/versions/latest
-#       env: 'CLAUDE_API_KEY'
-
-# Optional: Define substitutions for variables
-# substitutions:
-#   _REGION: 'us-central1'
-#   _SERVICE_NAME: 'prompt-mixer-backend'
+# Define substitutions for variables
+# These can be set in the build trigger configuration
+substitutions:
+  _REGION: 'us-central1'
+  _DATABASE_URL: ''
+  _SECRET_KEY: ''
+  _GOOGLE_CLIENT_ID: ''
+  _CLAUDE_API_KEY: ''
+  _SERVICE_NAME: 'prompt-mixer-backend'
