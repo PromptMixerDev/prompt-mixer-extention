@@ -50,4 +50,4 @@ venv
 *.sqlite3
 *.sql
 *.csv
-.db
+*.db
