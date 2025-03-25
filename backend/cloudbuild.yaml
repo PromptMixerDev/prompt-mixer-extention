@@ -59,3 +59,6 @@ substitutions:
   _GOOGLE_CLIENT_ID: ''
   _CLAUDE_API_KEY: ''
   _SERVICE_NAME: 'prompt-mixer-backend'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
