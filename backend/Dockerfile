@@ -9,19 +9,17 @@ ENV PYTHONPATH=/app \
     PYTHONUNBUFFERED=1
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     gcc \
-    postgresql-client \
     libpq-dev \
-    python3-dev \
+    netcat-traditional \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy application code
 COPY . .

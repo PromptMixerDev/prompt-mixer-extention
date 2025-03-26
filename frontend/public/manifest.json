@@ -19,14 +19,14 @@
     "activeTab"
   ],
   "oauth2": {
-    "client_id": "331223637725-uf6jd48rqs99dlc0gt0csc3a5fc6me17.apps.googleusercontent.com",
+    "client_id": "331223637725-dr9ddvgm85o0asrrai8blhmjvehof8tm.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile"
     ]
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://localhost:8000 https://*.googleapis.com https://*.gstatic.com"
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://localhost:8000 https://*.googleapis.com https://*.gstatic.com https://prompt-mixer-backend-331223637725.us-central1.run.app http://prompt-mixer-backend-331223637725.us-central1.run.app"
   },
   "host_permissions": [
     "https://chat.openai.com/*",
@@ -35,7 +35,9 @@
     "https://claude.ai/*",
     "https://anthropic.com/*",
     "https://gemini.google.com/*",
-    "http://localhost:8000/*"
+    "http://localhost:8000/*",
+    "https://prompt-mixer-backend-331223637725.us-central1.run.app/*",
+    "http://prompt-mixer-backend-331223637725.us-central1.run.app/*"
   ],
   "background": {
     "service_worker": "background.js",
