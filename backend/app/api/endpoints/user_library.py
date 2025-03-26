@@ -10,7 +10,7 @@ from app.models.models import User
 
 router = APIRouter()
 
-@router.get("/", response_model=UserLibraryList)
+@router.get("", response_model=UserLibraryList)
 async def get_user_library(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=1000, description="Maximum number of records to return"),
@@ -72,7 +72,7 @@ async def get_library_item(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting library item: {str(e)}")
 
-@router.post("/", response_model=UserLibrary)
+@router.post("", response_model=UserLibrary)
 async def create_library_item(
     item: UserLibraryCreate,
     current_user: User = Depends(get_current_user),
