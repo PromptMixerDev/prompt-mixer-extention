@@ -15,16 +15,16 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--color-text-tertiary);
+  background-color: rgba(255, 255, 255, 0.2);
   border: none;
   cursor: pointer;
   padding: 0;
 }
 
 .indicator.active {
-  background-color: var(--color-text-primary);
+  background-color: white;
 }
 
 .indicator:hover {
-  background-color: rgba(55, 53, 47, 0.45);
+  background-color: rgba(255, 255, 255, 0.3);
 }

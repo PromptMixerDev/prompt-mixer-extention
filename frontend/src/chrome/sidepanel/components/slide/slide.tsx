@@ -49,14 +49,15 @@ const Slide: React.FC<SlideProps> = ({ color, title, description, illustration, 
       className="slide"
       style={{ backgroundColor: color }}
     >
+      {illustration && (
+        <div 
+          ref={illustrationRef}
+          className="slide-illustration" 
+          style={{ backgroundImage: `url(${illustration})` }}
+        />
+      )}
+      <div className="slide-overlay"></div>
       <div className="slide-content">
-        {illustration && (
-          <div 
-            ref={illustrationRef}
-            className="slide-illustration" 
-            style={{ backgroundImage: `url(${illustration})` }}
-          />
-        )}
         <div className="slide-text-container">
           <h3 dangerouslySetInnerHTML={{ __html: title }}></h3>
           <p>{description}</p>

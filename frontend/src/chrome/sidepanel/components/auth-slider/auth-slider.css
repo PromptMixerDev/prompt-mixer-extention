@@ -8,7 +8,26 @@
 
 /* Контейнер для слайдов */
 .slides-container {
-  display: flex;
+  position: relative;
   width: 100%;
   height: 100%;
+}
+
+/* Обертка для слайда */
+.slide-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+/* Активный слайд */
+.slide-wrapper.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
 }
