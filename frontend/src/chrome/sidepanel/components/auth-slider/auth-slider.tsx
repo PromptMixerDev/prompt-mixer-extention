@@ -42,12 +42,14 @@ const AuthSlider: React.FC<AuthSliderProps> = ({ onSignIn }) => {
         className="slides-container"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
-        {slidesData.map((slide) => (
+        {slidesData.map((slide, index) => (
           <Slide
             key={slide.id}
             color={slide.color}
             title={slide.title}
             description={slide.description}
+            illustration={slide.illustration}
+            isVisible={index === currentSlide} // Передаем флаг видимости
             onSignIn={onSignIn}
           />
         ))}

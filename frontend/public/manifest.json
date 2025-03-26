@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Prompt Mixer Extension",
+  "name": "Prompt Mixer",
   "version": "0.1.0",
   "description": "A Chrome extension for working with AI prompts",
   "action": {
@@ -19,7 +19,7 @@
     "activeTab"
   ],
   "oauth2": {
-    "client_id": "331223637725-dr9ddvgm85o0asrrai8blhmjvehof8tm.apps.googleusercontent.com",
+    "client_id": "331223637725-uf6jd48rqs99dlc0gt0csc3a5fc6me17.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile"
