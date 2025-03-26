@@ -10,37 +10,67 @@
   text-align: center;
 }
 
+/* Стили для иллюстрации */
+.slide-illustration {
+  width: 90%;
+  aspect-ratio: 1.33 / 1;
+  background-size: 100% 100%; /* Начальное значение */
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  overflow: hidden;
+  will-change: background-size; /* Оптимизация анимации */
+  transition: background-size 10s ease-out; /* Плавный переход */
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+}
+
+/* Класс для увеличенного состояния */
+.slide-illustration.zoomed {
+  background-size: 110% 110%;
+}
+
 /* Контейнер для содержимого слайда */
 .slide-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 48px;
+  width: 100%;
   max-width: 320px;
+  height: 460px;
+  text-align: center;
+}
+
+/* Контейнер для текста (заголовок и описание) */
+.slide-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  width: 100%;
   text-align: center;
 }
 
 /* Стили для заголовка */
-.slide-content h3 {
-  margin-bottom: var(--spacing-2);
-  font-size: var(--font-size-xl);
+.slide-text-container h3 {
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
 }
 
 /* Стили для описания */
-.slide-content p {
+.slide-text-container p {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-tight);
   color: var(--color-text-secondary);
-  height: 72px;
   max-width: 280px;
 }
 
 /* Кнопка входа */
 .sign-in-button {
-  margin-top: var(--spacing-4);
   padding: 0 var(--spacing-3);
   height: 32px;
   background-color: white;

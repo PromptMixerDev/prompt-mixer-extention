@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import './slide.css';
 // Импортируем логотип Google как модуль
 // @ts-ignore
@@ -8,21 +8,59 @@ interface SlideProps {
   color: string;
   title: string;
   description: string;
+  illustration?: string; // Путь к иллюстрации
+  isVisible?: boolean; // Флаг видимости слайда
   onSignIn: () => Promise<void>;
 }
 
 /**
  * Компонент отдельного слайда
  */
-const Slide: React.FC<SlideProps> = ({ color, title, description, onSignIn }) => {
+const Slide: React.FC<SlideProps> = ({ color, title, description, illustration, isVisible = false, onSignIn }) => {
+  const illustrationRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (isVisible) {
+      // Сначала удаляем класс, чтобы сбросить анимацию
+      if (illustrationRef.current) {
+        illustrationRef.current.classList.remove('zoomed');
+      }
+      
+      // Затем добавляем класс через небольшую задержку
+      timer = setTimeout(() => {
+        if (illustrationRef.current) {
+          illustrationRef.current.classList.add('zoomed');
+        }
+      }, 50); // Небольшая задержка для сброса стилей
+    } else {
+      // Когда слайд не виден, сбрасываем анимацию
+      if (illustrationRef.current) {
+        illustrationRef.current.classList.remove('zoomed');
+      }
+    }
+    
+    return () => clearTimeout(timer);
+  }, [isVisible]); // Зависимость от isVisible
+  
   return (
     <div 
       className="slide"
       style={{ backgroundColor: color }}
     >
       <div className="slide-content">
-        <h3>{title}</h3>
-        <p>{description}</p>
+        {illustration && (
+          <div 
+            ref={illustrationRef}
+            className="slide-illustration" 
+            style={{ backgroundImage: `url(${illustration})` }}
+          />
+        )}
+        <div className="slide-text-container">
+          <h3 dangerouslySetInnerHTML={{ __html: title }}></h3>
+          <p>{description}</p>
+        </div>
         <button 
           className="sign-in-button"
           onClick={onSignIn}
