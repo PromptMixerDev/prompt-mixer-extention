@@ -1,0 +1,30 @@
+/* Стили для индикаторов слайдов */
+.slide-indicators {
+  position: absolute;
+  align-items: center;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  height: 28px;
+  z-index: 20;
+}
+
+.indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-text-tertiary);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.indicator.active {
+  background-color: var(--color-text-primary);
+}
+
+.indicator:hover {
+  background-color: rgba(55, 53, 47, 0.45);
+}

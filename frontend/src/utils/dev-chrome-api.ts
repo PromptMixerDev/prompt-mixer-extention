@@ -251,7 +251,7 @@ if (isDev && typeof document !== 'undefined') {
     button.textContent = 'Установить токен для разработки';
     button.style.position = 'fixed';
     button.style.bottom = '10px';
-    button.style.right = '10px';
+    button.style.left = '10px';
     button.style.zIndex = '9999';
     button.style.padding = '5px 10px';
     button.style.backgroundColor = '#007bff';

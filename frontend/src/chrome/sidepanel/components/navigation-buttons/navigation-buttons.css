@@ -1,0 +1,10 @@
+/* Стили для контейнера кнопок навигации */
+.navigation-buttons {
+  position: absolute;
+  bottom: 16px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+  z-index: 10;
+}
