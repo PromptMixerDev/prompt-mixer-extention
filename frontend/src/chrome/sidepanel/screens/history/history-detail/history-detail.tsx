@@ -8,6 +8,7 @@ import { libraryApi } from '@services/api/library';
 import { PromptHistoryItem } from '../../../../../types/history';
 import { getRandomIconId, getRandomColorId } from '@components/ui/library-icon/icon-options';
 import { usePrompts } from '@context/PromptContext';
+import { toast } from '@components/tech/toast/toast';
 
 interface HistoryDetailProps {
   id?: string | null;
@@ -170,9 +171,14 @@ const HistoryDetail: React.FC<HistoryDetailProps> = ({ id }) => {
                     colorId: randomColorId
                   });
                   
+                  // Показываем уведомление об успешном добавлении
+                  toast.success('Промпт успешно добавлен в библиотеку');
+                  
                   // Логируем успешное добавление в консоль
                   console.log('Prompt added to library successfully');
                 } catch (err) {
+                  // Показываем уведомление об ошибке
+                  toast.error('Ошибка при добавлении промпта в библиотеку');
                   console.error('Error adding prompt to library:', err);
                 }
               }}

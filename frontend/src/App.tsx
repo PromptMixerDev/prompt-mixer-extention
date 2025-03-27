@@ -4,6 +4,7 @@ import { PromptProvider } from '@context/PromptContext';
 import { AuthProvider } from '@context/AuthContext';
 import SidePanel from '@chrome/sidepanel/components/side-panel/side-panel';
 import SkeletonProvider from '@components/tech/skeleton-provider/skeleton-provider';
+import { ToastProvider } from '@components/tech/toast/toast';
 
 /**
  * Main application component
@@ -11,13 +12,15 @@ import SkeletonProvider from '@components/tech/skeleton-provider/skeleton-provid
  */
 function App() {
   return (
-    <SkeletonProvider>
-      <AuthProvider>
-        <PromptProvider>
-          <SidePanel />
-        </PromptProvider>
-      </AuthProvider>
-    </SkeletonProvider>
+    <ToastProvider>
+      <SkeletonProvider>
+        <AuthProvider>
+          <PromptProvider>
+            <SidePanel />
+          </PromptProvider>
+        </AuthProvider>
+      </SkeletonProvider>
+    </ToastProvider>
   );
 }
 

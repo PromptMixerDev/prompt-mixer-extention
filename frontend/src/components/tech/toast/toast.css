@@ -1,0 +1,25 @@
+/* Toast styles */
+
+/* Success toast */
+.toast-success {
+  background-color: var(--color-success);
+  color: var(--color-text-on-primary);
+}
+
+/* Error toast */
+.toast-error {
+  background-color: var(--color-error);
+  color: var(--color-text-on-primary);
+}
+
+/* Info toast */
+.toast-info {
+  background-color: var(--color-info);
+  color: var(--color-text-on-primary);
+}
+
+/* Warning toast */
+.toast-warning {
+  background-color: var(--color-warning);
+  color: var(--color-text-primary);
+}
