@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Literal
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
 
@@ -13,9 +13,13 @@ class TokenPayload(BaseModel):
 
 # User schemas
 class UserBase(BaseModel):
+    """
+    Base schema for user data with common fields
+    """
     email: EmailStr
     display_name: str
     is_active: bool = True
+    payment_status: Literal["paid", "unpaid"] = "unpaid"
 
 class UserCreate(UserBase):
     password: Optional[str] = None
@@ -23,10 +27,14 @@ class UserCreate(UserBase):
     photo_url: Optional[str] = None
 
 class UserUpdate(BaseModel):
+    """
+    Schema for updating user data
+    """
     email: Optional[EmailStr] = None
     display_name: Optional[str] = None
     photo_url: Optional[str] = None
     is_active: Optional[bool] = None
+    payment_status: Optional[Literal["paid", "unpaid"]] = None
 
 class UserInDBBase(UserBase):
     id: int

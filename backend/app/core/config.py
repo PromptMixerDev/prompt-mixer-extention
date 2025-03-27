@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     CLAUDE_API_KEY: str = os.getenv("CLAUDE_API_KEY", "")
     CLAUDE_MODEL: str = "claude-3-5-haiku-latest"
     
+    # Admin settings
+    ADMIN_EMAILS: List[str] = json.loads(os.getenv("ADMIN_EMAILS", '[]'))  # List of admin email addresses
+    
     class Config:
         case_sensitive = True
 
