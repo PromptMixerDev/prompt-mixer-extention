@@ -30,6 +30,11 @@ const ContentArea: React.FC = () => {
 
     // Listen for item selection events
     const handleItemSelect = (event: CustomEvent) => {
+      // Сбрасываем фокус перед переходом на новый экран
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+      
       setSelectedItemId(event.detail.id);
       setActiveScreen('detail');
     };

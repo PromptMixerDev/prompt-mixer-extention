@@ -200,12 +200,11 @@ export const InputBlockContent: React.FC<InputBlockContentProps> = ({
     }
   }, [htmlContent]);
   
-  // Handle autoFocus
+  // Handle autoFocus - полностью отключаем автофокус
   useEffect(() => {
-    if (autoFocus && contentRef.current && !readOnly) {
-      contentRef.current.focus();
-    }
-  }, [autoFocus, readOnly]);
+    // Не устанавливаем фокус автоматически вообще
+    // Пользователь должен сам кликнуть для фокуса
+  }, []);
   
   // Handle blur event - show placeholder if content is empty
   const handleBlur = () => {

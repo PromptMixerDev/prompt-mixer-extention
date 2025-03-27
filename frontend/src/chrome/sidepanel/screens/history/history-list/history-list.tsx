@@ -69,7 +69,7 @@ const HistoryList: React.FC = () => {
 
   return (
     <div className="history-list">
-      <h2>History</h2>
+      <h2>Improvement history</h2>
       
       {isLoading ? (
         <div className="history-items">

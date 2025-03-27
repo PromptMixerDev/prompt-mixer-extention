@@ -44,7 +44,6 @@
 
 .prompt-header-title.editable::placeholder {
   color: var(--color-text-tertiary);
-  opacity: 0.7;
 }
 
 .prompt-header-description {
@@ -66,7 +65,6 @@
 
 .prompt-header-description.editable::placeholder {
   color: var(--color-text-tertiary);
-  opacity: 0.7;
 }
 
 /* Tags */

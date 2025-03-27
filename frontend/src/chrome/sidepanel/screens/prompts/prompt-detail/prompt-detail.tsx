@@ -36,26 +36,26 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
   const [isNewPrompt, setIsNewPrompt] = useState(false);
   const [isPromptCreated, setIsPromptCreated] = useState(false);
   
-  // Обработчик выбора иконки и цвета
+  // Icon and color selection handler
   const handleIconSelect = (iconId: string, colorId: string) => {
     try {
-      // Обновляем локальное состояние
+      // Update local state
       setLocalIconId(iconId);
       setLocalColorId(colorId);
       
-      // Если это существующий промпт, сохраняем изменения
+      // If this is an existing prompt, save changes
       if (prompt) {
-        // Создаем объект с данными для обновления
+        // Create an object with update data
         const updateData = { iconId, colorId };
         
-        // Вызываем функцию обновления
+        // Call the update function
         updatePrompt(prompt.id, updateData)
           .catch(error => {
-            console.error('Ошибка при обновлении иконки и цвета:', error);
+            console.error('Error updating icon and color:', error);
           });
       }
     } catch (error) {
-      console.error('Ошибка при выборе иконки и цвета:', error);
+      console.error('Error selecting icon and color:', error);
     }
   };
   
@@ -90,7 +90,7 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
   const titleTextareaRef = useRef<HTMLTextAreaElement>(null);
   const descriptionTextareaRef = useRef<HTMLTextAreaElement>(null);
   
-  // Функция для автоматического изменения высоты textarea
+  // Function for automatic textarea height adjustment
   const autoResizeTextarea = (element: HTMLTextAreaElement) => {
     element.style.height = 'auto';
     element.style.height = `${element.scrollHeight}px`;
@@ -150,14 +150,14 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
     }
   }, [id, prompt]);
   
-  // Эффект для автоматического изменения высоты textarea при изменении заголовка
+  // Effect for automatic textarea height adjustment when title changes
   useEffect(() => {
     if (titleTextareaRef.current) {
       autoResizeTextarea(titleTextareaRef.current);
     }
   }, [localTitle]);
   
-  // Эффект для автоматического изменения высоты textarea при изменении описания
+  // Effect for automatic textarea height adjustment when description changes
   useEffect(() => {
     if (descriptionTextareaRef.current) {
       autoResizeTextarea(descriptionTextareaRef.current);
@@ -169,12 +169,12 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
     if (prompt && prompt.variables) {
       const initialValues: Record<string, string> = {};
       prompt.variables.forEach(variable => {
-        // Используем сохраненное значение или пустую строку
+        // Use saved value or empty string
         initialValues[variable.name] = variable.value || '';
       });
       setVariableValues(initialValues);
       
-      // Инициализируем предыдущие значения
+      // Initialize previous values
       prevVariableValuesRef.current = initialValues;
     }
   }, [prompt]);
@@ -190,18 +190,18 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
     }));
   };
   
-  // Общий эффект для создания нового промпта или обновления существующего
+  // Common effect for creating a new prompt or updating an existing one
   useEffect(() => {
     const createOrUpdatePrompt = async () => {
-      // Для нового промпта - создаем только один раз при изменении любого поля
+      // For a new prompt - create only once when any field changes
       if (isNewPrompt && !isPromptCreated && (localTitle || localContent)) {
         await createNewPromptIfNeeded();
-        return; // Выходим, чтобы не выполнять обновления ниже
+        return; // Exit to avoid executing updates below
       } 
       
-      // Для существующего промпта - обновляем измененные поля
+      // For an existing prompt - update changed fields
       if (prompt) {
-        // Обновляем заголовок если изменился
+        // Update title if changed
         if (localTitle !== prompt.title) {
           try {
             await updatePrompt(prompt.id, { title: localTitle });
@@ -210,7 +210,7 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
           }
         }
         
-        // Обновляем описание если изменилось
+        // Update description if changed
         if (localDescription !== (prompt.description || '')) {
           try {
             await updatePrompt(prompt.id, { description: localDescription });
@@ -219,7 +219,7 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
           }
         }
         
-        // Обновляем контент если изменился
+        // Update content if changed
         if (localContent !== prompt.content) {
           try {
             await updatePrompt(prompt.id, { content: localContent });
@@ -230,7 +230,7 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
       }
     };
     
-    // Используем debounce для предотвращения слишком частых обновлений
+    // Use debounce to prevent too frequent updates
     const timeoutId = setTimeout(createOrUpdatePrompt, 1000);
     
     return () => clearTimeout(timeoutId);
@@ -245,30 +245,30 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
     createNewPromptIfNeeded
   ]);
   
-  // Обновление значений переменных при изменении
+  // Update variable values when changed
   useEffect(() => {
     const updateVariableValues = async () => {
       if (prompt && prompt.variables && Object.keys(variableValues).length > 0) {
         try {
-          // Проверяем, действительно ли изменились значения переменных
+          // Check if variable values have actually changed
           const hasChanges = prompt.variables.some(variable => 
             prevVariableValuesRef.current[variable.name] !== variableValues[variable.name]
           );
           
           if (!hasChanges) {
-            return; // Если нет изменений, не обновляем
+            return; // If no changes, don't update
           }
           
-          // Сохраняем текущие значения как предыдущие
+          // Save current values as previous
           prevVariableValuesRef.current = {...variableValues};
           
-          // Создаем обновленный список переменных с текущими значениями
+          // Create an updated list of variables with current values
           const updatedVariables = prompt.variables.map(variable => ({
             ...variable,
             value: variableValues[variable.name] || ''
           }));
           
-          // Обновляем промпт с новыми значениями переменных
+          // Update prompt with new variable values
           await updatePrompt(prompt.id, { variables: updatedVariables });
         } catch (error) {
           console.error('Error updating variable values:', error);
@@ -276,7 +276,7 @@ const PromptDetail: React.FC<PromptDetailProps> = ({ id }) => {
       }
     };
     
-    // Добавляем debounce для предотвращения слишком частых обновлений
+    // Add debounce to prevent too frequent updates
     const timeoutId = setTimeout(updateVariableValues, 1000);
     
     return () => clearTimeout(timeoutId);
