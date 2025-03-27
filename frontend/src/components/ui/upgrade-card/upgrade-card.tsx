@@ -37,8 +37,8 @@ const UpgradeCard: React.FC<UpgradeCardProps> = ({
   const discountLabel = `-${YEARLY_DISCOUNT}%`;
   
   // URL для Stripe Checkout
-  const monthlyCheckoutUrl = 'https://buy.stripe.com/monthly_plan_url';
-  const yearlyCheckoutUrl = 'https://buy.stripe.com/yearly_plan_url';
+  const monthlyCheckoutUrl = 'https://buy.stripe.com/test_7sI4iY5SU2Kffw4cMP';
+  const yearlyCheckoutUrl = 'https://buy.stripe.com/test_4gw8ze3KMfx1abK6oq';
   
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   
