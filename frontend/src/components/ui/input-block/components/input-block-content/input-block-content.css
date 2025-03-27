@@ -22,6 +22,11 @@
   box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 2px inset;
 }
 
+/* Предотвращаем автофокус при загрузке страницы */
+.input-block-content:focus-visible {
+  outline: none;
+}
+
 /* Placeholder styling */
 .input-block-content.empty:before {
   content: attr(data-placeholder);

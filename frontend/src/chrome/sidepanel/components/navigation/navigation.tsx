@@ -35,7 +35,7 @@ const Navigation: React.FC = () => {
           />
         </Tooltip>
         
-        <Tooltip content="Improvment history" position="bottom">
+        <Tooltip content="Improvement history" position="bottom">
           <Button 
             kind="glyph" 
             size="medium" 

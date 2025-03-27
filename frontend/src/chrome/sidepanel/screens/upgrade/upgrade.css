@@ -1,0 +1,11 @@
+/* Upgrade page styles */
+.upgrade-page {
+  width: 100%;
+  background-color: var(--color-background-primary);
+}
+
+.upgrade-page-upgrade-container {
+  width: 100%;
+  padding: var(--spacing-4);
+  /* Дополнительные стили для контейнера */
+}
