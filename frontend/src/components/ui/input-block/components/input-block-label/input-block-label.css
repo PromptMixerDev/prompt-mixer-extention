@@ -3,12 +3,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-2);
-  min-height: 40px;
+  height: 24px;
 }
 
 .input-block-label-left {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
   font-weight: var(--font-weight-medium);
   letter-spacing: -0.012em;
