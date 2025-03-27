@@ -34,6 +34,15 @@ export const NavigationMenuPopup: React.FC<NavigationMenuPopupProps> = ({ trigge
     setIsOpen(false);
   };
 
+  const handleUpgrade = () => {
+    console.log('Upgrade clicked');
+    // Генерируем событие tabChange для переключения на вкладку upgrade
+    const event = new CustomEvent('tabChange', { detail: { tab: 'upgrade' } });
+    window.dispatchEvent(event);
+    // Закрываем меню
+    setIsOpen(false);
+  };
+
   const handleHelp = () => {
     console.log('Help clicked');
     // Здесь будет логика для открытия справки
@@ -44,21 +53,16 @@ export const NavigationMenuPopup: React.FC<NavigationMenuPopupProps> = ({ trigge
   // Обработчики для новых пунктов меню
   const handleTermsOfService = () => {
     console.log('Terms of Service clicked');
-    // Здесь будет логика для открытия Terms of Service
+    // Открываем Terms of Service в новой вкладке
+    window.open('https://www.promptmixer.dev/legal/terms', '_blank');
     // Закрываем меню
     setIsOpen(false);
   };
 
   const handlePrivacy = () => {
     console.log('Privacy clicked');
-    // Здесь будет логика для открытия Privacy
-    // Закрываем меню
-    setIsOpen(false);
-  };
-
-  const handleRefundPolicy = () => {
-    console.log('Refund Policy clicked');
-    // Здесь будет логика для открытия Refund Policy
+    // Открываем Privacy в новой вкладке
+    window.open('https://www.promptmixer.dev/legal/privacy', '_blank');
     // Закрываем меню
     setIsOpen(false);
   };
@@ -82,11 +86,11 @@ export const NavigationMenuPopup: React.FC<NavigationMenuPopupProps> = ({ trigge
       isOpen={isOpen}
       onOpenChange={setIsOpen}
     >
-      <MenuItem icon="base-icon" onClick={handleSettings}>
+      <MenuItem icon="user-line" onClick={handleSettings}>
         My profile
       </MenuItem>
-      <MenuItem icon="base-icon" onClick={handleHelp}>
-        Upgrade
+      <MenuItem icon="flashlight-fill" onClick={handleUpgrade}>
+        Upgrade to Pro
       </MenuItem>
       <MenuDivider />
       <MenuItem variant="secondary" onClick={handleTermsOfService}>
@@ -94,9 +98,6 @@ export const NavigationMenuPopup: React.FC<NavigationMenuPopupProps> = ({ trigge
       </MenuItem>
       <MenuItem variant="secondary" onClick={handlePrivacy}>
         Privacy
-      </MenuItem>
-      <MenuItem variant="secondary" onClick={handleRefundPolicy}>
-        Refund Policy
       </MenuItem>
       <MenuItem variant="secondary" onClick={handleLogout}>
         Logout

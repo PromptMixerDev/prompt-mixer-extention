@@ -5,6 +5,7 @@ import HistoryList from '../../screens/history/history-list/history-list';
 import HistoryDetail from '../../screens/history/history-detail/history-detail';
 import Marketplace from '../../screens/marketplace/marketplace';
 import Profile from '../../screens/profile/profile';
+import Upgrade from '../../screens/upgrade/upgrade';
 import BackHeader from '@components/ui/back-header/back-header';
 import { useAuth } from '@context/AuthContext';
 import './content-area.css';
@@ -60,8 +61,8 @@ const ContentArea: React.FC = () => {
 
   // Обработчик кнопки "назад"
   const handleBack = () => {
-    if (activeTab === 'profile') {
-      // Для страницы профиля переключаемся на вкладку prompt
+    if (activeTab === 'profile' || activeTab === 'upgrade') {
+      // Для страницы профиля и апгрейда переключаемся на вкладку prompt
       const event = new CustomEvent('tabChange', { detail: { tab: 'prompt' } });
       window.dispatchEvent(event);
     } else {
@@ -80,6 +81,8 @@ const ContentArea: React.FC = () => {
         return 'Back to history';
       case 'profile':
         return 'Profile'; // Возвращаемся к промптам при нажатии "назад" на странице профиля
+      case 'upgrade':
+        return 'Upgrade'; // Заголовок для страницы апгрейда
       default:
         return 'Back';
     }
@@ -104,6 +107,8 @@ const ContentArea: React.FC = () => {
         return <Marketplace />;
       case 'profile':
         return <Profile />;
+      case 'upgrade':
+        return <Upgrade />;
       default:
         return <div>Unknown tab</div>;
     }
@@ -111,7 +116,7 @@ const ContentArea: React.FC = () => {
 
   return (
     <div className="content-area">
-      {(activeScreen === 'detail' || activeTab === 'profile') && (
+      {(activeScreen === 'detail' || activeTab === 'profile' || activeTab === 'upgrade') && (
         <BackHeader 
           onClick={handleBack} 
           title={getBackTitle()} 

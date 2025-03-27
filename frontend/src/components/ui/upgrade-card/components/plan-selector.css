@@ -21,7 +21,7 @@
 
 .plan-selector-option.active {
   background-color: var(--color-background-primary);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.20);
   color: var(--color-text-primary);
 }
 
