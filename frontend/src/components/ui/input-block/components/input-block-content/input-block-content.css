@@ -1,13 +1,15 @@
 .input-block-content {
   width: 100%;
   max-height: 240px; /* Maximum height */
-  padding: var(--spacing-2);
+  padding: 4px 6px;
   outline: none;
   font-family: inherit;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--text-primary, #333);
-  background-color: var(--background-primary, #fff);
+  color: var(--color-text-primary);
+  background-color: var(--input-background);
+  border-radius: var(--border-radius-md);
+  box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px inset;
   white-space: pre-wrap; /* Preserve line breaks */
   word-break: break-word; /* Break long words */
   overflow-wrap: break-word; /* Ensure text wraps */
@@ -16,8 +18,8 @@
 }
 
 .input-block-content:focus {
-  background-color: var(--button-transparent-hover-bg);
   max-height: none; /* Expand to full height when focused */
+  box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 2px inset;
 }
 
 /* Placeholder styling */
