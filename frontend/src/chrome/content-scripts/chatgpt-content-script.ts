@@ -3,6 +3,8 @@
  * 
  * This script contains all the logic needed to add the "Improve Prompt" button
  * to ChatGPT site (chatgpt.com) and handle prompt improvement functionality.
+ * 
+ * This is a self-contained version that doesn't rely on external imports.
  */
 
 // Wrap everything in an IIFE to avoid variable name conflicts with other content scripts
@@ -16,13 +18,15 @@
 
   // ChatGPT-specific selectors for finding the input field
   const CHATGPT_INPUT_SELECTORS = [
-    // Специфичные селекторы для ChatGPT на основе HTML-разметки
+    // ChatGPT-specific selectors (2025 updated)
     '#prompt-textarea',
+    // Selector from user feedback
+    'form > div.flex.w-full.cursor-text.flex-col.items-center.justify-center.rounded-\\[28px\\] textarea',
+    // Previous selectors
     '.ProseMirror[data-virtualkeyboard="true"]',
     '[data-virtualkeyboard="true"]',
     'div.ProseMirror',
     'textarea.block.h-10.w-full.resize-none',
-    // Предыдущие селекторы
     'form textarea',
     'textarea.resize-none',
     'label textarea',
@@ -40,19 +44,37 @@
 
   // ChatGPT-specific selectors for finding the container for the button
   const CHATGPT_CONTAINER_SELECTORS = [
-    // Специфичные селекторы для ChatGPT на основе HTML-разметки
+    // ChatGPT-specific selectors (2025 updated)
+    // Container from user feedback
+    '.absolute.bottom-1.right-3.flex.items-center.gap-2',
+    '.flex.w-full.cursor-text.flex-col.items-center.justify-center.rounded-\\[28px\\]',
+    // Previous selectors
     '#composer-background',
     '.flex.w-full.cursor-text.flex-col.rounded-3xl',
     '.flex.flex-col.justify-start',
     '.flex.min-h-\\[44px\\].items-start',
     '.min-w-0.max-w-full.flex-1',
-    // Предыдущие селекторы
     'form.relative',
     'label.relative',
     '.absolute.bottom-3.right-3',
     'form',
     'label'
   ];
+
+  // Button styling
+  const BUTTON_STYLES = {
+    backgroundColor: 'rgb(0, 0, 0)',
+    hoverBackgroundColor: 'rgb(77, 77, 77)',
+    borderRadius: '999px',
+    width: '36px',
+    height: '36px'
+  };
+
+  // Button positioning
+  const BUTTON_POSITION = {
+    absoluteTop: '0px',
+    absoluteRight: '45px'
+  };
 
   /**
    * Initialize the content script
@@ -68,8 +90,14 @@
     
     console.log('ChatGPT page detected, adding button');
     
-    // Try to find the input field
-    findInputFieldAndAddButton();
+    // First try the direct approach to find the exact location specified by the user
+    if (tryDirectButtonPlacement()) {
+      console.log('Successfully placed button using direct DOM query on initialization');
+    } else {
+      // If direct placement fails, fall back to the standard approach
+      console.log('Direct placement failed, falling back to standard approach');
+      findInputFieldAndAddButton();
+    }
     
     // Set up observer to handle dynamic DOM changes
     setupObserver();
@@ -83,6 +111,90 @@
    */
   function isChatGPTPage(): boolean {
     return window.location.href.includes('chatgpt.com');
+  }
+
+  /**
+   * Try to place the button directly at the location specified by the user
+   * This is a more targeted approach that doesn't rely on finding the input field first
+   * 
+   * @returns boolean - Whether the button was successfully placed
+   */
+  function tryDirectButtonPlacement(): boolean {
+    // Try to find the exact container specified by the user
+    const targetContainer = document.querySelector('.absolute.bottom-1.right-3.flex.items-center.gap-2');
+    
+    if (!targetContainer) {
+      console.log('Target container not found for direct placement');
+      return false;
+    }
+    
+    console.log('Found target container for direct placement');
+    
+    // Create button container
+    const buttonContainer = document.createElement('div');
+    buttonContainer.id = BUTTON_CONTAINER_ID;
+    buttonContainer.style.position = 'relative';
+    buttonContainer.style.zIndex = '9999';
+    buttonContainer.style.display = 'block'; // Make it visible by default
+    
+    // Create button
+    const button = document.createElement('button');
+    button.id = BUTTON_ID;
+    button.innerHTML = CHATGPT_ICON;
+    button.title = 'Improve Prompt';
+    
+    // Style the button
+    Object.assign(button.style, {
+      backgroundColor: BUTTON_STYLES.backgroundColor,
+      color: 'white',
+      borderRadius: BUTTON_STYLES.borderRadius,
+      width: BUTTON_STYLES.width,
+      height: BUTTON_STYLES.height,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      transition: 'background-color 0.3s',
+      border: 'none',
+      outline: 'none',
+      padding: '0',
+      marginRight: '8px' // Add some spacing from other buttons
+    });
+    
+    // Add hover effect
+    button.addEventListener('mouseover', () => {
+      button.style.backgroundColor = BUTTON_STYLES.hoverBackgroundColor;
+    });
+    
+    button.addEventListener('mouseout', () => {
+      button.style.backgroundColor = BUTTON_STYLES.backgroundColor;
+    });
+    
+    // Find the input field for when the button is clicked
+    let inputField: Element | null = null;
+    for (const selector of CHATGPT_INPUT_SELECTORS) {
+      inputField = document.querySelector(selector);
+      if (inputField) break;
+    }
+    
+    if (!inputField) {
+      console.log('Input field not found for direct placement');
+      return false;
+    }
+    
+    // Add click handler
+    button.addEventListener('click', () => {
+      handleImprovePromptClick(inputField as Element);
+    });
+    
+    // Add button to container
+    buttonContainer.appendChild(button);
+    
+    // Add container to the target location
+    targetContainer.insertBefore(buttonContainer, targetContainer.firstChild);
+    
+    console.log('Button added successfully via direct placement');
+    return true;
   }
 
   /**
@@ -110,16 +222,16 @@
     } else {
       console.log('Input field not found. Dumping all available elements for debugging:');
       
-      // Дополнительная отладочная информация
+      // Additional debugging information
       console.log('Available textareas:', document.querySelectorAll('textarea').length);
       console.log('Available contenteditable elements:', document.querySelectorAll('[contenteditable="true"]').length);
       console.log('Available elements with role="textbox":', document.querySelectorAll('div[role="textbox"]').length);
       
-      // Попробуем найти элементы с похожими атрибутами
+      // Try to find elements with similar attributes
       const virtualKeyboardElements = document.querySelectorAll('[data-virtualkeyboard]');
       console.log('Elements with data-virtualkeyboard attribute:', virtualKeyboardElements.length);
       
-      // Отложенная повторная попытка найти поле ввода
+      // Delayed retry to find the input field
       setTimeout(() => {
         console.log('Retrying to find input field after delay...');
         findInputFieldAndAddButton();
@@ -154,11 +266,11 @@
     
     // Style the button to match ChatGPT's design
     Object.assign(button.style, {
-      backgroundColor: 'rgb(0, 0, 0)', // Black background
+      backgroundColor: BUTTON_STYLES.backgroundColor,
       color: 'white',
-      borderRadius: '999px',
-      width: '36px',
-      height: '36px',
+      borderRadius: BUTTON_STYLES.borderRadius,
+      width: BUTTON_STYLES.width,
+      height: BUTTON_STYLES.height,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -171,11 +283,11 @@
     
     // Add hover effect
     button.addEventListener('mouseover', () => {
-      button.style.backgroundColor = 'rgb(77, 77, 77)'; // Darker on hover
+      button.style.backgroundColor = BUTTON_STYLES.hoverBackgroundColor;
     });
     
     button.addEventListener('mouseout', () => {
-      button.style.backgroundColor = 'rgb(0, 0, 0)';
+      button.style.backgroundColor = BUTTON_STYLES.backgroundColor;
     });
     
     // Add click handler
@@ -205,7 +317,17 @@
    * Add the button container to the appropriate parent element
    */
   function addButtonToContainer(inputField: Element, buttonContainer: HTMLElement): void {
-    // Try to find a suitable container
+    // Try to find the specific container mentioned in user feedback
+    const specificContainer = document.querySelector('.absolute.bottom-1.right-3.flex.items-center.gap-2');
+    
+    if (specificContainer && specificContainer instanceof HTMLElement) {
+      console.log('Found specific container from user feedback');
+      specificContainer.style.position = 'relative'; // For proper positioning
+      specificContainer.appendChild(buttonContainer);
+      return;
+    }
+    
+    // If specific container not found, try the standard approach
     let container: Element | null = null;
     
     for (const selector of CHATGPT_CONTAINER_SELECTORS) {
@@ -237,9 +359,17 @@
     const position = buttonContainer.style.position;
     
     if (position === 'absolute') {
-      // Position for ChatGPT
-      buttonContainer.style.top = '68px';
-      buttonContainer.style.right = '51px';
+      // For the specific container from user feedback
+      if (buttonContainer.parentElement?.classList.contains('absolute') && 
+          buttonContainer.parentElement?.classList.contains('bottom-1') &&
+          buttonContainer.parentElement?.classList.contains('right-3')) {
+        buttonContainer.style.top = '0px';
+        buttonContainer.style.right = '0px';
+      } else {
+        // Use platform-specific positioning
+        buttonContainer.style.top = BUTTON_POSITION.absoluteTop;
+        buttonContainer.style.right = BUTTON_POSITION.absoluteRight;
+      }
     } else if (position === 'fixed') {
       const rect = inputField.getBoundingClientRect();
       buttonContainer.style.top = `${rect.top + 10}px`;
@@ -434,17 +564,29 @@
    * Set up observer to handle dynamic DOM changes
    */
   function setupObserver(): void {
-    console.log('Setting up observer');
+    console.log('Setting up observer for ChatGPT');
     
     const observer = new MutationObserver(() => {
-      if (!document.getElementById(BUTTON_ID)) {
-        findInputFieldAndAddButton();
+      // Check if the button exists
+      const button = document.getElementById(BUTTON_ID);
+      
+      if (!button) {
+        console.log('Button not found, attempting to add it');
+        
+        // First try the direct approach to find the exact location specified by the user
+        if (tryDirectButtonPlacement()) {
+          console.log('Successfully placed button using direct DOM query');
+        } else {
+          // If direct placement fails, fall back to the standard approach
+          findInputFieldAndAddButton();
+        }
       }
     });
     
     observer.observe(document.body, {
       childList: true,
       subtree: true,
+      attributes: true,
     });
   }
 

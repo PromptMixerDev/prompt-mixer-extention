@@ -3,6 +3,8 @@
  * 
  * This script contains all the logic needed to add the "Improve Prompt" button
  * to Gemini (gemini.google.com) and handle prompt improvement functionality.
+ * 
+ * This is a self-contained version that doesn't rely on external imports.
  */
 
 // Wrap everything in an IIFE to avoid variable name conflicts with other content scripts
@@ -13,11 +15,20 @@
   // Button ID for easy reference
   const BUTTON_ID = 'improve-prompt-button-gemini';
 
-  // Точный селектор для поля ввода Gemini
+  // Exact selector for Gemini input field
   const GEMINI_INPUT_SELECTOR = '.ql-editor.textarea.new-input-ui';
   
-  // Селектор для контейнера поля ввода
+  // Selector for input container
   const INPUT_CONTAINER_SELECTOR = '.text-input-field_textarea-wrapper';
+
+  // Button styling
+  const BUTTON_STYLES = {
+    backgroundColor: 'rgb(0, 0, 0)',
+    hoverBackgroundColor: 'rgb(77, 77, 77)',
+    borderRadius: '999px',
+    width: '40px',
+    height: '40px'
+  };
 
   /**
    * Initialize the content script
@@ -56,7 +67,7 @@
   function findInputFieldAndAddButton(): void {
     console.log('Finding input field for Gemini');
     
-    // Ищем поле ввода по точному селектору
+    // Look for input field using the exact selector
     const inputField = document.querySelector(GEMINI_INPUT_SELECTOR);
     
     if (inputField) {
@@ -65,7 +76,7 @@
     } else {
       console.log('Input field not found. Retrying after delay...');
       
-      // Отложенная повторная попытка найти поле ввода
+      // Delayed retry to find the input field
       setTimeout(() => {
         findInputFieldAndAddButton();
       }, 2000);
@@ -84,21 +95,21 @@
       return;
     }
     
-    // Create button directly without container for simplicity
+    // Create button directly without container for Gemini
     const button = document.createElement('button');
     button.id = BUTTON_ID;
     button.innerHTML = GEMINI_ICON;
     button.title = 'Improve Prompt';
     
-    // Стиль кнопки
+    // Style the button
     Object.assign(button.style, {
-      backgroundColor: 'rgb(0, 0, 0)', // Черный фон
+      backgroundColor: BUTTON_STYLES.backgroundColor,
       color: 'white',
-      borderRadius: '999px',
-      width: '40px',
-      height: '40px',
-      position: 'fixed', // Используем fixed для позиционирования относительно viewport
-      zIndex: '999999', // Максимальный z-index
+      borderRadius: BUTTON_STYLES.borderRadius,
+      width: BUTTON_STYLES.width,
+      height: BUTTON_STYLES.height,
+      position: 'fixed', // Use fixed for positioning relative to viewport
+      zIndex: '999999', // Maximum z-index
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -110,11 +121,11 @@
     
     // Add hover effect
     button.addEventListener('mouseover', () => {
-      button.style.backgroundColor = 'rgb(77, 77, 77)'; // Darker on hover
+      button.style.backgroundColor = BUTTON_STYLES.hoverBackgroundColor;
     });
     
     button.addEventListener('mouseout', () => {
-      button.style.backgroundColor = 'rgb(0, 0, 0)';
+      button.style.backgroundColor = BUTTON_STYLES.backgroundColor;
     });
     
     // Add click handler
@@ -122,18 +133,17 @@
       handleImprovePromptClick(inputField);
     });
     
-    // Добавляем кнопку в body
+    // Add button to body
     document.body.appendChild(button);
     
-    // Позиционируем кнопку относительно поля ввода
+    // Position the button relative to the input
     positionButtonRelativeToInput(button, inputField);
     
-    // Добавляем обработчик изменения размера окна для обновления позиции кнопки
+    // Add window resize and scroll handlers
     window.addEventListener('resize', () => {
       positionButtonRelativeToInput(button, inputField);
     });
     
-    // Добавляем обработчик прокрутки для обновления позиции кнопки
     window.addEventListener('scroll', () => {
       positionButtonRelativeToInput(button, inputField);
     });
@@ -145,24 +155,24 @@
    * Position the button relative to the input field
    */
   function positionButtonRelativeToInput(button: HTMLElement, inputField: Element): void {
-    // Получаем размеры и позицию поля ввода
+    // Get the dimensions and position of the input field
     const inputRect = inputField.getBoundingClientRect();
     
-    // Находим родительский контейнер поля ввода
-    let inputContainer = inputField.closest(INPUT_CONTAINER_SELECTOR);
+    // Find the parent container of the input field
+    const inputContainer = inputField.closest(INPUT_CONTAINER_SELECTOR);
     
-    // Если нашли контейнер, используем его размеры
+    // If we found the container, use its dimensions
     if (inputContainer) {
       const containerRect = inputContainer.getBoundingClientRect();
       
-      // Позиционируем кнопку в правом верхнем углу контейнера
+      // Position the button in the top right corner of the container
       button.style.top = `${containerRect.top + 10}px`;
       button.style.right = `${window.innerWidth - containerRect.right + 10}px`;
       
       console.log('Positioned button relative to input container:', 
                  `top: ${button.style.top}, right: ${button.style.right}`);
     } else {
-      // Если контейнер не найден, позиционируем относительно поля ввода
+      // If container not found, position relative to the input field
       button.style.top = `${inputRect.top + 10}px`;
       button.style.right = `${window.innerWidth - inputRect.right + 10}px`;
       
@@ -177,7 +187,7 @@
   function getPromptText(inputField: Element): string {
     console.log('Getting prompt text from input field');
     
-    // Ищем параграфы внутри поля ввода
+    // Look for paragraphs within the input field
     const paragraphs = inputField.querySelectorAll('p');
     if (paragraphs.length > 0) {
       const text = Array.from(paragraphs)
@@ -188,7 +198,7 @@
       return text;
     }
     
-    // Если параграфов нет, возвращаем textContent
+    // If no paragraphs, return textContent
     const textContent = inputField.textContent || '';
     console.log('No paragraphs found, using textContent:', textContent);
     return textContent;
@@ -200,32 +210,32 @@
   function setPromptText(inputField: Element, text: string): void {
     console.log('Setting prompt text:', text);
     
-    // Ищем параграфы внутри поля ввода
+    // Look for paragraphs within the input field
     const paragraphs = inputField.querySelectorAll('p');
     
     if (paragraphs.length > 0) {
-      // Установить текст в первый параграф
+      // Set text in the first paragraph
       paragraphs[0].textContent = text;
       
-      // Удалить остальные параграфы, если они есть
+      // Remove any additional paragraphs
       for (let i = 1; i < paragraphs.length; i++) {
         paragraphs[i].remove();
       }
       
       console.log('Set text in existing paragraph');
     } else {
-      // Если параграфов нет, создаем новый
+      // If no paragraphs, create a new one
       const p = document.createElement('p');
       p.textContent = text;
       
-      // Очищаем поле ввода и добавляем параграф
+      // Clear the input field and add the paragraph
       inputField.innerHTML = '';
       inputField.appendChild(p);
       
       console.log('Created new paragraph with text');
     }
     
-    // Trigger input event
+    // Trigger input and change events
     inputField.dispatchEvent(new Event('input', { bubbles: true }));
     inputField.dispatchEvent(new Event('change', { bubbles: true }));
   }
@@ -342,18 +352,18 @@
     console.log('Setting up observer');
     
     const observer = new MutationObserver(() => {
-      // Проверяем, существует ли кнопка
+      // Check if the button exists
       const button = document.getElementById(BUTTON_ID);
       
-      // Ищем поле ввода
+      // Look for input field
       const inputField = document.querySelector(GEMINI_INPUT_SELECTOR);
       
       if (!button && inputField) {
-        // Если кнопка не существует, но поле ввода найдено, добавляем кнопку
+        // If button doesn't exist but input field is found, add the button
         addButtonToPage(inputField);
-      } else if (button && inputField) {
-        // Если кнопка существует и поле ввода найдено, обновляем позицию кнопки
-        positionButtonRelativeToInput(button as HTMLElement, inputField);
+      } else if (button && inputField && button instanceof HTMLElement) {
+        // If button exists and input field is found, update the button position
+        positionButtonRelativeToInput(button, inputField);
       }
     });
     
