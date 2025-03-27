@@ -3,6 +3,8 @@
  * 
  * This script contains all the logic needed to add the "Improve Prompt" button
  * to Claude.ai and handle prompt improvement functionality.
+ * 
+ * This is a self-contained version that doesn't rely on external imports.
  */
 
 // Wrap everything in an IIFE to avoid variable name conflicts with other content scripts
@@ -49,6 +51,21 @@
     '.cl-textfield',
     '.cl-textarea'
   ];
+
+  // Button styling
+  const BUTTON_STYLES = {
+    backgroundColor: 'rgb(0, 0, 0)',
+    hoverBackgroundColor: 'rgb(50, 50, 50)',
+    borderRadius: '12px',
+    width: '32px',
+    height: '32px'
+  };
+
+  // Button positioning
+  const BUTTON_POSITION = {
+    absoluteTop: '48px',
+    absoluteRight: '10px'
+  };
 
   /**
    * Initialize the content script
@@ -106,6 +123,12 @@
       addButtonToPage(inputField);
     } else {
       console.log('Input field not found');
+      
+      // Delayed retry to find the input field
+      setTimeout(() => {
+        console.log('Retrying to find input field after delay...');
+        findInputFieldAndAddButton();
+      }, 2000);
     }
   }
 
@@ -136,11 +159,11 @@
     
     // Style the button
     Object.assign(button.style, {
-      backgroundColor: 'rgb(0, 0, 0)',
+      backgroundColor: BUTTON_STYLES.backgroundColor,
       color: 'white',
-      borderRadius: '12px',
-      width: '32px',
-      height: '32px',
+      borderRadius: BUTTON_STYLES.borderRadius,
+      width: BUTTON_STYLES.width,
+      height: BUTTON_STYLES.height,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -153,11 +176,11 @@
     
     // Add hover effect
     button.addEventListener('mouseover', () => {
-      button.style.backgroundColor = 'rgb(50, 50, 50)';
+      button.style.backgroundColor = BUTTON_STYLES.hoverBackgroundColor;
     });
     
     button.addEventListener('mouseout', () => {
-      button.style.backgroundColor = 'rgb(0, 0, 0)';
+      button.style.backgroundColor = BUTTON_STYLES.backgroundColor;
     });
     
     // Add click handler
@@ -219,9 +242,9 @@
     const position = buttonContainer.style.position;
     
     if (position === 'absolute') {
-      // Единые значения для всех сайтов Claude
-      buttonContainer.style.top = '48px';
-      buttonContainer.style.right = '10px';
+      // Use platform-specific positioning
+      buttonContainer.style.top = BUTTON_POSITION.absoluteTop;
+      buttonContainer.style.right = BUTTON_POSITION.absoluteRight;
     } else if (position === 'fixed') {
       const rect = inputField.getBoundingClientRect();
       buttonContainer.style.top = `${rect.top + 10}px`;

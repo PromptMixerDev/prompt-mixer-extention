@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserPrompt, SharedPrompt, PromptContextType } from '../types/prompt';
 import { libraryApi } from '../services/api/library';
+import { getApiUrl } from '../utils/config';
 
 /**
  * Context for managing prompts in the application
@@ -164,8 +165,10 @@ export function PromptProvider({ children }: PromptProviderProps) {
    */
   const improvePrompt = async (promptText: string) => {
     try {
+      console.log('Sending request to:', getApiUrl('prompts/improve'));
+      
       // Call the backend API to improve the prompt
-      const response = await fetch('http://localhost:8000/api/v1/prompts/improve', {
+      const response = await fetch(getApiUrl('prompts/improve'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -174,14 +177,18 @@ export function PromptProvider({ children }: PromptProviderProps) {
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to improve prompt: ${response.statusText}`);
+        throw new Error(`Failed to improve prompt: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();
       return data.improved_prompt;
     } catch (err) {
       console.error('Error improving prompt:', err);
-      setError('Failed to improve prompt. Please try again.');
+      const errorMessage = err instanceof Error && err.message.includes('Failed to fetch')
+        ? 'Network error: Could not connect to the API server. Please check your internet connection.'
+        : 'Failed to improve prompt. Please try again.';
+      
+      setError(errorMessage);
       throw err;
     }
   };

@@ -6,8 +6,9 @@
  */
 
 // Import Chrome types and services
-import type { ChromeMessage, ChromeMessageSender, ChromeWindow } from '../../types/chrome';
+import type { ChromeMessage, ChromeMessageSender } from '../../types/chrome';
 import { authService } from '../../services/auth';
+import { getApiUrl } from '../../utils/config';
 
 // Initialize the side panel when the extension is installed or updated
 chrome.runtime.onInstalled.addListener(() => {
@@ -133,8 +134,10 @@ chrome.runtime.onMessage.addListener(
             headers['Authorization'] = `Bearer ${token}`;
           }
 
+          console.log('Sending request to:', getApiUrl('prompts/improve'));
+          
           // Call the backend API to improve the prompt
-          fetch('http://localhost:8000/api/v1/prompts/improve', {
+          fetch(getApiUrl('prompts/improve'), {
             method: 'POST',
             headers,
             body: JSON.stringify({
@@ -158,10 +161,14 @@ chrome.runtime.onMessage.addListener(
             })
             .catch(error => {
               console.error('Error improving prompt:', error);
+              const errorMessage = error.message.includes('Failed to fetch') 
+                ? 'Network error: Could not connect to the API server. Please check your internet connection.'
+                : `Error improving prompt: ${error.message}`;
+              
               sendResponse({
                 type: 'ERROR',
                 data: {
-                  message: `Error improving prompt: ${error.message}`,
+                  message: errorMessage,
                 },
               });
             });
