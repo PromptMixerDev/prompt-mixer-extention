@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { UserPrompt, SharedPrompt, PromptContextType } from '../types/prompt';
 import { libraryApi } from '../services/api/library';
 import { getApiUrl } from '../utils/config';
+import { toast } from '@components/tech/toast/toast';
 
 /**
  * Context for managing prompts in the application
@@ -167,6 +168,9 @@ export function PromptProvider({ children }: PromptProviderProps) {
     try {
       console.log('Sending request to:', getApiUrl('prompts/improve'));
       
+      // Показываем уведомление о начале процесса улучшения
+      const toastId = toast.info('Улучшаем промпт...', { duration: 10000 });
+      
       // Call the backend API to improve the prompt
       const response = await fetch(getApiUrl('prompts/improve'), {
         method: 'POST',
@@ -181,12 +185,22 @@ export function PromptProvider({ children }: PromptProviderProps) {
       }
       
       const data = await response.json();
+      
+      // Закрываем уведомление о процессе
+      toast.dismissById(toastId);
+      
+      // Показываем уведомление об успешном улучшении
+      toast.success('Промпт успешно улучшен и добавлен в историю');
+      
       return data.improved_prompt;
     } catch (err) {
       console.error('Error improving prompt:', err);
       const errorMessage = err instanceof Error && err.message.includes('Failed to fetch')
         ? 'Network error: Could not connect to the API server. Please check your internet connection.'
         : 'Failed to improve prompt. Please try again.';
+      
+      // Показываем уведомление об ошибке
+      toast.error('Ошибка при улучшении промпта');
       
       setError(errorMessage);
       throw err;

@@ -6,6 +6,7 @@ import { Tooltip } from '@components/tech/tooltip/tooltip';
 import { usePrompts } from '@context/PromptContext';
 import { UserPrompt } from '../../../../../types/prompt';
 import EmptyState from '@components/ui/empty-state/empty-state';
+import { toast } from '@components/tech/toast/toast';
 
 /**
  * Prompt list component
@@ -38,10 +39,13 @@ const PromptList: React.FC = () => {
   const handleRemovePrompt = async (id: string) => {
     try {
       await deletePrompt(id);
+      // Показываем уведомление об успешном удалении
+      toast.success('Промпт успешно удален');
       // Успешное удаление, обновление не требуется, так как состояние обновляется в контексте
     } catch (error) {
       console.error('Error removing prompt:', error);
-      // Можно добавить обработку ошибок, например, показать уведомление
+      // Показываем уведомление об ошибке
+      toast.error('Ошибка при удалении промпта');
     }
   };
 
