@@ -14,3 +14,4 @@ google-auth==2.27.0
 requests==2.31.0
 python-multipart==0.0.7
 anthropic==0.22.0
+stripe==11.6.0

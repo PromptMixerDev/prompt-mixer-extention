@@ -76,6 +76,11 @@ def read_root():
             <p>Improve a prompt using Claude AI</p>
         </div>
         
+        <div class="endpoint">
+            <span class="method">POST</span> /api/v1/stripe/webhook</p>
+            <p>Webhook endpoint for Stripe payment events</p>
+        </div>
+        
         <p>For full API documentation, visit <a href="/docs">/docs</a></p>
     </body>
     </html>

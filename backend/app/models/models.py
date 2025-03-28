@@ -6,6 +6,10 @@ from typing import Optional
 from app.core.database import Base
 
 class User(Base):
+    """
+    User model representing application users with authentication and profile information.
+    Includes payment status to track subscription state.
+    """
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -15,6 +19,7 @@ class User(Base):
     display_name = Column(String)
     photo_url = Column(String, nullable=True)
     is_active = Column(Boolean, default=True)
+    payment_status = Column(String, default="unpaid", nullable=False)  # Possible values: "paid", "unpaid"
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

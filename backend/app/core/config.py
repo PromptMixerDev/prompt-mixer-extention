@@ -29,6 +29,13 @@ class Settings(BaseSettings):
     CLAUDE_API_KEY: str = os.getenv("CLAUDE_API_KEY", "")
     CLAUDE_MODEL: str = "claude-3-5-haiku-latest"
     
+    # Stripe API
+    STRIPE_API_KEY: str = os.getenv("STRIPE_API_KEY", "")
+    STRIPE_WEBHOOK_SECRET: str = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+    
+    # Admin settings
+    ADMIN_EMAILS: List[str] = json.loads(os.getenv("ADMIN_EMAILS", '[]'))  # List of admin email addresses
+    
     class Config:
         case_sensitive = True
 

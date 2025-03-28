@@ -1,9 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
-from typing import List, Optional
-from sqlalchemy.orm import Session
+from typing import Optional
 from app.schemas.prompts import PromptRequest, PromptResponse, PromptHistory, PromptHistoryList
 from app.services.prompt_improvement import prompt_improvement_service
-from app.core.database import get_db, SessionLocal
+from app.core.database import SessionLocal
 from app.api.endpoints.users import get_current_user
 from app.models.models import User, PromptHistory as PromptHistoryModel
 
