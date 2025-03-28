@@ -1,12 +1,10 @@
 import stripe
-import json
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from typing import Any
 
 from app.core.database import get_db
 from app.core.config import settings
-from app.models.models import User
 from app.services.auth import AuthService
 
 router = APIRouter()
