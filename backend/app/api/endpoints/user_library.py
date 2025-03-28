@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
-from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from app.schemas.user_library import UserLibrary, UserLibraryCreate, UserLibraryUpdate, UserLibraryList

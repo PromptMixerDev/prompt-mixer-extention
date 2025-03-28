@@ -6,7 +6,6 @@ from typing import Literal
 
 from app.core.database import get_db
 from app.core.config import settings
-from app.core.security import verify_password
 from app.models.models import User
 from app.schemas.schemas import User as UserSchema, UserUpdate
 from app.services.auth import AuthService
@@ -14,40 +13,6 @@ from app.services.auth import AuthService
 router = APIRouter()
 auth_service = AuthService()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
-
-def is_admin(user: User) -> bool:
-    """
-    Check if a user is an admin based on their email
-    
-    Args:
-        user: User object to check
-        
-    Returns:
-        bool: True if the user is an admin, False otherwise
-    """
-    return user.email in settings.ADMIN_EMAILS
-
-def get_admin_user(
-    current_user: User = Depends(get_current_user),
-) -> User:
-    """
-    Get current user and verify they have admin privileges
-    
-    Args:
-        current_user: Current authenticated user
-        
-    Returns:
-        User: Current user if they are an admin
-        
-    Raises:
-        HTTPException: If the user is not an admin
-    """
-    if not is_admin(current_user):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions",
-        )
-    return current_user
 
 def get_current_user(
     db: Session = Depends(get_db),
@@ -106,6 +71,42 @@ def get_current_user(
         import traceback
         print(f"get_current_user: Traceback: {traceback.format_exc()}")
         raise credentials_exception
+    
+def is_admin(user: User) -> bool:
+    """
+    Check if a user is an admin based on their email
+    
+    Args:
+        user: User object to check
+        
+    Returns:
+        bool: True if the user is an admin, False otherwise
+    """
+    return user.email in settings.ADMIN_EMAILS
+
+def get_admin_user(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """
+    Get current user and verify they have admin privileges
+    
+    Args:
+        current_user: Current authenticated user
+        
+    Returns:
+        User: Current user if they are an admin
+        
+    Raises:
+        HTTPException: If the user is not an admin
+    """
+    if not is_admin(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions",
+        )
+    return current_user
+
+
 
 @router.get("/me", response_model=UserSchema)
 async def read_users_me(current_user: User = Depends(get_current_user)):
