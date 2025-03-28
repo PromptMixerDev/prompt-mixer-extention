@@ -38,7 +38,7 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--port=8000'  # Match the port in run.py
-      - '--set-env-vars=DATABASE_URL=${_DATABASE_URL},SECRET_KEY=${_SECRET_KEY},GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID},CLAUDE_API_KEY=${_CLAUDE_API_KEY}'
+      - '--set-env-vars=DATABASE_URL=${_DATABASE_URL},SECRET_KEY=${_SECRET_KEY},GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID},CLAUDE_API_KEY=${_CLAUDE_API_KEY},STRIPE_API_KEY=${_STRIPE_API_KEY},STRIPE_WEBHOOK_SECRET=${_STRIPE_WEBHOOK_SECRET}'
     id: 'deploy'
     waitFor: ['push-image']
 
@@ -58,6 +58,8 @@ substitutions:
   _SECRET_KEY: ''
   _GOOGLE_CLIENT_ID: ''
   _CLAUDE_API_KEY: ''
+  _STRIPE_API_KEY: ''
+  _STRIPE_WEBHOOK_SECRET: ''
   _SERVICE_NAME: 'prompt-mixer-backend'
 
 options:
