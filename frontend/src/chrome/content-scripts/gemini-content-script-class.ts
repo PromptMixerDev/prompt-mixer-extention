@@ -13,10 +13,30 @@ import { BaseContentScript } from './base-content-script';
 export class GeminiContentScript extends BaseContentScript {
   /**
    * Override the position button method to handle Gemini-specific positioning
+   * Positions the button to the right of the plus button
    */
   protected positionButtonRelativeToInput(): void {
     if (!this.inputField || !this.button) return;
     
+    // Try to find the plus button using the selector
+    const plusButtonSelector = 'div.leading-actions-wrapper > div > uploader > div > div > button';
+    const plusButton = document.querySelector(plusButtonSelector);
+    
+    if (plusButton) {
+      // Get the dimensions and position of the plus button
+      const plusButtonRect = plusButton.getBoundingClientRect();
+      
+      // Position our button to the right of the plus button
+      this.button.style.top = `${plusButtonRect.top}px`;
+      this.button.style.left = `${plusButtonRect.right + 10}px`; // 10px spacing
+      this.button.style.right = 'auto'; // Clear right positioning
+      
+      console.log('Positioned button to the right of plus button:', 
+                 `top: ${this.button.style.top}, left: ${this.button.style.left}`);
+      return;
+    }
+    
+    // Fallback to original positioning if plus button not found
     // Get the dimensions and position of the input field
     const inputRect = this.inputField.getBoundingClientRect();
     
@@ -30,15 +50,17 @@ export class GeminiContentScript extends BaseContentScript {
       // Position the button in the top right corner of the container
       this.button.style.top = `${containerRect.top + 10}px`;
       this.button.style.right = `${window.innerWidth - containerRect.right + 10}px`;
+      this.button.style.left = 'auto'; // Clear left positioning
       
-      console.log('Positioned button relative to input container:', 
+      console.log('Positioned button relative to input container (fallback):', 
                  `top: ${this.button.style.top}, right: ${this.button.style.right}`);
     } else {
       // If container not found, position relative to the input field
       this.button.style.top = `${inputRect.top + 10}px`;
       this.button.style.right = `${window.innerWidth - inputRect.right + 10}px`;
+      this.button.style.left = 'auto'; // Clear left positioning
       
-      console.log('Positioned button relative to input field:', 
+      console.log('Positioned button relative to input field (fallback):', 
                  `top: ${this.button.style.top}, right: ${this.button.style.right}`);
     }
   }

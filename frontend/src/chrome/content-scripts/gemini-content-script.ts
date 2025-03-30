@@ -152,9 +152,28 @@
   }
 
   /**
-   * Position the button relative to the input field
+   * Position the button relative to the plus button or input field
    */
   function positionButtonRelativeToInput(button: HTMLElement, inputField: Element): void {
+    // Try to find the plus button using the selector
+    const plusButtonSelector = 'div.leading-actions-wrapper > div > uploader > div > div > button';
+    const plusButton = document.querySelector(plusButtonSelector);
+    
+    if (plusButton) {
+      // Get the dimensions and position of the plus button
+      const plusButtonRect = plusButton.getBoundingClientRect();
+      
+      // Position our button to the right of the plus button
+      button.style.top = `${plusButtonRect.top}px`;
+      button.style.left = `${plusButtonRect.right + 10}px`; // 10px spacing
+      button.style.right = 'auto'; // Clear right positioning
+      
+      console.log('Positioned button to the right of plus button:', 
+                 `top: ${button.style.top}, left: ${button.style.left}`);
+      return;
+    }
+    
+    // Fallback to original positioning if plus button not found
     // Get the dimensions and position of the input field
     const inputRect = inputField.getBoundingClientRect();
     
@@ -168,15 +187,17 @@
       // Position the button in the top right corner of the container
       button.style.top = `${containerRect.top + 10}px`;
       button.style.right = `${window.innerWidth - containerRect.right + 10}px`;
+      button.style.left = 'auto'; // Clear left positioning
       
-      console.log('Positioned button relative to input container:', 
+      console.log('Positioned button relative to input container (fallback):', 
                  `top: ${button.style.top}, right: ${button.style.right}`);
     } else {
       // If container not found, position relative to the input field
       button.style.top = `${inputRect.top + 10}px`;
       button.style.right = `${window.innerWidth - inputRect.right + 10}px`;
+      button.style.left = 'auto'; // Clear left positioning
       
-      console.log('Positioned button relative to input field:', 
+      console.log('Positioned button relative to input field (fallback):', 
                  `top: ${button.style.top}, right: ${button.style.right}`);
     }
   }
