@@ -334,37 +334,53 @@ export class BaseContentScript {
       this.showLoadingState();
     }
     
-    // Send message to background script
-    chrome.runtime.sendMessage(
-      {
-        type: 'IMPROVE_PROMPT',
-        data: {
-          prompt: promptText,
-          url: window.location.href,
+    // Check if chrome.runtime is defined before using it
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+      // Send message to background script
+      chrome.runtime.sendMessage(
+        {
+          type: 'IMPROVE_PROMPT',
+          data: {
+            prompt: promptText,
+            url: window.location.href,
+          },
         },
-      },
-      (response) => {
-        if (response && response.type === 'IMPROVED_PROMPT') {
-          // Set the improved prompt
-          this.setPromptText(response.data.improvedPrompt);
-          
-          // Reset button state
-          if (this.button) {
-            this.resetButtonState();
-          }
-        } else {
-          // Show error state
-          if (this.button) {
-            this.showErrorState();
+        (response) => {
+          if (response && response.type === 'IMPROVED_PROMPT') {
+            // Set the improved prompt
+            this.setPromptText(response.data.improvedPrompt);
             
-            // Reset after 2 seconds
-            setTimeout(() => {
+            // Reset button state
+            if (this.button) {
               this.resetButtonState();
-            }, 2000);
+            }
+          } else {
+            // Show error state
+            if (this.button) {
+              this.showErrorState();
+              
+              // Reset after 2 seconds
+              setTimeout(() => {
+                this.resetButtonState();
+              }, 2000);
+            }
           }
         }
+      );
+    } else {
+      // Handle case where chrome.runtime is not available
+      console.error('Chrome runtime not available. This extension requires Chrome APIs to function properly.');
+      
+      // Show error state
+      if (this.button) {
+        this.showErrorState();
+        
+        // Reset after 2 seconds
+        setTimeout(() => {
+          this.resetButtonState();
+        }, 2000);
       }
-    );
+    }
   }
 
   /**
