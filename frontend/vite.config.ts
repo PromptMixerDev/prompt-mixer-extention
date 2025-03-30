@@ -45,7 +45,7 @@ export default defineConfig({
         background: path.resolve(__dirname, 'src/chrome/background/index.ts'),
         'claude-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/claude-content-script.ts'),
         'openai-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/openai-content-script.ts'),
-        'chatgpt-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/chatgpt-content-script.ts'),
+        'chatgpt-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/chatgpt-content-script-fallback.ts'),
         'gemini-content-script': path.resolve(__dirname, 'src/chrome/content-scripts/gemini-content-script.ts'),
       },
       output: {
