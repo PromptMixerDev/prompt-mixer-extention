@@ -314,12 +314,12 @@ export class ClaudeContentScript extends BaseContentScript {
     // Send message to background script with timeout
     const timeoutId = setTimeout(() => {
       // If it takes too long, reset the button
-      console.log('Improve prompt request timed out');
+      console.log('Improve prompt request timed out after 5 minutes');
       if (this.button) {
         this.resetButtonState();
       }
       this.isProcessingImprovePrompt = false;
-    }, 15000); // 15 second timeout
+    }, 300000); // 5 minute timeout (300,000 ms)
     
     chrome.runtime.sendMessage(
       {
