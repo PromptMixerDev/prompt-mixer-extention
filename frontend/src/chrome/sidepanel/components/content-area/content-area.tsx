@@ -123,7 +123,7 @@ const ContentArea: React.FC = () => {
           showRightContent={activeTab === 'profile'}
           rightContent={
             activeTab === 'profile' ? (
-              <span className="user-email">admin@example.com</span>
+              <span className="user-email">{currentUser?.email || 'No email available'}</span>
             ) : null
           }
         />
