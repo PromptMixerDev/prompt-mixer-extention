@@ -89,32 +89,19 @@ export const claudeConfig: PlatformConfig = {
     '.ProseMirror',
     '[contenteditable="true"]',
     'div[role="textbox"]',
-    // Claude-specific selectors
-    'textarea.claude-textarea',
-    '.claude-input-container textarea',
-    '.claude-input-container [contenteditable="true"]',
-    // New Claude selectors (2025)
+    // Claude-specific selectors (2025)
     '.cl-textarea',
-    '.cl-textfield',
     '.cl-textfield__textarea',
     '.cl-editor',
     '.cl-editor-container [contenteditable="true"]',
     '.cl-chat-input',
-    '.cl-chat-input-container textarea',
-    '.cl-chat-input-container [contenteditable="true"]',
     // Generic fallbacks
-    'textarea',
-    'div.editor',
-    '[data-testid="text-input"]',
-    '[data-testid="chat-input"]'
+    'textarea'
   ],
   containerSelectors: [
     'fieldset',
     '.cl-chat-input-container',
-    '.cl-editor-container',
-    'form',
-    '.cl-textfield',
-    '.cl-textarea'
+    '.cl-editor-container'
   ],
   buttonStyles: {
     backgroundColor: 'rgb(0, 0, 0)',
