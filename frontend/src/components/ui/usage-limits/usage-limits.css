@@ -1,0 +1,28 @@
+.usage-limits {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #FBBC05;
+}
+
+.usage-limits-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.usage-limits-item {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+}
+
+.usage-limits-count {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.usage-limits-action {
+  display: flex;
+  align-items: center;
+}

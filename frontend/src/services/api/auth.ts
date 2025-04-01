@@ -5,12 +5,12 @@ import { getApiUrl } from '@utils/config';
  * Get auth token from chrome.storage
  */
 const getAuthToken = async (): Promise<string | null> => {
-  console.log('Getting auth token from chrome.storage.local');
+  console.log('auth.ts: Getting auth token from chrome.storage.local');
   return new Promise(resolve => {
     chrome.storage.local.get(['auth'], result => {
-      console.log('Auth data from storage:', result);
+      console.log('auth.ts: Auth data from storage:', result);
       const token = result.auth?.token || null;
-      console.log('Extracted token:', token ? `${token.substring(0, 10)}...` : 'null');
+      console.log('auth.ts: Extracted token:', token ? `${token.substring(0, 10)}...` : 'null');
       resolve(token);
     });
   });
@@ -21,7 +21,7 @@ const getAuthToken = async (): Promise<string | null> => {
  */
 export const createAuthHeaders = async (): Promise<HeadersInit> => {
   const token = await getAuthToken();
-  console.log('Auth token from storage:', token);
+  console.log('auth.ts: Auth token from storage:', token ? `${token.substring(0, 10)}...` : 'null');
   
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -29,9 +29,9 @@ export const createAuthHeaders = async (): Promise<HeadersInit> => {
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
-    console.log('Authorization header:', headers['Authorization']);
+    console.log('auth.ts: Authorization header created');
   } else {
-    console.warn('No auth token found in storage');
+    console.warn('auth.ts: No auth token found in storage');
   }
 
   return headers;

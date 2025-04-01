@@ -3,6 +3,7 @@ import { MenuPopup } from '@components/ui/popups/menu-popup/menu-popup';
 import { MenuItem } from '@components/ui/popups/menu-item/menu-item';
 import { MenuDivider } from '@components/ui/popups/menu-divider/menu-divider';
 import { useAuth } from '@context/AuthContext';
+import { useSubscription } from '@hooks/useSubscription';
 import './navigation-menu-popup.css';
 
 interface NavigationMenuPopupProps {
@@ -22,8 +23,8 @@ export const NavigationMenuPopup: React.FC<NavigationMenuPopupProps> = ({ trigge
   // Получаем информацию о пользователе и функцию signOut из контекста аутентификации
   const { currentUser, signOut } = useAuth();
   
-  // Проверяем, является ли пользователь платным
-  const isPaidUser = currentUser?.payment_status === 'paid';
+  // Получаем информацию о статусе подписки из хука useSubscription
+  const { isPaidUser } = useSubscription();
   
   /**
    * Обработчики для элементов меню

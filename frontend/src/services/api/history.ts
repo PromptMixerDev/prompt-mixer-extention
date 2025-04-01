@@ -25,6 +25,13 @@ export const historyApi = {
           // или вызов метода повторной аутентификации
           return { items: [], total: 0 };
         }
+        
+        // Проверка на ошибку валидации (422 Unprocessable Entity)
+        if (response.status === 422) {
+          console.error('Validation error in history request:', response.statusText);
+          return { items: [], total: 0 };
+        }
+        
         throw new Error(`Failed to get history: ${response.statusText}`);
       }
 

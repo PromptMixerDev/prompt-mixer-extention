@@ -7,14 +7,31 @@ import { usePrompts } from '@context/PromptContext';
 import { UserPrompt } from '../../../../../types/prompt';
 import EmptyState from '@components/ui/empty-state/empty-state';
 import { toast } from '@components/tech/toast/toast';
+import { useSubscription } from '@hooks/useSubscription';
 
 /**
  * Prompt list component
  * Displays a list of user prompts
  */
 const PromptList: React.FC = () => {
-  const { userPrompts, isLoading, error, addPrompt, deletePrompt } = usePrompts();
+  const { userPrompts, isLoading, error, addPrompt, deletePrompt, loadPrompts } = usePrompts();
+  const { hasReachedPromptsLimit } = useSubscription();
   const [activePopupId, setActivePopupId] = useState<string | null>(null);
+  
+  // Логируем состояние и принудительно загружаем промпты, если они не загружены
+  useEffect(() => {
+    console.log('PromptList: Initial state', {
+      userPromptsCount: userPrompts.length,
+      isLoading,
+      error
+    });
+    
+    // Если данные не загружаются и не загружены, принудительно загружаем их
+    if (!isLoading && userPrompts.length === 0 && !error) {
+      console.log('PromptList: Forcing loadPrompts');
+      loadPrompts(true);
+    }
+  }, [isLoading, userPrompts.length, error, loadPrompts]);
   
   /**
    * Handle prompt selection
@@ -40,12 +57,12 @@ const PromptList: React.FC = () => {
     try {
       await deletePrompt(id);
       // Показываем уведомление об успешном удалении
-      toast.success('Промпт успешно удален');
+      toast.success('Prompt successfully removed');
       // Успешное удаление, обновление не требуется, так как состояние обновляется в контексте
     } catch (error) {
       console.error('Error removing prompt:', error);
       // Показываем уведомление об ошибке
-      toast.error('Ошибка при удалении промпта');
+      toast.error('Error on deleting a prompt');
     }
   };
 
@@ -62,7 +79,13 @@ const PromptList: React.FC = () => {
     <div className="prompt-list">
       <div className="header-container">
         <h2>My library</h2>
-        <Tooltip content="Create new prompt" position="bottom-right">
+        <Tooltip 
+          content={hasReachedPromptsLimit 
+            ? "You've reached your 10 prompt limit." 
+            : "Create new prompt"
+          } 
+          position="bottom-right"
+        >
           <Button 
             kind="glyph" 
             variant="tertiary" 
@@ -71,6 +94,7 @@ const PromptList: React.FC = () => {
             onClick={handleCreatePrompt}
             className="new-prompt-button"
             aria-label="Create new prompt"
+            disabled={hasReachedPromptsLimit}
           />
         </Tooltip>
       </div>
