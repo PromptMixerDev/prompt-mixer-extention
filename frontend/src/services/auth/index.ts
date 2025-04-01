@@ -8,6 +8,7 @@ export interface User {
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
+  payment_status?: "paid" | "unpaid";
 }
 
 /**
