@@ -13,25 +13,25 @@ import { BaseContentScript } from './base-content-script';
 export class GeminiContentScript extends BaseContentScript {
   /**
    * Override the position button method to handle Gemini-specific positioning
-   * Positions the button to the right of the plus button
+   * Positions the button to the right of the canvas button
    */
   protected positionButtonRelativeToInput(): void {
     if (!this.inputField || !this.button) return;
     
-    // Try to find the plus button using the selector
-    const plusButtonSelector = 'div.leading-actions-wrapper > div > uploader > div > div > button';
-    const plusButton = document.querySelector(plusButtonSelector);
+    // Try to find the canvas button using the selector provided
+    const canvasButtonSelector = '#app-root > main > side-navigation-v2 > bard-sidenav-container > bard-sidenav-content > div.content-wrapper > div > div.content-container > chat-window > div > input-container > div > input-area-v2 > div > div > div.leading-actions-wrapper > toolbox-drawer > div > toolbox-drawer-item:nth-child(2) > button';
+    const canvasButton = document.querySelector(canvasButtonSelector);
     
-    if (plusButton) {
-      // Get the dimensions and position of the plus button
-      const plusButtonRect = plusButton.getBoundingClientRect();
+    if (canvasButton) {
+      // Get the dimensions and position of the canvas button
+      const canvasButtonRect = canvasButton.getBoundingClientRect();
       
-      // Position our button to the right of the plus button
-      this.button.style.top = `${plusButtonRect.top}px`;
-      this.button.style.left = `${plusButtonRect.right + 10}px`; // 10px spacing
+      // Position our button to the right of the canvas button
+      this.button.style.top = `${canvasButtonRect.top}px`;
+      this.button.style.left = `${canvasButtonRect.right + 10}px`; // 10px spacing
       this.button.style.right = 'auto'; // Clear right positioning
       
-      console.log('Positioned button to the right of plus button:', 
+      console.log('Positioned button to the right of canvas button:', 
                  `top: ${this.button.style.top}, left: ${this.button.style.left}`);
       return;
     }

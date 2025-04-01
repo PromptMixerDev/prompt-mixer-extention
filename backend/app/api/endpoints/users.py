@@ -8,7 +8,9 @@ from app.core.database import get_db
 from app.core.config import settings
 from app.models.models import User
 from app.schemas.schemas import User as UserSchema, UserUpdate
+from app.schemas.user_limits import UserLimits
 from app.services.auth import AuthService
+from app.services.usage_limits import usage_limits_service
 
 router = APIRouter()
 auth_service = AuthService()
@@ -184,3 +186,20 @@ async def list_users(
     """
     users = db.query(User).offset(skip).limit(limit).all()
     return users
+
+@router.get("/limits", response_model=UserLimits)
+async def get_user_limits(
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get current user's usage limits and counts
+    
+    This endpoint returns information about the user's current usage,
+    including prompt and improvement counts, limits, and whether
+    they have reached their limits.
+    
+    Returns:
+        UserLimits: Object containing usage and limit information
+    """
+    limits = await usage_limits_service.get_user_limits(current_user.id)
+    return limits

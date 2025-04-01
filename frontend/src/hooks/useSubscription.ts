@@ -1,95 +1,86 @@
 import { useAuth } from '@context/AuthContext';
-import { usePrompts } from '@context/PromptContext';
-import { historyApi } from '@services/api/history';
 import { useState, useEffect } from 'react';
+import { limitsApi, UserLimitsResponse } from '@services/api/limits';
 
-// Константы для лимитов
+// Export constants for backward compatibility
 export const MAX_FREE_PROMPTS = 10;
 export const MAX_FREE_IMPROVEMENTS = 3;
 
 /**
- * Хук для управления подпиской и лимитами
+ * Hook for managing subscription and usage limits
  * 
- * Предоставляет информацию о статусе подписки, лимитах и текущем использовании
+ * Provides information about subscription status, limits, and current usage
+ * by fetching data from the backend API
  */
 export function useSubscription() {
   const { currentUser } = useAuth();
-  const { userPrompts, isLoading: promptsLoading, loadPrompts } = usePrompts();
   
-  const [improvementsCount, setImprovementsCount] = useState(0);
+  const [limits, setLimits] = useState<UserLimitsResponse>({
+    isPaidUser: false,
+    promptsCount: 0,
+    improvementsCount: 0,
+    maxFreePrompts: MAX_FREE_PROMPTS,
+    maxFreeImprovements: MAX_FREE_IMPROVEMENTS,
+    promptsLeft: MAX_FREE_PROMPTS,
+    improvementsLeft: MAX_FREE_IMPROVEMENTS,
+    hasReachedPromptsLimit: false,
+    hasReachedImprovementsLimit: false
+  });
+  
   const [isLoading, setIsLoading] = useState(true);
-  const [hasTriedLoadingHistory, setHasTriedLoadingHistory] = useState(false);
   
-  // Логируем только при первом рендеринге и при изменении данных
+  // Log initial state
   useEffect(() => {
     console.log('useSubscription: Initial state', {
-      userPrompts: userPrompts.length,
-      promptsLoading,
       currentUser: currentUser?.email
     });
   }, []);
   
-  // Определяем статус подписки
-  const isPaidUser = currentUser?.payment_status === 'paid';
-  
-  // Убираем принудительную загрузку промптов, так как она уже происходит в PromptContext
-  // useEffect(() => {
-  //   console.log('useSubscription: Loading prompts');
-  //   loadPrompts();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-  
-  // Загружаем данные об использованных улучшениях
+  // Load limits from backend when user changes
   useEffect(() => {
-    if (!currentUser || isPaidUser || hasTriedLoadingHistory) {
+    if (!currentUser) {
       setIsLoading(false);
       return;
     }
     
-    // Отмечаем, что попытка загрузки была сделана
-    setHasTriedLoadingHistory(true);
+    console.log('useSubscription: Loading limits from backend');
+    setIsLoading(true);
     
-    // Используем limit=1 вместо limit=0, чтобы избежать ошибки 422
-    historyApi.getHistory(0, 1)
+    limitsApi.getUserLimits()
       .then(response => {
-        setImprovementsCount(response.total);
+        console.log('useSubscription: Received limits from backend', response);
+        setLimits(response);
         setIsLoading(false);
       })
       .catch(error => {
-        console.error('Error fetching improvements count:', error);
-        // Устанавливаем значение по умолчанию при ошибке
-        setImprovementsCount(0);
+        console.error('Error fetching user limits:', error);
         setIsLoading(false);
       });
-  }, [currentUser, isPaidUser, hasTriedLoadingHistory]);
+  }, [currentUser]);
   
-  // Вычисляем оставшиеся лимиты
-  const promptsLeft = isPaidUser ? Infinity : Math.max(0, MAX_FREE_PROMPTS - userPrompts.length);
-  const improvementsLeft = isPaidUser ? Infinity : Math.max(0, MAX_FREE_IMPROVEMENTS - improvementsCount);
-  
-  // Проверяем, достигнуты ли лимиты
-  const hasReachedPromptsLimit = !isPaidUser && userPrompts.length >= MAX_FREE_PROMPTS;
-  const hasReachedImprovementsLimit = !isPaidUser && improvementsCount >= MAX_FREE_IMPROVEMENTS;
+  // Convert -1 to Infinity for frontend display
+  const promptsLeft = limits.promptsLeft === -1 ? Infinity : limits.promptsLeft;
+  const improvementsLeft = limits.improvementsLeft === -1 ? Infinity : limits.improvementsLeft;
   
   return {
-    // Статус подписки
-    isPaidUser,
+    // Subscription status
+    isPaidUser: limits.isPaidUser,
     isLoading,
     
-    // Лимиты
-    maxFreePrompts: MAX_FREE_PROMPTS,
-    maxFreeImprovements: MAX_FREE_IMPROVEMENTS,
+    // Limits
+    maxFreePrompts: limits.maxFreePrompts,
+    maxFreeImprovements: limits.maxFreeImprovements,
     
-    // Текущее использование
-    promptsCount: userPrompts.length,
-    improvementsCount,
+    // Current usage
+    promptsCount: limits.promptsCount,
+    improvementsCount: limits.improvementsCount,
     
-    // Оставшиеся ресурсы
+    // Remaining resources
     promptsLeft,
     improvementsLeft,
     
-    // Методы проверки лимитов
-    hasReachedPromptsLimit,
-    hasReachedImprovementsLimit
+    // Limit check methods
+    hasReachedPromptsLimit: limits.hasReachedPromptsLimit,
+    hasReachedImprovementsLimit: limits.hasReachedImprovementsLimit
   };
 }

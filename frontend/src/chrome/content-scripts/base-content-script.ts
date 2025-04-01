@@ -354,6 +354,25 @@ export class BaseContentScript {
             if (this.button) {
               this.resetButtonState();
             }
+          } else if (response && response.type === 'ERROR') {
+            // Check if this is a limit reached error
+            if (response.data.isLimitReached) {
+              // Show limit reached message
+              this.showLimitReachedMessage(response.data.message);
+            } else {
+              // Show generic error message
+              alert(response.data.message || 'An error occurred while improving the prompt.');
+            }
+            
+            // Show error state
+            if (this.button) {
+              this.showErrorState();
+              
+              // Reset after 2 seconds
+              setTimeout(() => {
+                this.resetButtonState();
+              }, 2000);
+            }
           } else {
             // Show error state
             if (this.button) {
@@ -381,6 +400,17 @@ export class BaseContentScript {
         }, 2000);
       }
     }
+  }
+  
+  /**
+   * Show a message when the user has reached their limit
+   */
+  protected showLimitReachedMessage(message: string): void {
+    // Show a simple alert with the message
+    alert(`${message}\n\nPlease open the extension to see your usage limits and upgrade options.`);
+    
+    // Open the side panel
+    chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
   }
 
   /**
