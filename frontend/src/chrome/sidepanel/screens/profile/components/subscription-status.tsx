@@ -21,7 +21,7 @@ const SubscriptionStatus: React.FC = () => {
   const handleManageSubscription = () => {
     // URL for Stripe Customer Portal will be provided later
     // For now, use a placeholder URL
-    window.open('https://billing.stripe.com/p/login/test', '_blank');
+    window.open('https://billing.stripe.com/p/login/5kAbLO5xU2Xc7EQ144', '_blank');
   };
   
   return (
