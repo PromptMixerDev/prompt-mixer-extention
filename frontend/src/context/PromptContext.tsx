@@ -23,56 +23,96 @@ export function PromptProvider({ children }: PromptProviderProps) {
   // State for shared prompts
   const [sharedPrompts, setSharedPrompts] = useState<SharedPrompt[]>([]);
 
-  // State for loading status
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  // State for loading status - начинаем с false, чтобы избежать блокировки
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // State for error messages
   const [error, setError] = useState<string | null>(null);
 
+  // Флаг для отслеживания, была ли уже выполнена загрузка
+  const [hasLoaded, setHasLoaded] = useState(false);
+
   // Load prompts when the component mounts
   useEffect(() => {
-    loadPrompts();
+    console.log('PromptContext: Component mounted, loading prompts');
+    loadPrompts(true); // Принудительная загрузка при монтировании
   }, []);
 
   /**
    * Load prompts from API
+   * @param force Принудительная загрузка, игнорируя флаги состояния
    */
-  const loadPrompts = async () => {
+  const loadPrompts = async (force = false) => {
+    console.log('PromptContext: loadPrompts called, force =', force);
+    
+    // Если загрузка уже идёт и это не принудительная загрузка, выходим
+    if (isLoading && !force) {
+      console.log('PromptContext: Already loading prompts, skipping');
+      return;
+    }
+    
+    // Устанавливаем таймаут для гарантированного сброса состояния загрузки через 5 секунд
+    const loadingTimeout = setTimeout(() => {
+      console.log('PromptContext: Loading timeout reached, forcing isLoading to false');
+      setIsLoading(false);
+      setHasLoaded(true);
+    }, 5000);
+    
     setIsLoading(true);
     setError(null);
 
     try {
       // Load user prompts from API
+      console.log('PromptContext: Calling libraryApi.getLibraryItems');
       const { items } = await libraryApi.getLibraryItems();
+      console.log('PromptContext: Received items from API', { count: items.length });
+      
+      // Очищаем таймаут, так как загрузка успешно завершена
+      clearTimeout(loadingTimeout);
+      
+      // Устанавливаем данные и состояние
       setUserPrompts(items);
-
-      // Simulate loading shared prompts from an API
-      // In a real implementation, this would be an API call
-      setTimeout(() => {
-        setSharedPrompts([
-          {
-            id: 'shared-1',
-            title: 'SEO Optimization',
-            content: 'Optimize the following content for SEO: {{content}}',
-            createdAt: new Date().toISOString(),
-            tags: ['SEO', 'Content Writing']
-          },
-          {
-            id: 'shared-2',
-            title: 'Code Review',
-            content: 'Review the following code and suggest improvements: ```{{code}}```',
-            createdAt: new Date().toISOString(),
-            tags: ['Programming', 'Development']
-          },
-        ]);
-
-        setIsLoading(false);
-      }, 1000);
+      setIsLoading(false);
+      setHasLoaded(true);
+      
+      // Загружаем общие промпты отдельно, без блокировки интерфейса
+      loadSharedPrompts();
     } catch (err) {
       console.error('Error loading prompts:', err);
+      
+      // Очищаем таймаут, так как загрузка завершена с ошибкой
+      clearTimeout(loadingTimeout);
+      
       setError('Failed to load prompts. Please try again.');
       setIsLoading(false);
+      setHasLoaded(true);
     }
+  };
+  
+  /**
+   * Загрузка общих промптов отдельно от пользовательских
+   */
+  const loadSharedPrompts = () => {
+    // Simulate loading shared prompts from an API
+    // In a real implementation, this would be an API call
+    setTimeout(() => {
+      setSharedPrompts([
+        {
+          id: 'shared-1',
+          title: 'SEO Optimization',
+          content: 'Optimize the following content for SEO: {{content}}',
+          createdAt: new Date().toISOString(),
+          tags: ['SEO', 'Content Writing']
+        },
+        {
+          id: 'shared-2',
+          title: 'Code Review',
+          content: 'Review the following code and suggest improvements: ```{{code}}```',
+          createdAt: new Date().toISOString(),
+          tags: ['Programming', 'Development']
+        },
+      ]);
+    }, 1000);
   };
 
   /**

@@ -53,7 +53,7 @@ export interface PromptContextState {
  * Prompt context actions interface
  */
 export interface PromptContextActions {
-  loadPrompts: () => Promise<void>;
+  loadPrompts: (force?: boolean) => Promise<void>;
   addPrompt: (prompt: Omit<UserPrompt, 'id' | 'createdAt'>) => Promise<UserPrompt>;
   updatePrompt: (id: string, updatedPrompt: Partial<UserPrompt>) => Promise<UserPrompt | undefined>;
   deletePrompt: (id: string) => Promise<void>;

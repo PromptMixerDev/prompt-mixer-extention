@@ -78,20 +78,20 @@ export const libraryApi = {
    */
   async getLibraryItems(skip = 0, limit = 100): Promise<{ items: UserPrompt[], total: number }> {
     try {
-      console.log(`Fetching library items: skip=${skip}, limit=${limit}`);
+      console.log(`libraryApi.getLibraryItems: Fetching library items: skip=${skip}, limit=${limit}`);
       const headers = await createAuthHeaders();
-      console.log('Request headers:', headers);
+      console.log('libraryApi.getLibraryItems: Request headers:', headers);
       
       const url = getApiUrl(`library?skip=${skip}&limit=${limit}`);
-      console.log('Request URL:', url);
+      console.log('libraryApi.getLibraryItems: Request URL:', url);
       
       const response = await fetch(url, {
         headers,
         redirect: 'follow' // Автоматически следовать перенаправлениям
       });
 
-      console.log('Response status:', response.status, response.statusText);
-      console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
+      console.log('libraryApi.getLibraryItems: Response status:', response.status, response.statusText);
+      console.log('libraryApi.getLibraryItems: Response headers:', Object.fromEntries([...response.headers.entries()]));
       
       if (!response.ok) {
         // Проверка на ошибки аутентификации
@@ -110,11 +110,18 @@ export const libraryApi = {
           // или вызов метода повторной аутентификации
           return { items: [], total: 0 };
         }
+        
+        // Проверка на ошибку валидации (422 Unprocessable Entity)
+        if (response.status === 422) {
+          console.error('Validation error in library request:', response.statusText);
+          return { items: [], total: 0 };
+        }
+        
         throw new Error(`Failed to get library items: ${response.statusText}`);
       }
 
       const data: LibraryListResponse = await response.json();
-      console.log('Response data:', data);
+      console.log('libraryApi.getLibraryItems: Response data:', data);
       
       // Convert API items to UserPrompt format
       const items = data.items.map(convertToUserPrompt);
