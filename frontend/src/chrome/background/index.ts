@@ -145,8 +145,13 @@ chrome.runtime.onMessage.addListener(
               url: message.data.url,
             }),
           })
-            .then(response => {
+            .then(async response => {
               if (!response.ok) {
+                // Check for limit reached error (403 Forbidden)
+                if (response.status === 403) {
+                  const errorData = await response.json();
+                  throw new Error(`LIMIT_REACHED: ${errorData.detail || 'You have reached your free improvement limit. Please upgrade to a paid plan to continue.'}`);
+                }
                 throw new Error(`HTTP error! Status: ${response.status}`);
               }
               return response.json();
@@ -161,14 +166,21 @@ chrome.runtime.onMessage.addListener(
             })
             .catch(error => {
               console.error('Error improving prompt:', error);
+              
+              // Check if this is a limit reached error
+              const isLimitReached = error.message.includes('LIMIT_REACHED');
+              
               const errorMessage = error.message.includes('Failed to fetch') 
                 ? 'Network error: Could not connect to the API server. Please check your internet connection.'
-                : `Error improving prompt: ${error.message}`;
+                : isLimitReached
+                  ? error.message.replace('LIMIT_REACHED: ', '')
+                  : `Error improving prompt: ${error.message}`;
               
               sendResponse({
                 type: 'ERROR',
                 data: {
                   message: errorMessage,
+                  isLimitReached: isLimitReached
                 },
               });
             });
@@ -219,6 +231,25 @@ chrome.runtime.onMessage.addListener(
               }
             }
           });
+        });
+        break;
+        
+      case 'OPEN_SIDE_PANEL':
+        // Open the side panel when requested from content script
+        console.log('Opening side panel from content script request');
+        chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+          if (tabs[0]?.windowId) {
+            if (chrome.sidePanel) {
+              chrome.sidePanel.open({ windowId: tabs[0].windowId });
+              sendResponse({ success: true });
+            } else {
+              console.error('Side panel API not available');
+              sendResponse({ success: false, message: 'Side panel API not available' });
+            }
+          } else {
+            console.error('No active window found');
+            sendResponse({ success: false, message: 'No active window found' });
+          }
         });
         break;
 

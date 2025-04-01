@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, HTTPException, Depends, Query, status
 from typing import Optional
 from app.schemas.prompts import PromptRequest, PromptResponse, PromptHistory, PromptHistoryList
 from app.services.prompt_improvement import prompt_improvement_service
+from app.services.usage_limits import usage_limits_service
 from app.core.database import SessionLocal
 from app.api.endpoints.users import get_current_user
 from app.models.models import User, PromptHistory as PromptHistoryModel
@@ -17,10 +18,21 @@ async def improve_prompt(
     Improve a prompt using Claude AI
     
     This endpoint takes a prompt and returns an improved version of it.
+    If the user is not a paid user and has reached their improvement limit,
+    a 403 Forbidden error is returned.
     """
     try:
         # Get user_id if user is authenticated
         user_id = current_user.id if current_user else None
+        
+        # Check if user has reached their improvement limit
+        if user_id is not None:
+            has_reached_limit = await usage_limits_service.check_improvement_limit(user_id)
+            if has_reached_limit:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You have reached your free improvement limit. Please upgrade to a paid plan to continue."
+                )
         
         improved_prompt = await prompt_improvement_service.improve_prompt(
             request.prompt,
@@ -30,6 +42,9 @@ async def improve_prompt(
             user_id=user_id
         )
         return {"improved_prompt": improved_prompt}
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error improving prompt: {str(e)}")
 
