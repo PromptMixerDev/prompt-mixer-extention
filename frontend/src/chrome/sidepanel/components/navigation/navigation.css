@@ -17,4 +17,5 @@
 
 .navigation-right {
   display: flex;
+  gap: 8px;
 }
