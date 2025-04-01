@@ -16,6 +16,6 @@
 .input-block-label-right {
   display: flex;
   align-items: center;
-  opacity: 0; /* Hide buttons by default */
+  opacity: 1; /* Always visible */
   transition: opacity var(--transition-fast); /* Smooth transition */
 }

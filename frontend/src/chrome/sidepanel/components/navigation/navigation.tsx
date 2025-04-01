@@ -45,15 +45,17 @@ const Navigation: React.FC = () => {
           />
         </Tooltip>
         
-        <Tooltip content="Search prompts" position="bottom-center">
-          <Button 
-            kind="glyph" 
-            size="medium" 
-            variant="tertiary" 
-            icon="search-line"
-            onClick={() => handleTabClick('marketplace')} 
-          />
-        </Tooltip>
+        <div style={{ display: 'none' }}>
+          <Tooltip content="Search prompts" position="bottom-center">
+            <Button 
+              kind="glyph" 
+              size="medium" 
+              variant="tertiary" 
+              icon="search-line"
+              onClick={() => handleTabClick('marketplace')} 
+            />
+          </Tooltip>
+        </div>
       </div>
       <div className="navigation-right">
         <NavigationMenuPopup
