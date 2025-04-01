@@ -19,8 +19,11 @@ export const NavigationMenuPopup: React.FC<NavigationMenuPopupProps> = ({ trigge
   // Состояние для контроля открытия/закрытия меню
   const [isOpen, setIsOpen] = useState(false);
   
-  // Получаем функцию signOut из контекста аутентификации
-  const { signOut } = useAuth();
+  // Получаем информацию о пользователе и функцию signOut из контекста аутентификации
+  const { currentUser, signOut } = useAuth();
+  
+  // Проверяем, является ли пользователь платным
+  const isPaidUser = currentUser?.payment_status === 'paid';
   
   /**
    * Обработчики для элементов меню
@@ -89,9 +92,11 @@ export const NavigationMenuPopup: React.FC<NavigationMenuPopupProps> = ({ trigge
       <MenuItem icon="user-line" onClick={handleSettings}>
         My profile
       </MenuItem>
-      <MenuItem icon="flashlight-fill" onClick={handleUpgrade}>
-        Upgrade to Pro
-      </MenuItem>
+      {!isPaidUser && (
+        <MenuItem icon="flashlight-fill" onClick={handleUpgrade}>
+          Upgrade to Pro
+        </MenuItem>
+      )}
       <MenuDivider />
       <MenuItem variant="secondary" onClick={handleTermsOfService}>
         Terms of Service

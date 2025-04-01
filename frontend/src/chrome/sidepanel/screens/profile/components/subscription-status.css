@@ -1,0 +1,35 @@
+.subscription-status {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-page-upgrade-status {
+  width: 100%;
+  margin-bottom: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.profile-page-upgrade-status-title {
+
+}
+
+.profile-page-upgrade-status-subtitle {
+
+}
+
+.subscription-manage-container {
+  width: 100%;
+  margin-top: var(--spacing-3);
+  display: flex;
+  justify-content: start;
+}
+
+.subscription-manage-button {
+
+}

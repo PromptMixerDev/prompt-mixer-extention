@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService, User } from '@services/auth';
+import { authApi } from '@services/api/auth';
 
 /**
  * Auth context type definition
@@ -10,6 +11,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<User | null>;
   signOut: () => Promise<void>;
+  refreshUserInfo: () => Promise<User | null>;
 }
 
 /**
@@ -103,12 +105,46 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  /**
+   * Refresh user info from backend
+   */
+  const refreshUserInfo = async (): Promise<User | null> => {
+    console.log('AuthContext.refreshUserInfo: Refreshing user info from backend');
+    try {
+      // Get fresh user data from backend
+      const user = await authApi.getUserInfo();
+      console.log('AuthContext.refreshUserInfo: Got updated user data:', user);
+      
+      // Update chrome.storage with new user data
+      chrome.storage.local.get(['auth'], result => {
+        if (result.auth) {
+          const updatedAuth = {
+            ...result.auth,
+            user: user
+          };
+          
+          console.log('AuthContext.refreshUserInfo: Updating auth data in storage:', updatedAuth);
+          chrome.storage.local.set({ auth: updatedAuth });
+        }
+      });
+      
+      // Update state
+      setCurrentUser(user);
+      
+      return user;
+    } catch (error) {
+      console.error('AuthContext.refreshUserInfo: Error refreshing user info:', error);
+      return null;
+    }
+  };
+
   const value = {
     currentUser,
     token,
     loading,
     signInWithGoogle,
     signOut,
+    refreshUserInfo,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
