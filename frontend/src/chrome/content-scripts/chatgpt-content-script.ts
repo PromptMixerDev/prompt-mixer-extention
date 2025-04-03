@@ -47,6 +47,7 @@
     // ChatGPT-specific selectors (2025 updated)
     // Container from user feedback
     '.absolute.bottom-1.right-3.flex.items-center.gap-2',
+    '.flex.items-center.gap-2', // More generic version of the above
     '.flex.w-full.cursor-text.flex-col.items-center.justify-center.rounded-\\[28px\\]',
     // Previous selectors
     '#composer-background',
@@ -120,22 +121,139 @@
    * @returns boolean - Whether the button was successfully placed
    */
   function tryDirectButtonPlacement(): boolean {
-    // Try to find the exact container specified by the user
-    const targetContainer = document.querySelector('.absolute.bottom-1.right-3.flex.items-center.gap-2');
+    console.log('Trying direct button placement');
     
-    if (!targetContainer) {
-      console.log('Target container not found for direct placement');
+    // Based on the HTML structure, look for the send button directly
+    const sendButton = document.querySelector('#composer-submit-button');
+    
+    // Find its container
+    const sendButtonContainer = sendButton ? sendButton.closest('.absolute.bottom-0.right-3.flex.items-center.gap-2') : null;
+    
+    if (!sendButtonContainer) {
+      console.log('Send button container not found by direct selector');
+      
+      // Try alternative selectors
+      const altContainer = document.querySelector('.ml-auto.flex.items-center.gap-1\\.5');
+      
+      if (altContainer) {
+        console.log('Found alternative container for send button');
+        
+        // Find the speech button within this container
+        const speechButton = altContainer.querySelector('button[data-testid="composer-speech-button"]');
+        
+        if (sendButton) {
+          console.log('Found send button in alternative container');
+          
+          // Create button container
+          const buttonContainer = document.createElement('div');
+          buttonContainer.id = BUTTON_CONTAINER_ID;
+          buttonContainer.style.position = 'relative';
+          buttonContainer.style.zIndex = '9999';
+          buttonContainer.style.display = 'flex';
+          buttonContainer.style.alignItems = 'center';
+          
+          // Create button
+          const button = document.createElement('button');
+          button.id = BUTTON_ID;
+          button.innerHTML = CHATGPT_ICON;
+          button.title = 'Improve Prompt';
+          
+          // Style the button
+          Object.assign(button.style, {
+            backgroundColor: BUTTON_STYLES.backgroundColor,
+            color: 'white',
+            borderRadius: BUTTON_STYLES.borderRadius,
+            width: BUTTON_STYLES.width,
+            height: BUTTON_STYLES.height,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s',
+            border: 'none',
+            outline: 'none',
+            padding: '0',
+            marginRight: '8px',
+            flexShrink: '0'
+          });
+          
+          // Add hover effect
+          button.addEventListener('mouseover', () => {
+            button.style.backgroundColor = BUTTON_STYLES.hoverBackgroundColor;
+          });
+          
+          button.addEventListener('mouseout', () => {
+            button.style.backgroundColor = BUTTON_STYLES.backgroundColor;
+          });
+          
+          // Find the input field
+          let inputField = document.querySelector('#prompt-textarea');
+          if (!inputField) {
+            for (const selector of CHATGPT_INPUT_SELECTORS) {
+              inputField = document.querySelector(selector);
+              if (inputField) break;
+            }
+          }
+          
+          if (!inputField) {
+            console.log('Input field not found for direct placement');
+            return false;
+          }
+          
+          // Add click handler
+          button.addEventListener('click', () => {
+            handleImprovePromptClick(inputField as Element);
+          });
+          
+          // Add button to container
+          buttonContainer.appendChild(button);
+          
+          // Insert the button container before the send button
+          altContainer.insertBefore(buttonContainer, sendButton);
+          
+          console.log('Button added successfully via alternative placement');
+          return true;
+        }
+      }
+      
+      console.log('Alternative placement failed, trying fallback methods');
       return false;
     }
     
+    console.log('Found send button container:', sendButtonContainer);
+    
+    // We already have the sendButton from earlier, no need to query again
+    // Just make sure it's in the container
+    if (!sendButton || sendButton.parentElement !== sendButtonContainer) {
+      // If not, try to find it within the container
+      const containerSendButton = sendButtonContainer.querySelector('button');
+      if (!containerSendButton) {
+        console.log('Send button not found within container');
+        return false;
+      }
+      console.log('Found send button within container');
+    }
+    
+    if (!sendButton) {
+      console.log('Send button not found within container');
+      return false;
+    }
+    
+    console.log('Found send button:', sendButton);
+    
+    // Use the container as the target
+    const targetContainer = sendButtonContainer;
+    
     console.log('Found target container for direct placement');
+    
     
     // Create button container
     const buttonContainer = document.createElement('div');
     buttonContainer.id = BUTTON_CONTAINER_ID;
     buttonContainer.style.position = 'relative';
     buttonContainer.style.zIndex = '9999';
-    buttonContainer.style.display = 'block'; // Make it visible by default
+    buttonContainer.style.display = 'flex'; // Use flex for better alignment
+    buttonContainer.style.alignItems = 'center'; // Center items vertically
     
     // Create button
     const button = document.createElement('button');
@@ -158,7 +276,8 @@
       border: 'none',
       outline: 'none',
       padding: '0',
-      marginRight: '8px' // Add some spacing from other buttons
+      marginRight: '8px', // Add some spacing from other buttons
+      flexShrink: '0' // Prevent button from shrinking
     });
     
     // Add hover effect
@@ -190,8 +309,9 @@
     // Add button to container
     buttonContainer.appendChild(button);
     
-    // Add container to the target location
-    targetContainer.insertBefore(buttonContainer, targetContainer.firstChild);
+    // Insert the button container before the send button
+    // This ensures it's always to the left of the send button
+    targetContainer.insertBefore(buttonContainer, sendButton);
     
     console.log('Button added successfully via direct placement');
     return true;
@@ -256,7 +376,8 @@
     buttonContainer.id = BUTTON_CONTAINER_ID;
     buttonContainer.style.position = 'absolute';
     buttonContainer.style.zIndex = '9999';
-    buttonContainer.style.display = 'none'; // Initially hidden
+    buttonContainer.style.display = 'flex'; // Always visible
+    buttonContainer.style.alignItems = 'center'; // Center items vertically
     
     // Create button
     const button = document.createElement('button');
@@ -317,13 +438,54 @@
    * Add the button container to the appropriate parent element
    */
   function addButtonToContainer(inputField: Element, buttonContainer: HTMLElement): void {
-    // Try to find the specific container mentioned in user feedback
-    const specificContainer = document.querySelector('.absolute.bottom-1.right-3.flex.items-center.gap-2');
+    // Try to find the container with buttons
+    let specificContainer = null;
+    
+    // Try different selectors for the container
+    const containerSelectors = [
+      '.absolute.bottom-0.right-3.flex.items-center.gap-2', // Current send button container
+      '.absolute.bottom-1.right-3.flex.items-center.gap-2', // Alternative send button container
+      '.flex.items-center.gap-2', // Generic version for flexibility
+      'form div[role="presentation"]' // For newer ChatGPT versions
+    ];
+    
+    for (const selector of containerSelectors) {
+      const container = document.querySelector(selector);
+      if (container && container instanceof HTMLElement) {
+        specificContainer = container;
+        console.log(`Found specific container with selector: ${selector}`);
+        break;
+      }
+    }
     
     if (specificContainer && specificContainer instanceof HTMLElement) {
-      console.log('Found specific container from user feedback');
+      console.log('Found specific container for button placement');
       specificContainer.style.position = 'relative'; // For proper positioning
-      specificContainer.appendChild(buttonContainer);
+      
+      // Find the send button
+      let sendButton = document.querySelector('#composer-submit-button');
+      
+      if (!sendButton) {
+        // Try to find the send button by its appearance
+        const possibleSendButtons = document.querySelectorAll('button');
+        for (const btn of possibleSendButtons) {
+          // Look for a button that might be the send button (circular button at the bottom right)
+          if (btn.closest('.flex.items-center.gap-2') || 
+              btn.closest('form div[role="presentation"]')) {
+            sendButton = btn;
+            console.log('Found potential send button by context');
+            break;
+          }
+        }
+      }
+      
+      if (sendButton && sendButton.parentElement === specificContainer) {
+        // Insert the button before the send button
+        specificContainer.insertBefore(buttonContainer, sendButton);
+      } else {
+        // Fallback to inserting at the beginning of the container
+        specificContainer.insertBefore(buttonContainer, specificContainer.firstChild);
+      }
       return;
     }
     
@@ -359,21 +521,64 @@
     const position = buttonContainer.style.position;
     
     if (position === 'absolute') {
+      // Try to find the send button
+      const sendButton = document.querySelector('#composer-submit-button');
+      
       // For the specific container from user feedback
       if (buttonContainer.parentElement?.classList.contains('absolute') && 
           buttonContainer.parentElement?.classList.contains('bottom-1') &&
           buttonContainer.parentElement?.classList.contains('right-3')) {
-        buttonContainer.style.top = '0px';
-        buttonContainer.style.right = '0px';
+        
+        // If we found the send button and we're in the same container
+        if (sendButton && sendButton.parentElement === buttonContainer.parentElement) {
+          // Position is handled by DOM order (button is inserted before send button)
+          buttonContainer.style.top = '0px';
+          buttonContainer.style.right = 'auto'; // Clear any right positioning
+        } else {
+          // Fallback to original positioning
+          buttonContainer.style.top = '0px';
+          buttonContainer.style.right = '0px';
+        }
       } else {
         // Use platform-specific positioning
         buttonContainer.style.top = BUTTON_POSITION.absoluteTop;
-        buttonContainer.style.right = BUTTON_POSITION.absoluteRight;
+        
+        // If we found the send button, position relative to it
+        if (sendButton && sendButton instanceof HTMLElement) {
+          // Position to the left of the send button
+          const sendButtonRect = sendButton.getBoundingClientRect();
+          const buttonContainerRect = buttonContainer.getBoundingClientRect();
+          
+          // Calculate the distance from the right edge to the send button
+          const distanceFromRight = window.innerWidth - sendButtonRect.right;
+          
+          // Position the button to the left of the send button
+          buttonContainer.style.right = `${distanceFromRight + sendButtonRect.width + 5}px`;
+        } else {
+          // Fallback to the configured right position
+          buttonContainer.style.right = BUTTON_POSITION.absoluteRight;
+        }
       }
     } else if (position === 'fixed') {
       const rect = inputField.getBoundingClientRect();
       buttonContainer.style.top = `${rect.top + 10}px`;
-      buttonContainer.style.right = '20px';
+      
+      // Try to find the send button
+      const sendButton = document.querySelector('#composer-submit-button');
+      
+      if (sendButton && sendButton instanceof HTMLElement) {
+        // Position to the left of the send button
+        const sendButtonRect = sendButton.getBoundingClientRect();
+        
+        // Calculate the distance from the right edge to the send button
+        const distanceFromRight = window.innerWidth - sendButtonRect.right;
+        
+        // Position the button to the left of the send button
+        buttonContainer.style.right = `${distanceFromRight + sendButtonRect.width + 5}px`;
+      } else {
+        // Fallback position
+        buttonContainer.style.right = '20px';
+      }
     }
   }
 
@@ -408,9 +613,8 @@
    * Update button visibility based on input field content
    */
   function updateButtonVisibility(buttonContainer: HTMLElement, inputField: Element): void {
-    const promptText = getPromptText(inputField);
-    const isEmpty = !promptText || promptText.trim() === '';
-    buttonContainer.style.display = isEmpty ? 'none' : 'block';
+    // Always show the button, regardless of input field content
+    buttonContainer.style.display = 'flex';
   }
 
   /**
