@@ -22,45 +22,22 @@ export const chatGptConfig: PlatformConfig = {
   buttonContainerId: 'improve-prompt-button-container-chatgpt',
   hostnames: ['chatgpt.com'],
   inputSelectors: [
-    // ChatGPT-specific selectors (2025 updated)
+    // Primary selector for current ChatGPT (2025)
     '#prompt-textarea',
-    // Selector from user feedback
-    'form > div.flex.w-full.cursor-text.flex-col.items-center.justify-center.rounded-\\[28px\\] textarea',
-    // Previous selectors
-    '.ProseMirror[data-virtualkeyboard="true"]',
-    '[data-virtualkeyboard="true"]',
-    'div.ProseMirror',
-    'textarea.block.h-10.w-full.resize-none',
-    'form textarea',
-    'textarea.resize-none',
-    'label textarea',
-    '[data-gtm-form-interact-field-id]',
-    '.chatgpt-textarea',
-    '.chat-input-container textarea',
-    '.chat-input-container [contenteditable="true"]',
-    // Generic fallbacks
-    'textarea',
+    // Minimal set of fallbacks for robustness
+    'div.ProseMirror[data-virtualkeyboard="true"]',
     '[contenteditable="true"]',
-    'div[role="textbox"]',
-    '[data-testid="text-input"]',
-    '[data-testid="chat-input"]'
+    'div[role="textbox"]'
   ],
   containerSelectors: [
-    // ChatGPT-specific selectors (2025 updated)
-    // Container from user feedback
-    '.absolute.bottom-1.right-3.flex.items-center.gap-2',
-    '.flex.w-full.cursor-text.flex-col.items-center.justify-center.rounded-\\[28px\\]',
-    // Previous selectors
-    '#composer-background',
-    '.flex.w-full.cursor-text.flex-col.rounded-3xl',
-    '.flex.flex-col.justify-start',
-    '.flex.min-h-\\[44px\\].items-start',
-    '.min-w-0.max-w-full.flex-1',
-    'form.relative',
-    'label.relative',
-    '.absolute.bottom-3.right-3',
-    'form',
-    'label'
+    // Primary selectors for current ChatGPT versions (2025)
+    '.absolute.bottom-0.right-3.flex.items-center.gap-2', // Exact selector from the HTML
+    'div.absolute.bottom-0.right-3.flex.items-center.gap-2', // With div prefix
+    '.flex.items-center.gap-2', // More generic version
+    // Fallbacks
+    'form div[role="presentation"]',
+    'form.w-full',
+    'form'
   ],
   buttonStyles: {
     backgroundColor: 'rgb(0, 0, 0)',
@@ -71,7 +48,7 @@ export const chatGptConfig: PlatformConfig = {
   },
   buttonPosition: {
     absoluteTop: '0px',
-    absoluteRight: '45px'
+    absoluteRight: '0px' // Not used in direct placement, but kept as fallback
   }
 };
 

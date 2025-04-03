@@ -72,8 +72,8 @@
 
   // Button positioning
   const BUTTON_POSITION = {
-    absoluteTop: '0px',
-    absoluteRight: '45px'
+    absoluteBottom: '10px',
+    absoluteRight: '55px'
   };
 
   // Flag to track if Chrome APIs are available
@@ -390,7 +390,7 @@
         buttonContainer.style.right = '0px';
       } else {
         // Use platform-specific positioning
-        buttonContainer.style.top = BUTTON_POSITION.absoluteTop;
+        buttonContainer.style.bottom = BUTTON_POSITION.absoluteBottom;
         buttonContainer.style.right = BUTTON_POSITION.absoluteRight;
       }
     } else if (position === 'fixed') {
