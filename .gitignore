@@ -51,3 +51,4 @@ venv
 *.sql
 *.csv
 *.db
+frontend/dist.zip
