@@ -5,6 +5,7 @@ import Navigation from '../navigation/navigation';
 import ContentArea from '../content-area/content-area';
 import UsageLimits from '@components/ui/usage-limits/usage-limits';
 import { useSubscription } from '@hooks/useSubscription';
+import type { ChromeMessage } from '../../../../types/chrome';
 import './side-panel.css';
 
 /**
@@ -14,7 +15,7 @@ import './side-panel.css';
  */
 const SidePanel: React.FC = () => {
   const { currentUser, loading } = useAuth();
-  const { isPaidUser, promptsLeft, improvementsLeft, isLoading: subscriptionLoading } = useSubscription();
+  const { isPaidUser, promptsLeft, improvementsLeft, refreshLimits, isLoading: subscriptionLoading } = useSubscription();
   
   // Логируем только при первом рендеринге
   useEffect(() => {
@@ -26,6 +27,28 @@ const SidePanel: React.FC = () => {
       subscriptionLoading
     });
   }, []);
+  
+  // Listen for LIMITS_CHANGED messages from background script
+  useEffect(() => {
+    if (!currentUser) return;
+    
+    const handleMessage = (message: ChromeMessage) => {
+      console.log('SidePanel: Received message', message);
+      
+      if (message.type === 'LIMITS_CHANGED') {
+        console.log('SidePanel: Limits changed, refreshing limits');
+        refreshLimits();
+      }
+    };
+    
+    // Add message listener
+    chrome.runtime.onMessage.addListener(handleMessage);
+    
+    // Clean up listener when component unmounts
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleMessage);
+    };
+  }, [currentUser, refreshLimits]);
   
   // Handler for Go to Pro button click
   const handleGoToProClick = () => {
@@ -46,7 +69,7 @@ const SidePanel: React.FC = () => {
   return (
     <div className="side-panel">
       <Navigation />
-      {currentUser && !isPaidUser && (
+      {currentUser && !subscriptionLoading && !isPaidUser && (
         <UsageLimits 
           improvementsLeft={improvementsLeft} 
           promptsLeft={promptsLeft} 

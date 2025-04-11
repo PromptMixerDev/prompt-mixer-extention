@@ -3,6 +3,7 @@ import { UserPrompt, SharedPrompt, PromptContextType } from '../types/prompt';
 import { libraryApi } from '../services/api/library';
 import { getApiUrl } from '../utils/config';
 import { toast } from '@components/tech/toast/toast';
+import { useSubscription } from '@hooks/useSubscription';
 
 /**
  * Context for managing prompts in the application
@@ -17,6 +18,9 @@ interface PromptProviderProps {
 }
 
 export function PromptProvider({ children }: PromptProviderProps) {
+  // Get the refreshLimits function from useSubscription
+  const { refreshLimits } = useSubscription();
+
   // State for user prompts
   const [userPrompts, setUserPrompts] = useState<UserPrompt[]>([]);
 
@@ -126,6 +130,9 @@ export function PromptProvider({ children }: PromptProviderProps) {
       // Update local state
       setUserPrompts(prevPrompts => [...prevPrompts, newPrompt]);
       
+      // Refresh limits to update the prompt counter
+      refreshLimits();
+      
       return newPrompt;
     } catch (err) {
       console.error('Error adding prompt:', err);
@@ -192,6 +199,9 @@ export function PromptProvider({ children }: PromptProviderProps) {
       
       // Update local state
       setUserPrompts(prevPrompts => [...prevPrompts, newPrompt]);
+      
+      // Refresh limits to update the prompt counter
+      refreshLimits();
 
       return newPrompt;
     } catch (err) {
@@ -231,6 +241,9 @@ export function PromptProvider({ children }: PromptProviderProps) {
       
       // Показываем уведомление об успешном улучшении
       toast.success('Промпт успешно улучшен и добавлен в историю');
+      
+      // Refresh limits to update the improvement counter
+      refreshLimits();
       
       return data.improved_prompt;
     } catch (err) {
