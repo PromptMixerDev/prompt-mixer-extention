@@ -29,6 +29,30 @@ export function useSubscription() {
   
   const [isLoading, setIsLoading] = useState(true);
   
+  /**
+   * Fetches the latest limits data from the backend API
+   * This function can be called after any action that changes the limits
+   * such as improving a prompt or adding a prompt to the library
+   */
+  const refreshLimits = async () => {
+    if (!currentUser) {
+      return;
+    }
+    
+    console.log('useSubscription: Refreshing limits from backend');
+    setIsLoading(true);
+    
+    try {
+      const response = await limitsApi.getUserLimits();
+      console.log('useSubscription: Received refreshed limits from backend', response);
+      setLimits(response);
+    } catch (error) {
+      console.error('Error refreshing user limits:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   // Log initial state
   useEffect(() => {
     console.log('useSubscription: Initial state', {
@@ -81,6 +105,9 @@ export function useSubscription() {
     
     // Limit check methods
     hasReachedPromptsLimit: limits.hasReachedPromptsLimit,
-    hasReachedImprovementsLimit: limits.hasReachedImprovementsLimit
+    hasReachedImprovementsLimit: limits.hasReachedImprovementsLimit,
+    
+    // Method to refresh limits data
+    refreshLimits
   };
 }

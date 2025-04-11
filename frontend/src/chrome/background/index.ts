@@ -157,6 +157,11 @@ chrome.runtime.onMessage.addListener(
               return response.json();
             })
             .then(data => {
+              // Notify all extension pages that limits have changed
+              chrome.runtime.sendMessage({
+                type: 'LIMITS_CHANGED'
+              });
+              
               sendResponse({
                 type: 'IMPROVED_PROMPT',
                 data: {
