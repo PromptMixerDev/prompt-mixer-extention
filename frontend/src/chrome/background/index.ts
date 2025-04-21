@@ -22,10 +22,21 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // Open the side panel when the extension icon is clicked
-chrome.action.onClicked.addListener(tab => {
+chrome.action.onClicked.addListener((tab) => {
   // Toggle the side panel
   if (chrome.sidePanel) {
-    chrome.sidePanel.open({ windowId: tab.windowId });
+    try {
+      // We need to provide either tabId or windowId
+      // Since we have the tab from the event, we can use its windowId
+      if (tab && tab.windowId) {
+        chrome.sidePanel.open({ windowId: tab.windowId });
+        console.log('Side panel opened from extension icon click');
+      } else {
+        console.error('No window ID available from tab');
+      }
+    } catch (error) {
+      console.error('Error opening side panel:', error);
+    }
   }
 });
 
@@ -38,15 +49,16 @@ chrome.runtime.onMessage.addListener(
     // Handle different message types
     switch (message.type) {
       case 'ADD_TO_CHAT':
-        // Get active tab
+        // Use activeTab permission to get the active tab
         chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
           if (tabs[0]?.id) {
             try {
               console.log('Background script: executing script to add text to chat');
               
               // Use executeScript to inject and run code in the page
+              // This works with activeTab permission
               chrome.scripting.executeScript({
-                target: { tabId: tabs[0].id as number },
+                target: { tabId: tabs[0].id },
                 func: (text: string) => {
                   console.log('Executing script to insert text:', text);
                   
@@ -218,44 +230,58 @@ chrome.runtime.onMessage.addListener(
         // Broadcast auth state change to all extension pages
         chrome.runtime.sendMessage(message);
 
-        // Также отправляем сообщение во все content scripts
-        chrome.tabs.query({}, tabs => {
-          tabs.forEach(tab => {
-            if (tab.id) {
-              try {
-                chrome.tabs.sendMessage(tab.id, message, {}, () => {
-                  // Игнорируем ошибки, если content script не загружен на странице
-                  if (chrome.runtime.lastError) {
-                    console.log(
-                      `Error sending message to tab ${tab.id}: ${chrome.runtime.lastError.message}`
-                    );
-                  }
-                });
-              } catch (error) {
-                console.log(`Error sending message to tab ${tab.id}: ${error}`);
+        // We no longer broadcast to all tabs since we don't have the "tabs" permission
+        // Instead, we'll rely on the activeTab permission when needed
+        
+        // If we have a sender tab ID, we can send a message to that specific tab
+        if (sender.tab?.id) {
+          try {
+            chrome.tabs.sendMessage(sender.tab.id, message, {}, () => {
+              // Ignore errors if content script is not loaded on the page
+              if (chrome.runtime.lastError) {
+                console.log(
+                  `Error sending message to tab ${sender.tab?.id}: ${chrome.runtime.lastError.message}`
+                );
               }
-            }
-          });
-        });
+            });
+          } catch (error) {
+            console.log(`Error sending message to tab ${sender.tab?.id}: ${error}`);
+          }
+        }
         break;
         
       case 'OPEN_SIDE_PANEL':
         // Open the side panel when requested from content script
         console.log('Opening side panel from content script request');
-        chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-          if (tabs[0]?.windowId) {
-            if (chrome.sidePanel) {
-              chrome.sidePanel.open({ windowId: tabs[0].windowId });
+        if (chrome.sidePanel) {
+          try {
+            // We need to provide either tabId or windowId
+            // If we have sender tab info, we can use its windowId
+            if (sender.tab && sender.tab.windowId) {
+              chrome.sidePanel.open({ windowId: sender.tab.windowId });
+              console.log('Side panel opened from content script request with windowId:', sender.tab.windowId);
               sendResponse({ success: true });
             } else {
-              console.error('Side panel API not available');
-              sendResponse({ success: false, message: 'Side panel API not available' });
+              // If we don't have sender tab info, we need to query for the active tab
+              chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                if (tabs[0]?.windowId && chrome.sidePanel) {
+                  chrome.sidePanel.open({ windowId: tabs[0].windowId });
+                  console.log('Side panel opened from content script request with queried windowId:', tabs[0].windowId);
+                  sendResponse({ success: true });
+                } else {
+                  console.error('No window ID available from active tab query or sidePanel API not available');
+                  sendResponse({ success: false, message: 'No window ID available or sidePanel API not available' });
+                }
+              });
             }
-          } else {
-            console.error('No active window found');
-            sendResponse({ success: false, message: 'No active window found' });
+          } catch (error) {
+            console.error('Error opening side panel:', error);
+            sendResponse({ success: false, message: 'Error opening side panel: ' + (error as Error).message });
           }
-        });
+        } else {
+          console.error('Side panel API not available');
+          sendResponse({ success: false, message: 'Side panel API not available' });
+        }
         break;
 
       default:
