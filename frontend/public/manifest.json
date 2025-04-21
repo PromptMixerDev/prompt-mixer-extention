@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Prompt Mixer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Chrome extension for working with AI prompts",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2a60HvdvMcLnTzhPOSFocp1UBnRKpgyl4JJMe9JlqddfDjYYN1adxiqI4j097fGVtUyuun7rvXSZTquj3HAwJfY2hygFa1YjQVC6WfTYYxZn/mj9pJwsvRvZQjla1lQvvSytFiaWcOVDUhSQMOTGpEsFSI3VZGn/EhkymYAv33v42gPeQop5m9tnbTyNGwXpYRueoB2kW+gxL6VU67u+QiSan3+pBkRg5cvfZoiM6i+JrY38hbmnByqG1atX/pmm/C3sIfcgl9/9YXJ9bdEut0hz38JZju56rQP5UAkLIzfFUPKoALIDCPYrCQg83Ze6g4EAlOVwJNs8e/3j+Wex/wIDAQAB",
   "icons": {
@@ -28,7 +28,6 @@
     "scripting",
     "identity",
     "windows",
-    "tabs",
     "activeTab"
   ],
   "oauth2": {
